@@ -19,5 +19,5 @@ licence: SlopBlock (lydonator), youtube-ai-slop-dataset, Slop Evader,
 youtube-ai-slop-visual-blocker.
 
 Community lists we may consume as *verification candidates* (never as
-verdicts) and their terms: AiSList (CC BY-NC 4.0 — KillSlop is non-commercial),
-CevvalYoutubeAIBlocklist (CC0), DeSlop list (GPL-3.0).
+verdicts) and their terms: CevvalYoutubeAIBlocklist (CC0); AiSList (CC BY-NC
+4.0), only with its author's permission.

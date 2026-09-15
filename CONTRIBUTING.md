@@ -130,5 +130,6 @@ Next up: LinkedIn, then X.
 
 The code is GPL-3.0 (see `LICENSE`), and by contributing you agree your
 contribution is licensed the same way. The list itself (the public export) is
-CC0: the votes, reports and reviews it is built from become part of a
-public-domain dataset.
+CC BY-SA 4.0: the votes, reports and reviews it is built from become part of
+a dataset anyone may use and share, with credit to KillSlop, under the same
+licence.

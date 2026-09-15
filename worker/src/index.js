@@ -151,7 +151,7 @@ async function getExport(env) {
     });
   }
   return json(
-    { license: 'CC0-1.0', generated: Date.now(), channels },
+    { license: 'CC-BY-SA-4.0', attribution: 'KillSlop (https://killslop.app)', generated: Date.now(), channels },
     200,
     { 'cache-control': 'public, max-age=3600' }
   );

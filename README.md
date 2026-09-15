@@ -2,7 +2,7 @@
 
 A browser extension that hides AI-generated slop, and an open,
 evidence-backed list of it that anyone can use. YouTube first, then
-LinkedIn, then X. The code is GPL-3.0; the list is public domain (CC0).
+LinkedIn, then X. The code is GPL-3.0; the list is CC BY-SA 4.0.
 
 Website: **[killslop.app](https://killslop.app)**. Privacy policy:
 [killslop.app/privacy](https://killslop.app/privacy).
@@ -81,10 +81,13 @@ Each entry says *why* it is on the list:
 Turning off "Include opinion votes" in the popup restricts the list to
 measured entries, which cannot produce an opinion-based false positive.
 
-Decided channels are exported in the clear under CC0 at
+Decided channels are exported in the clear under
+[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) at
 <https://api.killslop.app/api/v1/export/youtube-channels.json>, so uBlock
 lists, ReVanced-style patches and researchers can consume them without
-running the extension.
+running the extension. Anyone may use and share the list, commercially too,
+as long as they credit KillSlop and release what they build from it under
+the same licence.
 
 ## The review queue
 
@@ -240,5 +243,5 @@ that gap. See RESEARCH.md sections 6, 7 and 11.
 
 ## Licence and credit
 
-The code is GPL-3.0, see `LICENSE`. The exported list is CC0. What we
+The code is GPL-3.0, see `LICENSE`. The exported list is CC BY-SA 4.0. What we
 borrowed and from whom is in [ATTRIBUTION.md](ATTRIBUTION.md).
