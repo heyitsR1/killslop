@@ -1,0 +1,316 @@
+/* Injected into YouTube. Everything is prefixed and scoped to our own
+   attributes so we never restyle YouTube by accident. */
+
+[data-killslop='hidden'] > *:not(.killslop-card) {
+  display: none !important;
+}
+
+[data-killslop='hidden'] {
+  display: block !important;
+  min-height: 0 !important;
+}
+
+[data-killslop='dimmed'] {
+  opacity: 0.28;
+  filter: grayscale(1);
+  transition: opacity 120ms ease;
+}
+
+[data-killslop='dimmed']:hover {
+  opacity: 0.75;
+}
+
+/* The placeholder a hidden tile leaves behind, in the extension's own look
+   (black and white, hairline border) so it reads as ours, not YouTube's.
+   Geist is not loaded into YouTube pages; the system stack stands in. */
+
+.killslop-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 6px 6px 12px;
+  margin: 2px 0;
+  border: 1px solid #2e2e2e;
+  border-radius: 8px;
+  background: #0a0a0a;
+  font: 500 12px/16px 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #a1a1a1;
+}
+
+html:not([dark]) .killslop-card {
+  border-color: #ebebeb;
+  background: #ffffff;
+  color: #666666;
+}
+
+.killslop-card__dot {
+  width: 6px;
+  height: 6px;
+  flex: none;
+  border-radius: 50%;
+  background: #e5484d;
+}
+
+.killslop-card__text {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.killslop-card__btn {
+  flex: none;
+  height: 24px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 6px;
+  background: #ededed;
+  color: #0a0a0a;
+  font: inherit;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+.killslop-card__btn:hover {
+  background: #cccccc;
+}
+
+html:not([dark]) .killslop-card__btn {
+  background: #171717;
+  color: #ffffff;
+}
+
+html:not([dark]) .killslop-card__btn:hover {
+  background: #383838;
+}
+
+.killslop-card__btn--ghost,
+html:not([dark]) .killslop-card__btn--ghost {
+  background: transparent;
+  color: inherit;
+}
+
+.killslop-card__btn--ghost:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+html:not([dark]) .killslop-card__btn--ghost:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+/* ------------------------------------------------------------------------
+   AI SLOP button. A pill beside like/dislike on the watch page, a round
+   action in the Shorts bar. Grey is something you can do; red is a verdict,
+   solid when it's yours and tinted when KillSlop reached it on its own.
+   ------------------------------------------------------------------------ */
+
+.killslop-vote {
+  --killslop-vote-bg: rgba(255, 255, 255, 0.1);
+  --killslop-vote-bg-hover: rgba(255, 255, 255, 0.2);
+  --killslop-vote-fg: #f1f1f1;
+  --killslop-red: #ff5a52;
+  --killslop-red-tint: rgba(255, 78, 69, 0.18);
+  --killslop-red-tint-hover: rgba(255, 78, 69, 0.28);
+  --killslop-red-solid: #e5261f;
+  --killslop-red-solid-hover: #f2372f;
+
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+  /* YouTube only spaces Share when it directly follows like/dislike. With us
+     in between, both gaps are ours to supply. */
+  margin: 0 8px;
+  padding: 0 16px 0 12px;
+  border: 0;
+  border-radius: 20px;
+  background: var(--killslop-vote-bg);
+  color: var(--killslop-vote-fg);
+  font: 500 14px/40px 'Roboto', 'Arial', sans-serif;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 100ms ease;
+}
+
+html:not([dark]) .killslop-vote {
+  --killslop-vote-bg: rgba(0, 0, 0, 0.05);
+  --killslop-vote-bg-hover: rgba(0, 0, 0, 0.1);
+  --killslop-vote-fg: #0f0f0f;
+  --killslop-red: #c4160f;
+  --killslop-red-tint: rgba(204, 26, 20, 0.1);
+  --killslop-red-tint-hover: rgba(204, 26, 20, 0.17);
+}
+
+.killslop-vote:hover {
+  background: var(--killslop-vote-bg-hover);
+}
+
+.killslop-vote:focus-visible {
+  outline: 2px solid var(--killslop-vote-fg);
+  outline-offset: 2px;
+}
+
+.killslop-vote__icon {
+  display: inline-flex;
+  flex: none;
+}
+
+.killslop-vote__icon svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* You said so: filled, like a pressed like button. */
+.killslop-vote[data-state='mine'],
+.killslop-vote[data-state='channel'] {
+  background: var(--killslop-red-solid);
+  color: #fff;
+}
+
+.killslop-vote[data-state='mine']:hover,
+.killslop-vote[data-state='channel']:hover {
+  background: var(--killslop-red-solid-hover);
+}
+
+/* KillSlop says so: tinted. Hover explains why. */
+.killslop-vote[data-state='flagged'] {
+  background: var(--killslop-red-tint);
+  color: var(--killslop-red);
+}
+
+.killslop-vote[data-state='flagged']:hover {
+  background: var(--killslop-red-tint-hover);
+}
+
+/* Shorts: 48px circle with the label underneath, like the actions around it. */
+
+.killslop-vote--shorts {
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 0;
+  height: 78px; /* every action in the bar is 78px: 48 circle + label */
+  margin: 0 !important; /* YouTube gives bare buttons in the bar a top margin */
+  padding: 0;
+  background: none !important;
+  color: var(--killslop-vote-fg) !important;
+  font: 400 12px/18px 'Roboto', 'Arial', sans-serif;
+  letter-spacing: normal;
+}
+
+.killslop-vote--shorts .killslop-vote__icon {
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--killslop-vote-bg);
+  color: var(--killslop-vote-fg);
+  transition: background-color 100ms ease;
+}
+
+.killslop-vote--shorts .killslop-vote__label {
+  margin-top: 4px;
+}
+
+.killslop-vote--shorts:hover .killslop-vote__icon {
+  background: var(--killslop-vote-bg-hover);
+}
+
+.killslop-vote--shorts .killslop-vote__icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.killslop-vote--shorts[data-state='mine'] .killslop-vote__icon,
+.killslop-vote--shorts[data-state='channel'] .killslop-vote__icon {
+  background: var(--killslop-red-solid);
+  color: #fff;
+}
+
+.killslop-vote--shorts[data-state='flagged'] .killslop-vote__icon {
+  background: var(--killslop-red-tint);
+  color: var(--killslop-red);
+}
+
+/* Confirmation toast, bottom-left where YouTube puts its own, drawn like the
+   extension's other surfaces: a bordered card that follows the page theme. */
+
+.killslop-toast {
+  position: fixed;
+  left: 24px;
+  bottom: 24px;
+  z-index: 2300;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  max-width: min(600px, calc(100vw - 48px));
+  padding: 8px 8px 8px 16px;
+  border: 1px solid #2e2e2e;
+  border-radius: 8px;
+  background: #0a0a0a;
+  color: #ededed;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 16px 32px -8px rgba(0, 0, 0, 0.5);
+  font: 400 14px/20px 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  animation: killslop-toast-in 160ms ease-out;
+}
+
+html:not([dark]) .killslop-toast {
+  border-color: #ebebeb;
+  background: #ffffff;
+  color: #171717;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06), 0 16px 32px -8px rgba(0, 0, 0, 0.12);
+}
+
+.killslop-toast__text {
+  flex: 1 1 auto;
+  margin-right: 8px;
+}
+
+.killslop-toast__btn {
+  flex: none;
+  height: 32px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  box-shadow: inset 0 0 0 1px #2e2e2e;
+  color: inherit;
+  font: inherit;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+.killslop-toast__btn:hover {
+  background: #1a1a1a;
+}
+
+html:not([dark]) .killslop-toast__btn {
+  box-shadow: inset 0 0 0 1px #ebebeb;
+}
+
+html:not([dark]) .killslop-toast__btn:hover {
+  background: #f2f2f2;
+}
+
+@keyframes killslop-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .killslop-toast {
+    animation: none;
+  }
+}

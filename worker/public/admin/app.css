@@ -1,0 +1,820 @@
+/* KillSlop console. Builds on /ui/base.css (fonts, tokens, buttons, inputs,
+   segmented control, badges), the same file the extension and the site use,
+   so the three read as one product. This file only lays out the console and
+   styles what is particular to it. The look follows Vercel's dashboard: a
+   white header over a faintly gray page, hairline borders, rows divided
+   inside one bordered container, Geist Mono for anything machine-shaped. */
+
+body {
+  min-height: 100vh;
+  background: var(--bg-subtle);
+}
+
+.spacer {
+  flex: 1;
+}
+
+/* ----------------------------------------------------------------- topbar */
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--bg);
+  /* An inset line rather than a border, so the active tab's 2px bar can sit
+     on top of it instead of below it. */
+  box-shadow: inset 0 -1px 0 var(--border);
+}
+
+.topbar__inner,
+.tabs,
+.main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+.topbar__inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 64px;
+}
+
+.crumbs {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.crumbs .wordmark {
+  font-size: 15px;
+}
+
+.crumbs__sep {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  margin: 0 -4px;
+  fill: none;
+  stroke: var(--border-strong);
+  stroke-width: 1.25;
+}
+
+.crumbs__page {
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+#mode {
+  cursor: help;
+}
+
+.badge:empty {
+  display: none;
+}
+
+/* ------------------------------------------------------------------- tabs */
+
+.tabs {
+  display: flex;
+  /* Pull the first tab's padding back, so its label lines up with the mark. */
+  padding-left: 12px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tabs [role='tab'] {
+  position: relative;
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  height: 46px;
+  padding: 0 12px;
+  border: 0;
+  background: none;
+  color: var(--fg-muted);
+  font: 400 14px/20px var(--font-sans);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 150ms ease;
+}
+
+/* Hover is a rounded wash behind the label, not the whole cell. */
+.tabs [role='tab']::before {
+  content: '';
+  position: absolute;
+  inset: 8px 4px;
+  z-index: -1;
+  border-radius: var(--radius);
+  transition: background-color 150ms ease;
+}
+
+.tabs [role='tab']:hover {
+  color: var(--fg);
+}
+
+.tabs [role='tab']:hover::before {
+  background: var(--hover);
+}
+
+.tabs [role='tab']:focus-visible {
+  outline: none;
+}
+
+.tabs [role='tab']:focus-visible::before {
+  box-shadow: 0 0 0 2px var(--focus);
+}
+
+.tabs [aria-selected='true'] {
+  color: var(--fg);
+}
+
+.tabs [aria-selected='true']::after {
+  content: '';
+  position: absolute;
+  right: 12px;
+  bottom: 0;
+  left: 12px;
+  height: 2px;
+  background: var(--fg);
+}
+
+.tabs [role='tab'] {
+  isolation: isolate;
+}
+
+.count {
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--fill);
+  color: var(--fg-muted);
+  font: 500 11px/20px var(--font-mono);
+  text-align: center;
+}
+
+.count:empty {
+  display: none;
+}
+
+.count--accent {
+  background: var(--inverse);
+  color: var(--inverse-fg);
+}
+
+/* ------------------------------------------------------------------- main */
+
+.main {
+  padding-top: 32px;
+  padding-bottom: 96px;
+}
+
+.lede {
+  max-width: 72ch;
+  margin-bottom: 20px;
+  color: var(--fg-muted);
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin-bottom: 16px;
+}
+
+.toolbar .segmented {
+  display: inline-flex;
+}
+
+.hint {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  color: var(--fg-faint);
+  font-size: 12px;
+}
+
+.hint .kbd + .kbd {
+  margin-left: -1px;
+}
+
+.hint__sep {
+  margin: 0 6px 0 2px;
+}
+
+/* A native select, redrawn: the CSP allows no data: images, so the chevron
+   is two borders on the label rather than a background image. */
+.select {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--fg-muted);
+  font-size: 13px;
+}
+
+.select::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  width: 6px;
+  height: 6px;
+  border-right: 1.5px solid var(--fg-muted);
+  border-bottom: 1.5px solid var(--fg-muted);
+  pointer-events: none;
+  transform: translateY(-70%) rotate(45deg);
+}
+
+.select select {
+  height: 32px;
+  padding: 0 32px 0 10px;
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--bg);
+  box-shadow: 0 0 0 1px var(--border);
+  color: var(--fg);
+  font: 500 13px/20px var(--font-sans);
+  cursor: pointer;
+  appearance: none;
+}
+
+.select select:hover {
+  box-shadow: 0 0 0 1px var(--border-strong);
+}
+
+.select select:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+}
+
+.loading,
+.empty,
+.error {
+  padding: 56px 16px;
+  color: var(--fg-muted);
+  font-size: 14px;
+  text-align: center;
+}
+
+.error {
+  color: var(--red-fg);
+}
+
+/* Outside a list the empty state gets the list's frame, so the page does not
+   jump between a boxed list and bare text. */
+.empty {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg);
+}
+
+/* ------------------------------------------------------ console buttons */
+
+.btn--link {
+  height: auto;
+  padding: 0;
+  background: none;
+  box-shadow: none;
+  color: var(--fg-muted);
+  font-size: 13px;
+  font-weight: 400;
+  text-decoration: underline;
+  text-decoration-color: var(--border-strong);
+  text-underline-offset: 3px;
+}
+
+.btn--link:hover {
+  background: none;
+  color: var(--fg);
+  text-decoration-color: currentColor;
+}
+
+.btn--quiet {
+  background: transparent;
+  box-shadow: none;
+  color: var(--fg-muted);
+}
+
+.btn--quiet:hover {
+  background: var(--hover);
+  color: var(--fg);
+}
+
+/* Actions inside the toast sit on the inverse background. */
+.btn--inverse {
+  background: transparent;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--inverse-fg) 28%, transparent);
+  color: inherit;
+}
+
+.btn--inverse:hover {
+  background: color-mix(in srgb, var(--inverse-fg) 12%, transparent);
+}
+
+.btn--block {
+  margin-top: 16px;
+}
+
+/* -------------------------------------------------------------------- add */
+
+.add {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg);
+}
+
+.add__msg {
+  grid-column: 1 / -1;
+  color: var(--fg-muted);
+  font-size: 13px;
+}
+
+.add__msg:empty {
+  display: none;
+}
+
+.add__msg--error {
+  color: var(--red-fg);
+}
+
+/* ------------------------------------------------------------------ lists */
+
+/* One bordered container, rows divided by hairlines: Vercel's list style. */
+.list {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg);
+}
+
+.list:empty {
+  display: none;
+}
+
+.list > * + * {
+  border-top: 1px solid var(--border);
+}
+
+/* ---------------------------------------------------------------- entries */
+
+.entry {
+  display: grid;
+  grid-template-columns: 160px minmax(0, 1fr) auto;
+  gap: 20px;
+  padding: 16px;
+  transition: opacity 150ms ease, background-color 150ms ease;
+}
+
+.entry:focus-visible {
+  outline: none;
+  background: var(--bg-subtle);
+  box-shadow: inset 2px 0 0 var(--focus);
+}
+
+.entry--busy {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.entry__media {
+  display: block;
+  align-self: start;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: var(--fill);
+  box-shadow: inset 0 0 0 1px var(--border);
+  text-decoration: none;
+}
+
+.entry__media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.entry__media--channel {
+  display: grid;
+  place-items: center;
+}
+
+.entry__avatar {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--bg);
+  box-shadow: 0 0 0 1px var(--border);
+  color: var(--fg-muted);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.entry__body {
+  display: grid;
+  /* Clamp the track, or the upload strip's width stretches the whole row. */
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  gap: 8px;
+  min-width: 0;
+}
+
+.entry__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.entry__title {
+  overflow: hidden;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.entry__title:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.entry__sub,
+.entry__times {
+  overflow: hidden;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 16px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.entry__sub {
+  margin-top: -4px;
+  color: var(--fg-muted);
+}
+
+.entry__times {
+  color: var(--fg-faint);
+}
+
+.entry__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 112px;
+}
+
+.tag {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 4px;
+  box-shadow: inset 0 0 0 1px var(--border);
+  color: var(--fg-muted);
+  font: 500 10.5px/1 var(--font-mono);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.tag--bug {
+  background: var(--red-bg);
+  box-shadow: none;
+  color: var(--red-fg);
+}
+
+.tag--wrong {
+  background: var(--amber-bg);
+  box-shadow: none;
+  color: var(--amber-fg);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* Radius is half the one-line height rather than 999px, so a chip that wraps
+   on a narrow screen becomes a rounded box instead of a lozenge. */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 1px 8px;
+  border-radius: 11px;
+  background: var(--fill);
+  color: var(--fg-muted);
+  font-size: 12px;
+  line-height: 20px;
+}
+
+.chip--strong {
+  background: var(--inverse);
+  color: var(--inverse-fg);
+}
+
+.chip--warn {
+  background: var(--amber-bg);
+  color: var(--amber-fg);
+}
+
+.check {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  min-height: 22px;
+  font-size: 13px;
+}
+
+.check__muted {
+  color: var(--fg-muted);
+}
+
+.label {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 1px 8px;
+  border-radius: 11px;
+  box-shadow: inset 0 0 0 1px var(--border);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 20px;
+}
+
+.label--ai {
+  background: var(--red-bg);
+  box-shadow: none;
+  color: var(--red-fg);
+}
+
+.strip {
+  display: flex;
+  flex-basis: 100%;
+  min-width: 0;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.strip__item {
+  position: relative;
+  display: block;
+  flex: none;
+  width: 96px;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 4px;
+  background: var(--fill);
+}
+
+.strip__item img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.strip__ai {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  padding: 0 4px;
+  border-radius: 3px;
+  background: var(--red);
+  color: #ffffff;
+  font: 600 9.5px/15px var(--font-mono);
+  letter-spacing: 0.04em;
+}
+
+/* --------------------------------------------------------------- feedback */
+
+.fb {
+  display: grid;
+  gap: 10px;
+  padding: 16px 20px;
+}
+
+/* Unread: a bar on the leading edge, like an unread row in Vercel's inbox. */
+.fb--new {
+  box-shadow: inset 2px 0 0 var(--fg);
+}
+
+.fb__head,
+.fb__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.fb__when,
+.fb__version {
+  color: var(--fg-muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.fb__noemail {
+  color: var(--fg-faint);
+  font-size: 13px;
+}
+
+.fb__message {
+  max-width: 80ch;
+  font-size: 14px;
+  line-height: 22px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.fb__email {
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-color: var(--border-strong);
+  text-underline-offset: 3px;
+}
+
+.fb__email:hover {
+  text-decoration-color: currentColor;
+}
+
+/* ------------------------------------------------------------------ toast */
+
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: calc(100vw - 32px);
+  min-height: 48px;
+  padding: 8px 8px 8px 16px;
+  border-radius: var(--radius);
+  background: var(--inverse);
+  box-shadow: var(--shadow-menu);
+  color: var(--inverse-fg);
+  font-size: 14px;
+  transform: translateX(-50%);
+}
+
+.toast__text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* A toast with no action still needs room to breathe on the right. */
+.toast__text:last-child {
+  padding-right: 8px;
+}
+
+/* ------------------------------------------------------------------- auth */
+
+.auth {
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.auth__card {
+  width: 100%;
+  max-width: 360px;
+  padding: 32px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg);
+  box-shadow: var(--shadow-sm);
+}
+
+.auth__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.auth__brand .wordmark {
+  font-size: 15px;
+}
+
+.auth__title {
+  margin-top: 28px;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 28px;
+  letter-spacing: -0.02em;
+}
+
+.auth__sub {
+  margin-top: 4px;
+  color: var(--fg-muted);
+  font-size: 14px;
+}
+
+.auth__form {
+  display: grid;
+  margin-top: 24px;
+}
+
+.field__label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--fg-muted);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.auth__error {
+  margin-top: 10px;
+  color: var(--red-fg);
+  font-size: 13px;
+}
+
+/* ------------------------------------------------------------ small screens */
+
+@media (max-width: 720px) {
+  .topbar__inner,
+  .tabs,
+  .main {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .tabs {
+    padding-left: 4px;
+  }
+
+  .main {
+    padding-top: 24px;
+  }
+
+  .entry {
+    grid-template-columns: 112px minmax(0, 1fr);
+    gap: 14px;
+  }
+
+  .entry__actions {
+    grid-column: 1 / -1;
+    flex-direction: row;
+  }
+
+  .entry__actions .btn {
+    flex: 1;
+  }
+
+  .entry__times {
+    white-space: normal;
+  }
+
+  .hint {
+    display: none;
+  }
+
+  .add {
+    grid-template-columns: 1fr;
+  }
+
+  /* The address takes its own line, so both buttons stay together below it. */
+  .fb__foot .spacer {
+    display: none;
+  }
+
+  .fb__email,
+  .fb__noemail {
+    flex-basis: 100%;
+  }
+}
+
+@media (max-width: 520px) {
+  /* The mode badge matters more than the word "Console" on a phone. */
+  .crumbs__sep,
+  .crumbs__page {
+    display: none;
+  }
+}

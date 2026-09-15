@@ -1,0 +1,40 @@
+name: Wrong call
+description: A creator hidden by mistake, or AI slop that got through.
+labels: [wrong-call]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for checking our work. If this is your own channel, say so below
+        and it will be looked at first.
+  - type: dropdown
+    id: direction
+    attributes:
+      label: Which way was it wrong?
+      options:
+        - Hidden, but it is not AI slop
+        - Not hidden, but it is AI slop
+    validations:
+      required: true
+  - type: input
+    id: link
+    attributes:
+      label: Video or channel link
+      placeholder: https://www.youtube.com/@channel
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: >
+        What makes you sure? For example YouTube's "Made with AI" label, the
+        channel's upload pattern, or the creator's own statement. Facts about
+        the content, please, not about the person.
+    validations:
+      required: true
+  - type: input
+    id: reason
+    attributes:
+      label: What KillSlop said
+      description: Hover the AI SLOP button or read the hidden tile to see why it was hidden.

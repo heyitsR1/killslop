@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>KillSlop console</title>
+    <link rel="icon" href="/admin/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/ui/base.css" />
+    <link rel="stylesheet" href="/admin/app.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar__inner">
+        <div class="crumbs">
+          <svg class="mark" viewBox="0 0 24 24" aria-hidden="true">
+            <rect width="24" height="24" rx="6" fill="currentColor" />
+            <circle class="mark__glyph" cx="12" cy="12" r="6" />
+            <path class="mark__glyph" d="M7.76 7.76l8.48 8.48" />
+          </svg>
+          <span class="wordmark">KillSlop</span>
+          <svg class="crumbs__sep" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M16.88 3.55 7.12 20.45" />
+          </svg>
+          <span class="crumbs__page">Console</span>
+          <span class="badge" id="mode"></span>
+        </div>
+        <div class="spacer"></div>
+        <form method="post" action="/admin/logout">
+          <button type="submit" class="btn btn--ghost btn--sm">Sign out</button>
+        </form>
+      </div>
+      <nav class="tabs" id="tabs" role="tablist" aria-label="Sections">
+        <button type="button" role="tab" data-tab="queue" aria-selected="true">
+          Review queue <span class="count" data-count="queue"></span>
+        </button>
+        <button type="button" role="tab" data-tab="slop" aria-selected="false">
+          Final database <span class="count" data-count="slop"></span>
+        </button>
+        <button type="button" role="tab" data-tab="clean" aria-selected="false">
+          Rejected <span class="count" data-count="clean"></span>
+        </button>
+        <button type="button" role="tab" data-tab="feedback" aria-selected="false">
+          Feedback <span class="count count--accent" data-count="feedback"></span>
+        </button>
+      </nav>
+    </header>
+
+    <main class="main">
+      <section id="view-entries">
+        <p class="lede" id="lede"></p>
+
+        <form class="add" id="add" hidden>
+          <input
+            class="input"
+            id="add-input"
+            placeholder="Paste a YouTube video or channel link, or an id"
+            autocomplete="off"
+            spellcheck="false"
+            aria-label="YouTube link or id"
+          />
+          <button type="submit" class="btn btn--primary btn--lg">Add to database</button>
+          <p class="add__msg" id="add-msg" role="status"></p>
+        </form>
+
+        <div class="toolbar">
+          <div class="segmented" id="kind" role="group" aria-label="Kind">
+            <button type="button" data-kind="" aria-pressed="true">All</button>
+            <button type="button" data-kind="channel" aria-pressed="false">Channels</button>
+            <button type="button" data-kind="video" aria-pressed="false">Videos</button>
+          </div>
+          <label class="select">
+            <span>Sort</span>
+            <select id="sort">
+              <option value="signal">Strongest signal</option>
+              <option value="recent">Latest activity</option>
+              <option value="reviewed">Recently reviewed</option>
+            </select>
+          </label>
+          <div class="spacer"></div>
+          <span class="hint">
+            <kbd class="kbd">J</kbd><kbd class="kbd">K</kbd><span class="hint__sep">move</span>
+            <kbd class="kbd">A</kbd><span class="hint__sep">approve</span>
+            <kbd class="kbd">R</kbd><span class="hint__sep">reject</span>
+            <kbd class="kbd">Q</kbd><span>back to queue</span>
+          </span>
+        </div>
+
+        <div class="list" id="list"></div>
+        <p class="empty" id="empty" hidden></p>
+        <button type="button" class="btn btn--block" id="more" hidden>Load more</button>
+      </section>
+
+      <section id="view-feedback" hidden>
+        <p class="lede">
+          Sent from the extension's feedback page. Replies go out from your own mail client.
+        </p>
+        <div class="toolbar">
+          <div class="segmented" id="fb-status" role="group" aria-label="Status">
+            <button type="button" data-status="new" aria-pressed="true">New</button>
+            <button type="button" data-status="done" aria-pressed="false">Handled</button>
+            <button type="button" data-status="" aria-pressed="false">All</button>
+          </div>
+        </div>
+        <div class="list" id="fb-list"></div>
+        <p class="empty" id="fb-empty" hidden></p>
+        <button type="button" class="btn btn--block" id="fb-more" hidden>Load more</button>
+      </section>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+    <script src="/admin/app.js"></script>
+  </body>
+</html>

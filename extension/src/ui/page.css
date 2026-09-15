@@ -1,0 +1,126 @@
+/* Full-page extension views ("Your marks", "Send feedback"): a slim top bar
+   with the breadcrumb, a centred column, and the card and list containers.
+   Builds on base.css. */
+
+body {
+  min-height: 100vh;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+}
+
+.topbar__inner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 808px;
+  height: 56px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.topbar__sep {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: var(--border-strong);
+  stroke-width: 1;
+  stroke-linecap: round;
+}
+
+.topbar__page {
+  font-weight: 500;
+}
+
+.sheet {
+  max-width: 808px;
+  margin: 0 auto;
+  padding: 48px 24px 96px;
+}
+
+.sheet--narrow {
+  max-width: 648px;
+}
+
+.page-head {
+  margin-bottom: 32px;
+}
+
+.page-title {
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 40px;
+  letter-spacing: -0.04em;
+}
+
+.page-sub {
+  max-width: 60ch;
+  margin-top: 8px;
+  color: var(--fg-muted);
+  font-size: 15px;
+  line-height: 24px;
+}
+
+/* A Vercel settings card: a body, and a footer strip for the note and the
+   action. */
+.card {
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--bg);
+  box-shadow: 0 0 0 1px var(--border);
+}
+
+.card__body {
+  padding: 24px;
+}
+
+.card__footer {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 56px;
+  padding: 12px 24px;
+  border-top: 1px solid var(--border);
+  background: var(--bg-subtle);
+  color: var(--fg-muted);
+  font-size: 13px;
+}
+
+.card__footer .spacer {
+  flex: 1;
+}
+
+/* A bordered list: rows divided by hairlines. */
+.box {
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 0 0 1px var(--border);
+}
+
+.empty {
+  padding: 56px 24px;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-lg);
+  color: var(--fg-muted);
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .sheet {
+    padding: 32px 16px 64px;
+  }
+
+  .topbar__inner {
+    padding: 0 16px;
+  }
+
+  .page-title {
+    font-size: 28px;
+    line-height: 36px;
+  }
+}

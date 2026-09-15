@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../ui/base.css" />
+    <link rel="stylesheet" href="popup.css" />
+    <title>KillSlop</title>
+  </head>
+  <body>
+    <header class="header">
+      <svg class="mark" viewBox="0 0 24 24" aria-hidden="true">
+        <rect width="24" height="24" rx="6" fill="currentColor" />
+        <circle class="mark__glyph" cx="12" cy="12" r="6" />
+        <path class="mark__glyph" d="M7.76 7.76l8.48 8.48" />
+      </svg>
+      <span class="wordmark header__title">KillSlop</span>
+      <span class="status"><span class="dot" id="status-dot"></span><span id="status">Filtering</span></span>
+      <div class="spacer"></div>
+      <button
+        class="switch"
+        id="master"
+        role="switch"
+        aria-checked="true"
+        aria-label="Enable KillSlop"
+      ></button>
+    </header>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat__label">Hidden now</div>
+        <div class="stat__value" id="stat-session">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat__label">Videos known</div>
+        <div class="stat__value" id="stat-videos">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat__label">Channels</div>
+        <div class="stat__value" id="stat-channels">0</div>
+      </div>
+    </div>
+
+    <button class="nav-row" id="marks" type="button">
+      <span class="row__body">
+        <span class="row__title">Your marks</span>
+        <span class="row__desc" id="marks-desc">Nothing marked yet</span>
+      </span>
+      <svg class="chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5" /></svg>
+    </button>
+
+    <button class="nav-row" id="feedback" type="button">
+      <span class="row__body">
+        <span class="row__title">Send feedback</span>
+        <span class="row__desc">Bugs, wrong calls, ideas</span>
+      </span>
+      <svg class="chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5" /></svg>
+    </button>
+
+    <section class="section">
+      <h2 class="eyebrow section__label">Platforms</h2>
+      <div id="platforms"></div>
+    </section>
+
+    <section class="section">
+      <h2 class="eyebrow section__label">When something is slop</h2>
+      <div class="segmented segmented--2" role="tablist" id="action">
+        <button role="tab" data-value="hide" aria-selected="true">Hide it</button>
+        <button role="tab" data-value="dim" aria-selected="false">Dim it</button>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="eyebrow section__label">Sources</h2>
+
+      <div class="row">
+        <div class="row__body">
+          <div class="row__title">YouTube's AI label</div>
+          <div class="row__desc">The disclosure the creator set</div>
+        </div>
+        <button class="switch" id="useDisclosure" role="switch" aria-checked="true" aria-label="YouTube's AI label"></button>
+      </div>
+
+      <div class="row">
+        <div class="row__body">
+          <div class="row__title">Channel inference</div>
+          <div class="row__desc">Hide channels that mostly post AI</div>
+        </div>
+        <button class="switch" id="useChannelInference" role="switch" aria-checked="true" aria-label="Channel inference"></button>
+      </div>
+
+      <div class="row">
+        <div class="row__body">
+          <div class="row__title">Community list</div>
+          <div class="row__desc">Slop reported by other people</div>
+        </div>
+        <button class="switch" id="useCommunity" role="switch" aria-checked="true" aria-label="Community list"></button>
+      </div>
+
+      <div class="row">
+        <div class="row__body">
+          <div class="row__title">Include opinion votes</div>
+          <div class="row__desc">Off = only channels measured by their own AI labels</div>
+        </div>
+        <button class="switch" id="trustVotes" role="switch" aria-checked="true" aria-label="Include opinion votes"></button>
+      </div>
+
+      <div class="row">
+        <div class="row__body">
+          <div class="row__title">Contribute reports</div>
+          <div class="row__desc">Send your own calls back to the list</div>
+        </div>
+        <button class="switch" id="shareReports" role="switch" aria-checked="true" aria-label="Contribute reports"></button>
+      </div>
+    </section>
+
+    <p class="note" id="privacy">
+      Lookups are sent as a 4-character hash prefix, so the list never learns which
+      videos you watched.
+    </p>
+
+    <footer class="footer">
+      <button class="footer__link" id="reset" type="button">Reset local data</button>
+      <div class="spacer"></div>
+      <a class="footer__link" href="https://killslop.app/privacy" target="_blank" rel="noopener">Privacy</a>
+      <a class="footer__link" href="https://killslop.app" target="_blank" rel="noopener">killslop.app</a>
+    </footer>
+
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>

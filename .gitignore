@@ -1,0 +1,10 @@
+node_modules/
+.browsers/
+*.zip
+.DS_Store
+
+# Cloudflare: local state, local secrets, and the deploy config that names the
+# maintainer's own D1 database. Contributors copy worker/wrangler.example.toml.
+.wrangler/
+.dev.vars
+worker/wrangler.toml

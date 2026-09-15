@@ -1,0 +1,11 @@
+{
+  "name": "killslop-api",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test '../test/*.test.mjs'",
+    "deploy": "wrangler deploy",
+    "db:init": "wrangler d1 execute killslop --remote --file=schema.sql",
+    "db:init:local": "wrangler d1 execute killslop --local --file=schema.sql"
+  }
+}

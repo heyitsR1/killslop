@@ -1,0 +1,214 @@
+{
+  "ai-tv": {
+    "videoId": "9kzE8isXlQY",
+    "client": "TVHTML5",
+    "hl": "en",
+    "howThisWasMadeSectionViewModel": {
+      "bodyHeader": {
+        "content": "Made with AI"
+      },
+      "bodyText": {
+        "content": "Sounds or visuals were altered or fully generated."
+      }
+    }
+  },
+  "ai-web": {
+    "videoId": "9kzE8isXlQY",
+    "client": "WEB",
+    "hl": "en",
+    "howThisWasMadeSectionViewModel": {
+      "bodyHeader": {
+        "content": "Made with AI"
+      },
+      "bodyText": {
+        "content": "Sounds or visuals were altered or fully generated. Learn more",
+        "commandRuns": [
+          {
+            "startIndex": 51,
+            "length": 10,
+            "onTap": {
+              "innertubeCommand": {
+                "clickTrackingParams": "CF4Qtp4MGAIiEwjH4cTw6aSWAxVnpNgFHbsSF6fKAQTU0Rih",
+                "commandMetadata": {
+                  "webCommandMetadata": {
+                    "url": "//support.google.com/youtube/answer/15447836?hl=en",
+                    "webPageType": "WEB_PAGE_TYPE_UNKNOWN",
+                    "rootVe": 83769
+                  }
+                },
+                "urlEndpoint": {
+                  "url": "//support.google.com/youtube/answer/15447836?hl=en",
+                  "target": "TARGET_NEW_WINDOW"
+                }
+              }
+            }
+          }
+        ],
+        "styleRuns": [
+          {
+            "startIndex": 51,
+            "length": 10,
+            "fontColor": 4278607828
+          }
+        ]
+      }
+    },
+    "videoPrimaryInfoRenderer": {
+      "badges": [
+        {
+          "metadataBadgeRenderer": {
+            "icon": {
+              "iconType": "INFO"
+            },
+            "style": "BADGE_STYLE_TYPE_SIMPLE",
+            "label": "AI",
+            "trackingParams": "CL0EEK6vEhgAIhMIx-HE8OmklgMVZ6TYBR27Ehen",
+            "accessibilityData": {
+              "label": "AI: Content was made with AI"
+            },
+            "loggingDirectives": {
+              "trackingParams": "CL0EEK6vEhgAIhMIx-HE8OmklgMVZ6TYBR27Ehen",
+              "visibility": {
+                "types": "12"
+              },
+              "attentionLogging": "ATTENTION_LOGGING_BASIC"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "ai-web-nepali": {
+    "videoId": "9kzE8isXlQY",
+    "client": "WEB",
+    "hl": "ne",
+    "howThisWasMadeSectionViewModel": {
+      "bodyHeader": {
+        "content": "AI प्रयोग गरी बनाइएको"
+      },
+      "bodyText": {
+        "content": "साउन्ड वा भिजुअलहरू फेरबदल गरिएका वा पूर्ण रूपमा जेनेरेट गरिएका हुन्। थप जान्नुहोस्",
+        "commandRuns": [
+          {
+            "startIndex": 70,
+            "length": 13,
+            "onTap": {
+              "innertubeCommand": {
+                "clickTrackingParams": "CF4Qtp4MGAIiEwjwx5vx6aSWAxVy9jwCHa3vLMjKAQR-68yz",
+                "commandMetadata": {
+                  "webCommandMetadata": {
+                    "url": "//support.google.com/youtube/answer/15447836?hl=ne",
+                    "webPageType": "WEB_PAGE_TYPE_UNKNOWN",
+                    "rootVe": 83769
+                  }
+                },
+                "urlEndpoint": {
+                  "url": "//support.google.com/youtube/answer/15447836?hl=ne",
+                  "target": "TARGET_NEW_WINDOW"
+                }
+              }
+            }
+          }
+        ],
+        "styleRuns": [
+          {
+            "startIndex": 70,
+            "length": 13,
+            "fontColor": 4278607828
+          }
+        ]
+      }
+    },
+    "videoPrimaryInfoRenderer": {
+      "badges": [
+        {
+          "metadataBadgeRenderer": {
+            "icon": {
+              "iconType": "INFO"
+            },
+            "style": "BADGE_STYLE_TYPE_SIMPLE",
+            "label": "AI",
+            "trackingParams": "CL0EEK6vEhgAIhMI8Meb8emklgMVcvY8Ah2t7yzI",
+            "accessibilityData": {
+              "label": "AI: यो कन्टेन्ट AI प्रयोग गरी बनाइएको हो"
+            },
+            "loggingDirectives": {
+              "trackingParams": "CL0EEK6vEhgAIhMI8Meb8emklgMVcvY8Ah2t7yzI",
+              "visibility": {
+                "types": "12"
+              },
+              "attentionLogging": "ATTENTION_LOGGING_BASIC"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "autodub-tv": {
+    "videoId": "aDoanNM7O_s",
+    "client": "TVHTML5",
+    "hl": "en",
+    "howThisWasMadeSectionViewModel": {
+      "bodyHeader": {
+        "content": "Auto-dubbed"
+      },
+      "bodyText": {
+        "content": "Audio tracks for some languages were automatically generated."
+      }
+    }
+  },
+  "autodub-web": {
+    "videoId": "aDoanNM7O_s",
+    "client": "WEB",
+    "hl": "en",
+    "howThisWasMadeSectionViewModel": {
+      "bodyHeader": {
+        "content": "Auto-dubbed"
+      },
+      "bodyText": {
+        "content": "Audio tracks for some languages were automatically generated. Learn more",
+        "commandRuns": [
+          {
+            "startIndex": 62,
+            "length": 10,
+            "onTap": {
+              "innertubeCommand": {
+                "clickTrackingParams": "CDgQtp4MGAMiEwiF7IPy6aSWAxVoiqwCHS5aIQfKAQTCZrxf",
+                "commandMetadata": {
+                  "webCommandMetadata": {
+                    "url": "//support.google.com/youtube/answer/15569972?hl=en",
+                    "webPageType": "WEB_PAGE_TYPE_UNKNOWN",
+                    "rootVe": 83769
+                  }
+                },
+                "urlEndpoint": {
+                  "url": "//support.google.com/youtube/answer/15569972?hl=en",
+                  "target": "TARGET_NEW_WINDOW"
+                }
+              }
+            }
+          }
+        ],
+        "styleRuns": [
+          {
+            "startIndex": 62,
+            "length": 10,
+            "fontColor": 4278607828
+          }
+        ]
+      }
+    },
+    "videoPrimaryInfoRenderer": {}
+  },
+  "clean-tv": {
+    "videoId": "dQw4w9WgXcQ",
+    "client": "TVHTML5",
+    "hl": "en"
+  },
+  "clean-web": {
+    "videoId": "dQw4w9WgXcQ",
+    "client": "WEB",
+    "hl": "en",
+    "videoPrimaryInfoRenderer": {}
+  }
+}

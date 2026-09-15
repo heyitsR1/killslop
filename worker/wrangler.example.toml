@@ -1,0 +1,65 @@
+name = "killslop-api"
+main = "src/index.js"
+compatibility_date = "2026-08-01"
+
+# Custom domains, all served by this one worker: killslop.app is the website
+# (www redirects to it) and api.killslop.app the API and the console. See
+# src/site.js. On your own account, point these at a domain you own, or delete
+# them and use the workers.dev address.
+routes = [
+  { pattern = "killslop.app", custom_domain = true },
+  { pattern = "www.killslop.app", custom_domain = true },
+  { pattern = "api.killslop.app", custom_domain = true },
+]
+
+# `wrangler dev` rewrites every local request to one host, by default the first
+# route. Pin it to the API host so the console answers at localhost:8787/admin;
+# run `npx wrangler dev --local-upstream killslop.app` to see the website.
+[dev]
+host = "api.killslop.app"
+
+# Secrets, set with `npx wrangler secret put <NAME>` and never written here:
+#   VOTER_SALT       salts every hashed voter and network key
+#   ADMIN_PASSWORD   opens the console at /admin; unset means the console is off
+
+[vars]
+# How much the maintainer must approve before the list serves it:
+# "all", "votes" or "off". See REVIEW_MODES in src/policy.js.
+REVIEW_MODE = "all"
+
+# The console's pages. Every request runs the worker first, so these files are
+# only ever served through the auth check in src/admin.js.
+[assets]
+directory = "./public"
+binding = "ASSETS"
+run_worker_first = true
+html_handling = "none"
+not_found_handling = "none"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "killslop"
+# Your own D1 database: `npx wrangler d1 create killslop`, then paste its id.
+database_id = "00000000-0000-0000-0000-000000000000"
+
+# Per-network request budgets, enforced in src/http.js. A namespace_id only has
+# to be unique within the Cloudflare account.
+[[ratelimits]]
+name = "RL_READ"
+namespace_id = "7101"
+simple = { limit = 600, period = 60 }
+
+[[ratelimits]]
+name = "RL_WRITE"
+namespace_id = "7102"
+simple = { limit = 60, period = 60 }
+
+[[ratelimits]]
+name = "RL_FEEDBACK"
+namespace_id = "7103"
+simple = { limit = 5, period = 60 }
+
+[[ratelimits]]
+name = "RL_LOGIN"
+namespace_id = "7104"
+simple = { limit = 10, period = 60 }

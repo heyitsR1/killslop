@@ -1,0 +1,23 @@
+name: Idea
+description: A feature, a new platform, or a change to how detection works.
+labels: [idea]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does it solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What would you do?
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: >
+        For detection changes, measurements: how many items you checked, and
+        what the change catches and wrongly catches. RESEARCH.md shows the bar.

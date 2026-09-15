@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Sign in · KillSlop console</title>
+    <link rel="icon" href="/admin/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/ui/base.css" />
+    <link rel="stylesheet" href="/admin/app.css" />
+  </head>
+  <body class="auth">
+    <main class="auth__card">
+      <div class="auth__brand">
+        <svg class="mark" viewBox="0 0 24 24" aria-hidden="true">
+          <rect width="24" height="24" rx="6" fill="currentColor" />
+          <circle class="mark__glyph" cx="12" cy="12" r="6" />
+          <path class="mark__glyph" d="M7.76 7.76l8.48 8.48" />
+        </svg>
+        <span class="wordmark">KillSlop</span>
+      </div>
+      <h1 class="auth__title">Sign in to the console</h1>
+      <p class="auth__sub">Review reports and read feedback.</p>
+      <form method="post" action="/admin/login" class="auth__form">
+        <label for="password" class="field__label">Password</label>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          class="input"
+          autocomplete="current-password"
+          required
+          autofocus
+        />
+        <p class="auth__error" id="error" role="alert" hidden></p>
+        <button type="submit" class="btn btn--primary btn--lg btn--block">Sign in</button>
+      </form>
+    </main>
+    <script src="/admin/login.js"></script>
+  </body>
+</html>

@@ -1,0 +1,20 @@
+{
+  "name": "killslop",
+  "version": "0.1.0",
+  "description": "Hides AI-generated slop, starting with YouTube, and builds an open list of it.",
+  "license": "GPL-3.0-only",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test 'test/*.test.mjs'",
+    "test:live": "node test/live.mjs",
+    "fixtures": "node test/capture.mjs",
+    "test:e2e": "node test/e2e.mjs"
+  },
+  "devDependencies": {
+    "puppeteer-core": "^23.11.1"
+  }
+}

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="../ui/base.css" />
+    <link rel="stylesheet" href="../ui/page.css" />
+    <link rel="stylesheet" href="marks.css" />
+    <title>Your marks · KillSlop</title>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar__inner">
+        <svg class="mark" viewBox="0 0 24 24" aria-hidden="true">
+          <rect width="24" height="24" rx="6" fill="currentColor" />
+          <circle class="mark__glyph" cx="12" cy="12" r="6" />
+          <path class="mark__glyph" d="M7.76 7.76l8.48 8.48" />
+        </svg>
+        <span class="wordmark">KillSlop</span>
+        <svg class="topbar__sep" viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 2 5.5 14" /></svg>
+        <span class="topbar__page">Your marks</span>
+      </div>
+    </header>
+
+    <main class="sheet">
+      <div class="page-head">
+        <h1 class="page-title">Your marks</h1>
+        <p class="page-sub" id="sub">
+          Hidden for you right away. Hidden for everyone else only once the community list
+          confirms it.
+        </p>
+      </div>
+
+      <div class="segmented tabs" role="tablist" id="tabs">
+        <button role="tab" data-value="slop" aria-selected="true">
+          AI slop <span class="count" id="count-slop">0</span>
+        </button>
+        <button role="tab" data-value="clean" aria-selected="false">
+          Not slop <span class="count" id="count-clean">0</span>
+        </button>
+      </div>
+
+      <div id="list"></div>
+      <p class="empty" id="empty" hidden></p>
+    </main>
+
+    <script type="module" src="marks.js"></script>
+  </body>
+</html>

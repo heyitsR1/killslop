@@ -1,0 +1,209 @@
+/* The popup. Tokens, fonts and the shared controls (switch, segmented,
+   badge, dot, eyebrow) come from ../ui/base.css; this file lays out the
+   360px panel. */
+
+body {
+  width: 360px;
+}
+
+.spacer {
+  flex: 1;
+}
+
+/* ------------------------------------------------------------------ header */
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 56px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.header__title {
+  font-size: 15px;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 999px;
+  box-shadow: 0 0 0 1px var(--border);
+  color: var(--fg-muted);
+  font-size: 12px;
+  line-height: 1;
+}
+
+.status .dot {
+  width: 6px;
+  height: 6px;
+}
+
+/* ------------------------------------------------------------------- stats */
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-bottom: 1px solid var(--border);
+}
+
+.stat {
+  padding: 12px 16px 14px;
+  border-right: 1px solid var(--border);
+}
+
+.stat:last-child {
+  border-right: none;
+}
+
+.stat__label {
+  color: var(--fg-muted);
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.stat__value {
+  margin-top: 4px;
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 28px;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------------------------------------------------------------- nav rows */
+
+.nav-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 16px;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+.nav-row:hover {
+  background: var(--hover);
+}
+
+.nav-row:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--focus);
+}
+
+.nav-row .row__title,
+.nav-row .row__desc {
+  display: block;
+}
+
+.chevron {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: var(--fg-faint);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 150ms ease, stroke 150ms ease;
+}
+
+.nav-row:hover .chevron {
+  stroke: var(--fg);
+  transform: translateX(2px);
+}
+
+/* ---------------------------------------------------------------- sections */
+
+.section {
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.section__label {
+  margin-bottom: 4px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+}
+
+.row__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.row__title {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+}
+
+.row__desc {
+  color: var(--fg-muted);
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.platforms__next {
+  padding: 2px 0 6px;
+}
+
+.segmented--2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin: 6px 0;
+}
+
+/* ------------------------------------------------------------------ footer */
+
+.note {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--fg-muted);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 16px 12px;
+}
+
+.footer__link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--fg-muted);
+  font: inherit;
+  font-size: 12px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 150ms ease;
+}
+
+.footer__link:hover {
+  color: var(--fg);
+}
+
+.footer__link:focus-visible {
+  outline: none;
+  border-radius: 2px;
+  box-shadow: var(--ring);
+}

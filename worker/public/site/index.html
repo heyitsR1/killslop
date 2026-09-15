@@ -1,0 +1,540 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>KillSlop: Block AI slop videos on YouTube</title>
+    <meta
+      name="description"
+      content="KillSlop is a free, open-source Chrome extension that hides AI-generated slop from YouTube: your feed, search, recommendations and Shorts. It reads YouTube's own AI label, measures whole channels, and checks an open list that people review."
+    />
+    <link rel="canonical" href="https://killslop.app/" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000000" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="KillSlop" />
+    <meta property="og:url" content="https://killslop.app/" />
+    <meta property="og:title" content="KillSlop: Block AI slop videos on YouTube" />
+    <meta
+      property="og:description"
+      content="A free, open-source Chrome extension that hides AI-generated videos from YouTube, and an open, reviewed list of them."
+    />
+    <meta property="og:image" content="https://killslop.app/site/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="KillSlop. Block AI slop on YouTube." />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="KillSlop: Block AI slop videos on YouTube" />
+    <meta
+      name="twitter:description"
+      content="A free, open-source Chrome extension that hides AI-generated videos from YouTube, and an open, reviewed list of them."
+    />
+    <meta name="twitter:image" content="https://killslop.app/site/og.png" />
+    <link rel="icon" href="/site/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href="/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="/ui/base.css" />
+    <link rel="stylesheet" href="/site/site.css" />
+    <script src="/site/site.js" defer></script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <header class="nav">
+      <div class="nav__inner">
+        <a class="nav__brand" href="/" aria-label="KillSlop home">
+          <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="6" fill="currentColor"/><circle class="mark__glyph" cx="12" cy="12" r="6"/><path class="mark__glyph" d="M7.76 7.76l8.48 8.48"/></svg>
+          <span class="wordmark">KillSlop</span>
+        </a>
+        <nav class="nav__links" aria-label="Main">
+          <a href="#how">How it works</a>
+          <a href="#list">The list</a>
+          <a href="/privacy">Privacy</a>
+          <a href="https://github.com/heyitsR1/killslop">GitHub</a>
+        </nav>
+        <div class="nav__actions">
+          <a class="btn btn--sm nav__source" href="https://github.com/heyitsR1/killslop">View source</a>
+          <!-- Install link. /get redirects to the current install page; change it there, not here. -->
+          <a class="btn btn--sm btn--primary" href="/get">Get KillSlop</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="page">
+      <main class="shell" id="main">
+        <!-- ------------------------------------------------------------ hero -->
+        <section class="section hero" aria-labelledby="hero-title">
+          <div class="hero__bg" aria-hidden="true"></div>
+          <div class="hero__copy">
+            <p class="hero__eyebrow"><span class="dot" aria-hidden="true"></span>Free Chrome extension for YouTube</p>
+            <h1 class="hero__title" id="hero-title">Block AI slop on YouTube.</h1>
+            <p class="hero__lead">
+              KillSlop hides AI-generated videos from your feed, search, recommendations and Shorts.
+              <span class="muted">It reads YouTube's own AI label, measures whole channels, and checks an open list
+              that people review.</span>
+            </p>
+            <div class="hero__actions">
+              <a class="btn btn--primary btn--xl btn--pill" href="/get">Get KillSlop</a>
+              <a class="btn btn--xl btn--pill" href="https://github.com/heyitsR1/killslop">View source</a>
+            </div>
+            <p class="hero__note">Free and open source &middot; GPL-3.0 &middot; No account</p>
+          </div>
+
+          <div
+            class="hero__visual"
+            role="img"
+            aria-label="A video feed in which three AI-generated videos are replaced by KillSlop notes saying why each was hidden, and a watch page with the AI SLOP button pressed."
+          >
+            <div class="window" aria-hidden="true">
+              <div class="window__bar">
+                <span class="window__dots"><i></i><i></i><i></i></span>
+                <span class="window__url">youtube.com</span>
+                <span class="window__spacer"></span>
+              </div>
+              <div class="feed">
+                <div class="tile">
+                  <div class="thumb thumb--a"><span class="thumb__time">18:42</span></div>
+                  <div class="tile__meta">
+                    <span class="avatar"></span>
+                    <div class="tile__text">
+                      <p class="tile__title">Restoring a 1970s synthesizer, part 3</p>
+                      <p class="tile__sub">Bench Notes &middot; 84K views</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="tile tile--hidden">
+                  <div class="ks-card">
+                    <span class="ks-card__dot"></span>
+                    <span class="ks-card__text">Labelled AI by the creator</span>
+                    <span class="ks-card__btn">Show</span>
+                    <span class="ks-card__btn ks-card__btn--ghost">Not slop</span>
+                  </div>
+                </div>
+                <div class="tile">
+                  <div class="thumb thumb--b"><span class="thumb__time">9:15</span></div>
+                  <div class="tile__meta">
+                    <span class="avatar"></span>
+                    <div class="tile__text">
+                      <p class="tile__title">Sourdough at altitude: what actually changes</p>
+                      <p class="tile__sub">Crumb Club &middot; 31K views</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="tile tile--hidden">
+                  <div class="ks-card">
+                    <span class="ks-card__dot"></span>
+                    <span class="ks-card__text">Reported by the community</span>
+                    <span class="ks-card__btn">Show</span>
+                    <span class="ks-card__btn ks-card__btn--ghost">Not slop</span>
+                  </div>
+                </div>
+                <div class="tile tile--hidden">
+                  <div class="ks-card">
+                    <span class="ks-card__dot"></span>
+                    <span class="ks-card__text">Channel publishes AI content</span>
+                    <span class="ks-card__btn">Show</span>
+                    <span class="ks-card__btn ks-card__btn--ghost">Not slop</span>
+                  </div>
+                </div>
+                <div class="tile">
+                  <div class="thumb thumb--c"><span class="thumb__time">24:03</span></div>
+                  <div class="tile__meta">
+                    <span class="avatar"></span>
+                    <div class="tile__text">
+                      <p class="tile__title">Walking a forgotten rail line, 40 km in a day</p>
+                      <p class="tile__sub">Slow Miles &middot; 12K views</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="tile">
+                  <div class="thumb thumb--d"><span class="thumb__time">11:37</span></div>
+                  <div class="tile__meta">
+                    <span class="avatar"></span>
+                    <div class="tile__text">
+                      <p class="tile__title">Why suspension bridges hum in the wind</p>
+                      <p class="tile__sub">Field Physics &middot; 220K views</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="tile">
+                  <div class="thumb thumb--e"><span class="thumb__time">16:20</span></div>
+                  <div class="tile__meta">
+                    <span class="avatar"></span>
+                    <div class="tile__text">
+                      <p class="tile__title">Fixing a 20-year-old espresso machine</p>
+                      <p class="tile__sub">Workbench Weekly &middot; 57K views</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="watch" aria-hidden="true">
+              <p class="watch__title">Lost city found under the ocean (4K documentary)</p>
+              <div class="watch__row">
+                <span class="avatar"></span>
+                <span class="watch__channel"><span class="skel"></span><span class="skel skel--short"></span></span>
+                <span class="yt-pill yt-pill--split">
+                  <span class="yt-pill__half"
+                    ><svg viewBox="0 0 24 24"><path d="M4 10h3v10H4zM7 10l4-7c1.2 0 2.2 1 2 2.2L12.5 10H19a1.8 1.8 0 0 1 1.8 2.1l-1.3 6.4A2 2 0 0 1 17.5 20H7"/></svg>1.4K</span
+                  ><span class="yt-pill__half"
+                    ><svg class="yt-pill__down" viewBox="0 0 24 24"><path d="M4 10h3v10H4zM7 10l4-7c1.2 0 2.2 1 2 2.2L12.5 10H19a1.8 1.8 0 0 1 1.8 2.1l-1.3 6.4A2 2 0 0 1 17.5 20H7"/></svg
+                  ></span>
+                </span>
+                <span class="yt-pill yt-pill--slop"
+                  ><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M6 6l12 12"/></svg>AI SLOP</span
+                >
+              </div>
+              <div class="toast">
+                <span class="toast__text">Marked as AI slop. Hidden for you.</span>
+                <span class="toast__btn">Hide whole channel</span>
+                <span class="toast__btn">Undo</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ------------------------------------------------------- statement -->
+        <section class="section" aria-label="The problem">
+          <span class="plus plus--l" aria-hidden="true"></span>
+          <span class="plus plus--r" aria-hidden="true"></span>
+          <p class="statement">
+            AI slop is filling YouTube.
+            <span class="muted">Generated documentaries, AI voice-overs on stock footage, synthetic music and
+            animated kids' content, uploaded faster than anyone could watch it. YouTube labels some of it, then
+            recommends it anyway.</span>
+          </p>
+        </section>
+
+        <!-- -------------------------------------------------------- features -->
+        <section class="section" id="features" aria-labelledby="features-title">
+          <div class="head">
+            <p class="eyebrow">What it does</p>
+            <h2 class="h2" id="features-title">Your feed, minus the slop.</h2>
+            <p class="lead">Three independent signals decide what gets hidden, and your own clicks outrank all of them.</p>
+          </div>
+          <div class="cells cells--3">
+            <div class="cell">
+              <svg class="cell__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12.2V4a1 1 0 0 1 1-1h8.2a1 1 0 0 1 .7.3l8 8a1 1 0 0 1 0 1.4l-8.2 8.2a1 1 0 0 1-1.4 0l-8-8a1 1 0 0 1-.3-.7z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>
+              <h3 class="cell__title">Reads YouTube's own label</h3>
+              <p class="cell__text">
+                Creators must disclose realistic AI content, and YouTube now labels some of it itself. KillSlop
+                reads that label on each video: about 1 KB per check, once per video, ever.
+              </p>
+            </div>
+            <div class="cell">
+              <svg class="cell__icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/></svg>
+              <h3 class="cell__title">Catches whole channels</h3>
+              <p class="cell__text">
+                Slop farms label nearly every upload; real channels label none. When at least 60% of five or
+                more sampled uploads carry the label, the channel is hidden.
+              </p>
+            </div>
+            <div class="cell">
+              <svg class="cell__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h12M9 12h12M9 18h12"/><path d="M3.5 6h.01M3.5 12h.01M3.5 18h.01" stroke-width="2.5"/></svg>
+              <h3 class="cell__title">Checks an open, reviewed list</h3>
+              <p class="cell__text">
+                Every entry says why it is there: measured, voted or reviewed. While the list is young, a person
+                checks each entry before it is served to anyone.
+              </p>
+            </div>
+            <div class="cell">
+              <svg class="cell__icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M6 6l12 12"/></svg>
+              <h3 class="cell__title">One click, and yours wins</h3>
+              <p class="cell__text">
+                AI SLOP sits beside like and dislike, and in the Shorts bar. Your mark hides a video for you at
+                once, and your Not slop outranks everything else.
+              </p>
+            </div>
+            <div class="cell">
+              <svg class="cell__icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5h.01"/></svg>
+              <h3 class="cell__title">Always says why</h3>
+              <p class="cell__text">
+                A hidden video leaves a thin note with the reason, a Show button and a Not slop button. Nothing
+                disappears without a trace.
+              </p>
+            </div>
+            <div class="cell">
+              <svg class="cell__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3l18 18M10.6 10.6a2 2 0 0 0 2.8 2.8M9.9 5.1A10 10 0 0 1 12 5c5 0 8.5 4.5 9.5 7a13 13 0 0 1-2.2 3.4M6.6 6.6A13 13 0 0 0 2.5 12c1 2.5 4.5 7 9.5 7a9.6 9.6 0 0 0 5.4-1.6"/></svg>
+              <h3 class="cell__title">Hide it or dim it</h3>
+              <p class="cell__text">
+                Remove slop from the page, or grey it out so you can still see what was caught. One switch
+                pauses everything.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ------------------------------------------------------------- how -->
+        <section class="section" id="how" aria-labelledby="how-title">
+          <span class="plus plus--l" aria-hidden="true"></span>
+          <span class="plus plus--r" aria-hidden="true"></span>
+          <div class="head">
+            <p class="eyebrow">How it decides</p>
+            <h2 class="h2" id="how-title">Five checks, cheapest first.</h2>
+            <p class="lead">
+              The first check that answers wins. Your own word comes first, ahead of YouTube and the community
+              alike.
+            </p>
+          </div>
+          <div class="table-wrap">
+            <table class="tiers">
+              <thead>
+                <tr>
+                  <th scope="col">Tier</th>
+                  <th scope="col">Check</th>
+                  <th scope="col">Cost</th>
+                  <th scope="col">What it means</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="tiers__n">00</td>
+                  <td class="tiers__name">Your mark</td>
+                  <td class="tiers__cost"><span class="cost">free</span></td>
+                  <td class="tiers__note">Absolute. Your Not slop outranks YouTube and the community.</td>
+                </tr>
+                <tr>
+                  <td class="tiers__n">01</td>
+                  <td class="tiers__name">Local cache</td>
+                  <td class="tiers__cost"><span class="cost">free</span></td>
+                  <td class="tiers__note">Verdicts never expire, because a disclosure never changes.</td>
+                </tr>
+                <tr>
+                  <td class="tiers__n">02</td>
+                  <td class="tiers__name">Channel inference</td>
+                  <td class="tiers__cost"><span class="cost">free</span></td>
+                  <td class="tiers__note">
+                    At least 60% of at least 5 sampled uploads labelled AI, and the whole channel is hidden.
+                  </td>
+                </tr>
+                <tr>
+                  <td class="tiers__n">03</td>
+                  <td class="tiers__name">Community list</td>
+                  <td class="tiers__cost"><span class="cost">1 request / bucket</span></td>
+                  <td class="tiers__note">Batched, private by design, and every entry is tagged with its evidence.</td>
+                </tr>
+                <tr>
+                  <td class="tiers__n">04</td>
+                  <td class="tiers__name">Label check<small>InnerTube probe</small></td>
+                  <td class="tiers__cost"><span class="cost">~1 KB / video</span></td>
+                  <td class="tiers__note">Throttled, in the background, once per video ever.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- ------------------------------------------------------------ list -->
+        <section class="section" id="list" aria-labelledby="list-title">
+          <div class="split split--list">
+            <div>
+              <p class="eyebrow">The open list</p>
+              <h2 class="h2" id="list-title">An open list of slop, in the public domain.</h2>
+              <p class="lead">
+                Every channel the list has decided is published in the clear under CC0. Blocklists, researchers
+                and other filters can use it without running KillSlop.
+              </p>
+              <dl class="evidence">
+                <div class="evidence__item">
+                  <dt><span class="tag">disclosure</span></dt>
+                  <dd>Measured. Other KillSlop users saw the channel's own uploads carry YouTube's AI label.</dd>
+                </div>
+                <div class="evidence__item">
+                  <dt><span class="tag">vote</span></dt>
+                  <dd>Opinion. People pressed AI SLOP or Not slop. You can switch votes off and keep measurement only.</dd>
+                </div>
+                <div class="evidence__item">
+                  <dt><span class="tag">review</span></dt>
+                  <dd>Checked by hand. A maintainer looked at it, and that call wins in every mode.</dd>
+                </div>
+              </dl>
+            </div>
+
+            <div>
+              <div class="code">
+                <div class="code__bar">
+                  <span class="code__method">GET</span>
+                  <span class="code__url" id="export-url">api.killslop.app/<wbr />api/<wbr />v1/<wbr />export/<wbr />youtube-channels.json</span>
+                  <button
+                    class="btn btn--sm btn--ghost"
+                    type="button"
+                    data-copy="export-url"
+                    data-copy-text="https://api.killslop.app/api/v1/export/youtube-channels.json"
+                  >Copy</button>
+                </div>
+<pre class="code__body"><code>{
+  <span class="k">"license"</span>: <span class="s">"CC0-1.0"</span>,
+  <span class="k">"generated"</span>: <span class="n">1789257600000</span>,
+  <span class="k">"channels"</span>: [
+    {
+      <span class="k">"id"</span>: <span class="s">"UC..."</span>,
+      <span class="k">"evidence"</span>: <span class="s">"disclosure"</span>,
+      <span class="k">"reviewed"</span>: <span class="n">true</span>,
+      <span class="k">"score"</span>: <span class="n">0</span>,
+      <span class="k">"tallies"</span>: <span class="n">2</span>,
+      <span class="k">"sampled"</span>: { <span class="k">"ai"</span>: <span class="n">6</span>, <span class="k">"total"</span>: <span class="n">6</span> },
+      <span class="k">"updated"</span>: <span class="n">1789250000000</span>
+    }
+  ]
+}</code></pre>
+                <p class="code__caption">Channels only. Videos and voters are never published.</p>
+              </div>
+
+              <div class="stats" id="stats" hidden>
+                <p class="stats__head"><span class="dot" aria-hidden="true"></span>Live from the list</p>
+                <div class="stats__row">
+                  <div class="stat">
+                    <span class="stat__value" data-stat="channels"></span>
+                    <span class="stat__label">Channels on the list</span>
+                  </div>
+                  <div class="stat">
+                    <span class="stat__value" data-stat="reviewed"></span>
+                    <span class="stat__label">Reviewed by hand</span>
+                  </div>
+                  <div class="stat">
+                    <span class="stat__value" data-stat="pending"></span>
+                    <span class="stat__label">Waiting for review</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- --------------------------------------------------------- privacy -->
+        <section class="section" id="privacy" aria-labelledby="privacy-title">
+          <span class="plus plus--l" aria-hidden="true"></span>
+          <span class="plus plus--r" aria-hidden="true"></span>
+          <div class="head">
+            <p class="eyebrow">Privacy</p>
+            <h2 class="h2" id="privacy-title">Built not to know what you watch.</h2>
+            <p class="lead">
+              No account, no ads, no analytics. The few things that leave your browser are listed here, and in
+              full in the <a class="link" href="/privacy">privacy policy</a>.
+            </p>
+          </div>
+          <div class="cells cells--2">
+            <div class="cell">
+              <p class="chip">sha256(id) &rarr; 4 characters</p>
+              <h3 class="cell__title">Lookups by hash prefix</h3>
+              <p class="cell__text">
+                To check a video, the extension sends the first 4 characters of a hash of its id. The server
+                answers with the whole bucket, one of 65,536, and the match happens in your browser. The list never
+                learns which video you asked about.
+              </p>
+            </div>
+            <div class="cell">
+              <p class="chip">vote &middot; measurement &middot; feedback</p>
+              <h3 class="cell__title">Only what you choose to send</h3>
+              <p class="cell__text">
+                A mark sends the id you marked. A channel measurement sends a channel id and its counts, once.
+                Feedback sends what you typed. Switch off Contribute reports and your marks stay on your device.
+              </p>
+            </div>
+            <div class="cell">
+              <p class="chip">sha256(value + entry + salt)</p>
+              <h3 class="cell__title">Salted and unlinkable</h3>
+              <p class="cell__text">
+                A random install id and your network are stored only as salted hashes, scoped to the one entry you
+                voted on. Enough to count you once, never enough to link two of your votes.
+              </p>
+            </div>
+            <div class="cell">
+              <p class="chip">credentials: 'omit'</p>
+              <h3 class="cell__title">No cookies, no account</h3>
+              <p class="cell__text">
+                Label checks go to YouTube without your cookies, so they are never tied to your YouTube account.
+                KillSlop has no sign-in, and no way to know who you are.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ---------------------------------------------------------- limits -->
+        <section class="section" aria-labelledby="limits-title">
+          <div class="limits">
+            <div>
+              <p class="bignum">11<span>%</span></p>
+              <p class="bignum__caption">of AI slop carries YouTube's label, by our measurement.</p>
+            </div>
+            <div>
+              <p class="eyebrow">Honest limits</p>
+              <h2 class="h2" id="limits-title">It will not catch everything.</h2>
+              <p class="lead">
+                A filter that only reads the label misses most slop. Channel measurement, the open list and
+                human review exist to close that gap, and some will still get through. When KillSlop gets one wrong,
+                one click puts it back.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ---------------------------------------------------------- source -->
+        <section class="section" id="source" aria-labelledby="source-title">
+          <span class="plus plus--l" aria-hidden="true"></span>
+          <span class="plus plus--r" aria-hidden="true"></span>
+          <div class="split split--even">
+            <div>
+              <p class="eyebrow">Open source</p>
+              <h2 class="h2" id="source-title">Open code. Open data.</h2>
+              <p class="lead">
+                The extension and the API are GPL-3.0, and the list is CC0. Read how every verdict is made, run
+                your own list, or build on ours.
+              </p>
+              <div class="actions">
+                <a class="btn btn--lg btn--pill" href="https://github.com/heyitsR1/killslop">View on GitHub</a>
+              </div>
+            </div>
+            <div class="links">
+              <p class="links__label">Get involved</p>
+              <ul>
+                <li><a href="https://github.com/heyitsR1/killslop/blob/main/CONTRIBUTING.md">Contribute code or research</a></li>
+                <li><a href="https://github.com/heyitsR1/killslop/issues/new/choose">Report a wrong call</a></li>
+                <li><a href="https://github.com/heyitsR1/killslop/blob/main/RESEARCH.md">Read the detection research</a></li>
+                <li><a href="https://github.com/heyitsR1/killslop/security/policy">Report a security issue</a></li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- ------------------------------------------------------------- cta -->
+        <section class="section cta" aria-labelledby="cta-title">
+          <div class="hero__bg" aria-hidden="true"></div>
+          <h2 class="cta__title" id="cta-title">Take your feed back.</h2>
+          <p class="lead">Free, with no account. It starts on the next YouTube page you load.</p>
+          <div class="cta__actions">
+            <a class="btn btn--primary btn--xl btn--pill" href="/get">Get KillSlop</a>
+          </div>
+        </section>
+
+        <footer class="footer">
+          <div class="footer__brand">
+            <a class="nav__brand" href="/" aria-label="KillSlop home">
+              <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="6" fill="currentColor"/><circle class="mark__glyph" cx="12" cy="12" r="6"/><path class="mark__glyph" d="M7.76 7.76l8.48 8.48"/></svg>
+              <span class="wordmark">KillSlop</span>
+            </a>
+            <p class="footer__tag">Hides AI slop on YouTube, and builds an open list of it.</p>
+          </div>
+          <nav class="footer__col" aria-label="Product">
+            <p class="footer__head">Product</p>
+            <a href="#features">What it does</a>
+            <a href="#how">How it decides</a>
+            <a href="#list">The list</a>
+            <a href="/privacy">Privacy</a>
+          </nav>
+          <nav class="footer__col" aria-label="Project">
+            <p class="footer__head">Project</p>
+            <a href="https://github.com/heyitsR1/killslop">GitHub</a>
+            <a href="https://github.com/heyitsR1/killslop/issues/new/choose">Report a problem</a>
+            <a href="https://api.killslop.app/api/v1/export/youtube-channels.json">Export (JSON)</a>
+          </nav>
+          <div class="footer__legal">
+            <span>&copy; 2026 KillSlop</span>
+            <span>Not affiliated with YouTube or Google.</span>
+          </div>
+        </footer>
+      </main>
+    </div>
+  </body>
+</html>

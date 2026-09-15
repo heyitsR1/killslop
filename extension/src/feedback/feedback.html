@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="../ui/base.css" />
+    <link rel="stylesheet" href="../ui/page.css" />
+    <link rel="stylesheet" href="feedback.css" />
+    <title>Send feedback · KillSlop</title>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar__inner">
+        <svg class="mark" viewBox="0 0 24 24" aria-hidden="true">
+          <rect width="24" height="24" rx="6" fill="currentColor" />
+          <circle class="mark__glyph" cx="12" cy="12" r="6" />
+          <path class="mark__glyph" d="M7.76 7.76l8.48 8.48" />
+        </svg>
+        <span class="wordmark">KillSlop</span>
+        <svg class="topbar__sep" viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 2 5.5 14" /></svg>
+        <span class="topbar__page">Send feedback</span>
+      </div>
+    </header>
+
+    <main class="sheet sheet--narrow">
+      <div class="page-head">
+        <h1 class="page-title">Send feedback</h1>
+        <p class="page-sub">Bugs, wrong calls, ideas. It goes straight to the maintainer.</p>
+      </div>
+
+      <form class="card" id="form" novalidate>
+        <div class="card__body">
+          <div class="field">
+            <div class="field__label" id="category-label">What is it about?</div>
+            <div class="segmented segmented--4" role="radiogroup" aria-labelledby="category-label" id="category">
+              <button type="button" role="radio" data-value="bug" aria-checked="true">Bug</button>
+              <button type="button" role="radio" data-value="wrong" aria-checked="false">Wrong call</button>
+              <button type="button" role="radio" data-value="idea" aria-checked="false">Idea</button>
+              <button type="button" role="radio" data-value="other" aria-checked="false">Other</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="message">Message</label>
+            <textarea id="message" class="input textarea" rows="7" maxlength="3500" required></textarea>
+            <div class="field__row">
+              <span class="field__hint" id="category-hint"></span>
+              <span class="field__count"><span id="count">0</span> / 3,500</span>
+            </div>
+          </div>
+
+          <label class="attach" id="page" hidden>
+            <input type="checkbox" id="attach" checked />
+            <span>Include the page you were on <span class="attach__url" id="page-url"></span></span>
+          </label>
+
+          <div class="field">
+            <label class="field__label" for="email">Email <span class="optional">Optional</span></label>
+            <input
+              id="email"
+              class="input"
+              type="email"
+              autocomplete="email"
+              maxlength="254"
+              placeholder="you@example.com"
+            />
+            <div class="field__hint">Only if you want a reply. It is never published or shared.</div>
+          </div>
+
+          <p class="error" id="error" role="alert" hidden></p>
+        </div>
+
+        <div class="card__footer">
+          <span>Read by a person. Never published.</span>
+          <span class="spacer"></span>
+          <button type="submit" class="btn btn--primary" id="submit" disabled>Send feedback</button>
+        </div>
+      </form>
+
+      <div class="card" id="done" hidden>
+        <div class="card__body done">
+          <h2 class="done__title">Thanks, it is sent.</h2>
+          <p class="done__text" id="done-text"></p>
+          <button type="button" class="btn" id="again">Send another</button>
+        </div>
+      </div>
+    </main>
+
+    <script type="module" src="feedback.js"></script>
+  </body>
+</html>
