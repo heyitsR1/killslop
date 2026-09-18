@@ -60,14 +60,32 @@
       return { title: text.replace(/\s+/g, ' ').slice(0, 120) || null, channel: authorName(el) };
     },
 
-    // The smallest box holding both Comment and Repost is the action row.
+    /**
+     * The smallest box holding both Comment and Repost is the action row.
+     *
+     * Sit immediately after Send, the last of the post's own actions, rather
+     * than at the end of the row: the row also carries the reaction avatars,
+     * so appending puts the button past them, away from the buttons it
+     * belongs with.
+     */
     voteHost(el) {
       const repost = el.querySelector('button[aria-label^="Repost"]');
       const comment = el.querySelector('button[aria-label^="Comment"]');
       if (!repost || !comment) return null;
       let row = repost.parentElement;
       while (row && row !== el && !row.contains(comment)) row = row.parentElement;
-      return row && row !== el ? row : null;
+      if (!row || row === el) return null;
+
+      // Send is labelled "Send in a private message" or just "Send"; fall back
+      // to Repost, which is always there, if the label ever changes again.
+      const send =
+        [...row.querySelectorAll('button[aria-label]')].find((b) =>
+          /^Send\b/i.test(b.getAttribute('aria-label') || '')
+        ) ?? repost;
+      // The button is nested; walk up to the row's own child to insert after.
+      let after = send;
+      while (after && after.parentElement !== row) after = after.parentElement;
+      return { host: row, after };
     },
   });
 })();

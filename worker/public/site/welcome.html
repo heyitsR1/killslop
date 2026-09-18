@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Welcome to KillSlop</title>
+    <meta
+      name="description"
+      content="KillSlop is installed. Here is what it does, what it sends, and how to help the list get better."
+    />
+    <link rel="canonical" href="https://killslop.app/welcome" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000000" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="KillSlop" />
+    <meta property="og:url" content="https://killslop.app/welcome" />
+    <meta property="og:title" content="Welcome to KillSlop" />
+    <meta property="og:description" content="What KillSlop does, what it sends, and how to help." />
+    <meta property="og:image" content="https://killslop.app/site/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://killslop.app/site/og.png" />
+    <link rel="icon" href="/site/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href="/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="/ui/base.css" />
+    <link rel="stylesheet" href="/site/site.css" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <header class="nav">
+      <div class="nav__inner">
+        <a class="nav__brand" href="/" aria-label="KillSlop home">
+          <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="6" fill="currentColor"/><circle class="mark__glyph" cx="12" cy="12" r="6"/><path class="mark__glyph" d="M7.76 7.76l8.48 8.48"/></svg>
+          <span class="wordmark">KillSlop</span>
+        </a>
+        <nav class="nav__links" aria-label="Main">
+          <a href="/#how">How it works</a>
+          <a href="/#list">The list</a>
+          <a href="/#roadmap">Roadmap</a>
+          <a href="/privacy">Privacy</a>
+          <a href="https://github.com/heyitsR1/killslop">GitHub</a>
+        </nav>
+        <div class="nav__actions">
+          <a class="btn btn--sm nav__source" href="https://github.com/heyitsR1/killslop">View source</a>
+          <a class="btn btn--sm btn--primary" href="/#list">The list</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="page">
+      <main class="shell" id="main">
+        <article class="section doc">
+          <header class="doc__head">
+            <p class="eyebrow">You are set up</p>
+            <h1 class="doc__title">KillSlop is installed.</h1>
+            <p class="doc__meta"><span>Nothing else to configure</span><span>YouTube, X and LinkedIn</span></p>
+          </header>
+
+          <div class="doc__body">
+            <div class="prose">
+              <div class="callout">
+                <p class="eyebrow">In short</p>
+                <ul>
+                  <li>AI slop is hidden from your feeds automatically. You do not have to do anything.</li>
+                  <li>See something it missed? Press <strong>AI SLOP</strong> on the post. It disappears for you at once.</li>
+                  <li>Nothing you watch or read is sent anywhere. Free, and open source.</li>
+                </ul>
+              </div>
+
+              <h2 id="works">What it does</h2>
+              <p>
+                KillSlop hides AI-generated videos and posts on YouTube, X and LinkedIn as you scroll. A hidden post
+                does not vanish silently: it collapses to a thin line that says <em>why</em> it was hidden, with
+                <strong>Show</strong> to read it anyway and <strong>Not slop</strong> if we got it wrong. Your call
+                always wins, and it takes one click to reverse.
+              </p>
+              <p>
+                It starts working immediately. There is no account, no sign-in and nothing to set up.
+              </p>
+
+              <h2 id="how">How it decides</h2>
+              <p>
+                Cheapest check first, and the first one that answers wins.
+              </p>
+              <ul>
+                <li><strong>Your own calls</strong> outrank everything, including us.</li>
+                <li>
+                  <strong>The platform's own AI label</strong>, where there is one. YouTube labels some videos; X
+                  labels AI images and video. This is a fact, not a guess.
+                </li>
+                <li>
+                  <strong>The account's pattern.</strong> Channels that label nearly every upload are slop farms;
+                  ordinary channels label none. That difference is measured, not assumed.
+                </li>
+                <li><strong>The open list</strong>, built from what other people report and what a maintainer approves.</li>
+                <li>
+                  <strong>The writing itself</strong>, if you switch it on. X never labels text and LinkedIn labels
+                  nothing at all, so this reads the post. It is off until you turn it on, because it is the only part
+                  that sends anything about a post away. See the <a href="/privacy#writing">privacy policy</a>.
+                </li>
+              </ul>
+
+              <h2 id="help">How to help</h2>
+              <p>
+                The list gets better when people use it. If a post is AI slop and KillSlop missed it, press
+                <strong>AI SLOP</strong> on the post: on YouTube it sits beside the like button, and on X and
+                LinkedIn at the end of the post's own row of actions.
+              </p>
+              <p>
+                That hides it for you instantly. It does not hide it for anyone else: your report joins a queue that a
+                maintainer reviews by hand before anything is added to the public list. One person cannot bury a
+                creator, by design. If you would rather keep your calls to yourself, turn off
+                <strong>Contribute reports</strong> in the popup.
+              </p>
+              <p>
+                Got one wrong? Press <strong>Not slop</strong>. That is just as useful, and it is how false positives
+                get found.
+              </p>
+
+              <h2 id="privacy">What leaves your browser</h2>
+              <p>
+                Lookups are sent as the first four characters of a hash, so the server cannot tell what you were
+                looking at. There are no accounts, no ads, no analytics and no tracking, and nothing is ever sold.
+                The <a href="/privacy">privacy policy</a> lists every single thing that is sent and when, in plain
+                words.
+              </p>
+
+              <h2 id="open">Free and open source</h2>
+              <p>
+                The code is GPL-3.0 and the list is CC BY-SA 4.0, which means anyone can read it, check it, use the
+                list in their own tool, or improve it. That is deliberate: a filter that decides what you do not see
+                should be one you are allowed to audit.
+              </p>
+              <p>
+                <a href="https://github.com/heyitsR1/killslop">Read the source</a> ·
+                <a href="/#list">Download the list</a> ·
+                <a href="https://github.com/heyitsR1/killslop/issues/new/choose">Report a wrong call</a>
+              </p>
+            </div>
+
+            <nav class="toc" aria-label="On this page">
+              <p class="eyebrow">On this page</p>
+              <ol>
+                <li><a href="#works">What it does</a></li>
+                <li><a href="#how">How it decides</a></li>
+                <li><a href="#help">How to help</a></li>
+                <li><a href="#privacy">What leaves your browser</a></li>
+                <li><a href="#open">Free and open source</a></li>
+              </ol>
+            </nav>
+          </div>
+        </article>
+
+        <footer class="footer">
+          <div class="footer__brand">
+            <a class="nav__brand" href="/" aria-label="KillSlop home">
+              <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="6" fill="currentColor"/><circle class="mark__glyph" cx="12" cy="12" r="6"/><path class="mark__glyph" d="M7.76 7.76l8.48 8.48"/></svg>
+              <span class="wordmark">KillSlop</span>
+            </a>
+            <p class="footer__tag">Hides AI slop from your feed and keeps a public list of it.</p>
+          </div>
+          <nav class="footer__col" aria-label="Product">
+            <p class="footer__head">Product</p>
+            <a href="/#features">Features</a>
+            <a href="/#how">How it decides</a>
+            <a href="/#list">The list</a>
+            <a href="/#roadmap">Roadmap</a>
+            <a href="/privacy">Privacy</a>
+          </nav>
+          <nav class="footer__col" aria-label="Project">
+            <p class="footer__head">Project</p>
+            <a href="https://github.com/heyitsR1/killslop">GitHub</a>
+            <a href="https://github.com/heyitsR1/killslop/issues/new/choose">Report a problem</a>
+            <a href="https://api.killslop.app/api/v1/export/youtube-channels.json">Download the list (JSON)</a>
+          </nav>
+          <div class="footer__legal">
+            <span>&copy; 2026 KillSlop</span>
+            <span>Not affiliated with YouTube, Google, X or LinkedIn.</span>
+          </div>
+        </footer>
+      </main>
+    </div>
+  </body>
+</html>

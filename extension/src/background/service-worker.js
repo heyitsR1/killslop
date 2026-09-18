@@ -111,5 +111,14 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   return true; // keep the channel open for the async response
 });
 
-// No welcome tab on install: we do not own a website yet, and opening a domain
-// we don't control on every install would be a gift to whoever does.
+/**
+ * A welcome page, once, on a fresh install. Never on an update or a reload:
+ * a tab that reappears every time the extension updates is a nuisance, and
+ * that is what `reason` distinguishes.
+ *
+ * This waited until killslop.app existed. Opening a domain we did not control
+ * on every install would have been a gift to whoever registered it.
+ */
+chrome.runtime.onInstalled.addListener(({ reason }) => {
+  if (reason === 'install') chrome.tabs.create({ url: 'https://killslop.app/welcome' });
+});

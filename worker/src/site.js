@@ -12,7 +12,12 @@ const WWW_HOST = `www.${SITE_HOST}`;
 /** Chrome resolves *.localhost to loopback, so `wrangler dev` can show the site. */
 const SITE_HOSTS = new Set([SITE_HOST, WWW_HOST, 'site.localhost']);
 
-const PAGES = { '/': '/site/index.html', '/privacy': '/site/privacy.html' };
+const PAGES = {
+  '/': '/site/index.html',
+  '/privacy': '/site/privacy.html',
+  // Opened once, on install, by the service worker.
+  '/welcome': '/site/welcome.html',
+};
 /**
  * Where "Get KillSlop" goes. Every button on the site links to /get, so the
  * day the Chrome Web Store listing is live this is the one line to change.

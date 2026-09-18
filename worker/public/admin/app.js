@@ -320,10 +320,19 @@ function signals(e) {
       'strong',
     ]);
   }
+  if (e.writings) {
+    // Deliberately not styled 'strong' like a tally: a model read the words,
+    // nobody published a label, and the chip should rank it that way by eye
+    // (RESEARCH.md section 23).
+    out.push([
+      `Writing check: ${e.writing_ai} of ${e.writing_total} posts read as AI-written`,
+      '',
+    ]);
+  }
   if (e.up || e.down) {
     out.push([`${plural(e.up, 'slop vote')}, ${plural(e.down, 'not-slop vote')}`, e.up - e.down >= 3 ? 'strong' : '']);
   }
-  if (!e.tallies && !e.up && !e.down) out.push(['No votes', '']);
+  if (!e.tallies && !e.writings && !e.up && !e.down) out.push(['No votes', '']);
   if (e.served && !e.review) out.push(['Served without review', 'warn']);
   return out;
 }

@@ -19,7 +19,9 @@
  *   parse(el)         -> {id, channelId} or null; ids as in core/ids.js
  *   meta(el)          -> {title, channel}, for "Your marks"
  *   text(el)          -> the post's own words, for the writing check
- *   voteHost(el)      -> the element the post's AI SLOP button goes in, or null
+ *   voteHost(el)      -> where the post's AI SLOP button goes, or null. Either
+ *                        the element to append to, or {host, after} to place
+ *                        it directly after one of that element's children.
  */
 
 (() => {
@@ -232,7 +234,12 @@
 
     function paintVote(t) {
       let btn = t.el.querySelector('.killslop-vote');
-      const host = on() ? adapter.voteHost(t.el) : null;
+      // An adapter may name a sibling to sit after, because the end of an
+      // action row is not always the end of the actions: LinkedIn puts
+      // reaction avatars there too.
+      const spot = on() ? adapter.voteHost(t.el) : null;
+      const host = spot?.host ?? spot;
+      const after = spot?.after ?? null;
       if (!host) {
         btn?.remove();
         return;
@@ -244,7 +251,10 @@
         btn.addEventListener('click', onVoteClick);
       }
       // Both sites re-render a post's actions freely; put the button back.
-      if (btn.parentElement !== host) host.append(btn);
+      if (btn.parentElement !== host) {
+        if (after && after.parentElement === host) after.after(btn);
+        else host.append(btn);
+      }
 
       const v = known.get(t.id);
       const state = voteState(v);
