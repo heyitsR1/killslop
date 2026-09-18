@@ -13,7 +13,14 @@ let settings = null;
 
 /* --------------------------------------------------------------- switches */
 
-const TOGGLES = ['useDisclosure', 'useChannelInference', 'useCommunity', 'trustVotes', 'shareReports'];
+const TOGGLES = [
+  'useDisclosure',
+  'useChannelInference',
+  'useCommunity',
+  'trustVotes',
+  'shareReports',
+  'useWritingCheck',
+];
 
 function paintSwitch(el, on) {
   el.setAttribute('aria-checked', String(Boolean(on)));
@@ -91,11 +98,16 @@ function paint() {
   // Say exactly what still leaves the browser: marks are shared whenever
   // "Contribute reports" is on, and YouTube's label check always asks YouTube.
   // X's label is read from the page itself and sends nothing.
-  $('privacy').textContent = settings.useCommunity
-    ? 'Lookups are sent as a 4-character hash prefix, so the list never learns what you watched or read.'
-    : settings.shareReports
-      ? 'Community list is off, so nothing is looked up in it. Your marks are still shared; turn off Contribute reports to keep them here.'
-      : "Community list and sharing are off. Only YouTube's label check sends a request, to YouTube, without your cookies.";
+  //
+  // The writing check is named first when it is on, because it is the only
+  // setting that can send the words of a post rather than a hash of them.
+  $('privacy').textContent = settings.useWritingCheck
+    ? 'The writing check asks by hash first, and sends the text itself only for a post nothing else could place and nobody has had checked before.'
+    : settings.useCommunity
+      ? 'Lookups are sent as a 4-character hash prefix, so the list never learns what you watched or read.'
+      : settings.shareReports
+        ? 'Community list is off, so nothing is looked up in it. Your marks are still shared; turn off Contribute reports to keep them here.'
+        : "Community list and sharing are off. Only YouTube's label check sends a request, to YouTube, without your cookies.";
 }
 
 async function refreshStats() {

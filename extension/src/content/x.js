@@ -80,6 +80,10 @@
       return { id, channelId: (alias && users.get(alias)) || alias };
     },
 
+    // What the writing check reads: the post's own words, as shown. A quoted
+    // post carries its own text node, so take this post's first one only.
+    text: (el) => el.querySelector('[data-testid="tweetText"]')?.innerText.trim() || '',
+
     meta(el) {
       const text = el.querySelector('[data-testid="tweetText"]')?.innerText.trim() || '';
       const handle = authorHandle(el);

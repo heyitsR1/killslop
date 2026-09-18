@@ -18,6 +18,7 @@
  *   disclosureLabel   why a post the platform labelled AI was hidden
  *   parse(el)         -> {id, channelId} or null; ids as in core/ids.js
  *   meta(el)          -> {title, channel}, for "Your marks"
+ *   text(el)          -> the post's own words, for the writing check
  *   voteHost(el)      -> the element the post's AI SLOP button goes in, or null
  */
 
@@ -117,6 +118,7 @@
     const REASON_LABEL = {
       disclosure: adapter.disclosureLabel,
       channel: `This ${noun} often posts AI media`,
+      writing: 'Reads as AI-written',
       community: 'Reported by the community',
       'community-channel': `This ${noun} was reported by the community`,
       'community-measured': `This ${noun}'s own posts are labelled AI`,
@@ -381,8 +383,37 @@
         for (const [id, v] of Object.entries(res?.verdicts || {})) {
           if (!v.pending) known.set(id, v);
         }
+        if (res?.check?.length) await checkWriting(res.check);
       }
       paint();
+    }
+
+    /**
+     * Posts nothing else could place. Their text is read here and gated here:
+     * a post whose writing shows none of the signs is settled locally and its
+     * words never leave the page. Only what is left is handed to the
+     * background, which asks by hash before it sends anything.
+     */
+    async function checkWriting(items) {
+      const signs = globalThis.KillSlopSigns;
+      if (!signs || typeof adapter.text !== 'function') return;
+
+      const byId = new Map(tiles().map((t) => [t.id, t.el]));
+      const posts = [];
+      for (const { videoId } of items) {
+        const el = byId.get(videoId);
+        if (!el) continue;
+        const { suspicious, text } = signs.prefilter(adapter.text(el));
+        if (!suspicious) {
+          known.set(videoId, { slop: false, reason: 'none' });
+          continue;
+        }
+        posts.push({ id: videoId, text });
+      }
+      if (!posts.length) return;
+
+      const res = await send('checkWriting', { platform, posts });
+      for (const [id, v] of Object.entries(res?.verdicts || {})) known.set(id, v);
     }
 
     /** Forget cached verdicts for every post we know belongs to these channels. */

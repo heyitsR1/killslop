@@ -38,6 +38,18 @@ export const DEFAULTS = {
   trustVotes: true,
   /** Contribute your own reports back. Off means read-only. */
   shareReports: true,
+
+  /**
+   * Read the writing itself, for posts nothing else can place (X labels media
+   * but never text, LinkedIn labels nothing at all).
+   *
+   * The only default that is off. Every other source reads what the platform
+   * or the list already says; this one sends the text of a post away to be
+   * judged, which is a different kind of thing to agree to, so it is asked for
+   * rather than assumed. RESEARCH.md section 7 said detection of this shape
+   * should stay opt-in if it were ever added, and this is that.
+   */
+  useWritingCheck: false,
 };
 
 export async function getSettings() {

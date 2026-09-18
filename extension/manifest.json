@@ -33,14 +33,24 @@
     },
     {
       "matches": ["https://x.com/*"],
-      "js": ["src/content/parse.js", "src/content/feed.js", "src/content/x.js"],
+      "js": [
+        "src/content/parse.js",
+        "src/content/slopsigns.js",
+        "src/content/feed.js",
+        "src/content/x.js"
+      ],
       "css": ["src/content/feed.css"],
       "run_at": "document_start",
       "all_frames": false
     },
     {
       "matches": ["https://www.linkedin.com/*"],
-      "js": ["src/content/parse.js", "src/content/feed.js", "src/content/linkedin.js"],
+      "js": [
+        "src/content/parse.js",
+        "src/content/slopsigns.js",
+        "src/content/feed.js",
+        "src/content/linkedin.js"
+      ],
       "css": ["src/content/feed.css"],
       "run_at": "document_idle",
       "all_frames": false

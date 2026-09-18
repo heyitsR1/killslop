@@ -11,20 +11,33 @@
  *                           where the coverage comes from (see RESEARCH.md):
  *                           slop farms label ~100% of uploads, real channels 0%.
  *   3. Community list     — one batched request per hash bucket.
- *   4. InnerTube probe    — YouTube only, and it cannot happen here.
+ *   4. Writing check      — X and LinkedIn only, and off unless asked for.
+ *                           The words themselves, when nothing else can place
+ *                           the post: X labels media but never text, and
+ *                           LinkedIn labels nothing at all.
+ *   5. InnerTube probe    — YouTube only, and it cannot happen here.
  *
- * Tier 4 is delegated: YouTube 403s any request carrying an extension origin,
- * so the content script issues the probe and calls recordProbe() with the
- * result. X needs no probe: its feed already carries the label, and the X
- * content script hands over what it read through recordObservations().
- * LinkedIn has no label at all, so only tiers 0 and 3 ever answer there.
+ * Tiers 4 and 5 are both delegated to the content script, for opposite
+ * reasons. YouTube 403s any request carrying an extension origin, so the page
+ * issues the probe and calls recordProbe(). The writing check needs the post's
+ * text, which only the page can read, so the page gates it locally and calls
+ * recordWriting() with what survived. X needs no probe: its feed already
+ * carries the label, and the X content script hands over what it read through
+ * recordObservations().
  */
 
 import { VERDICT } from './innertube.js';
 import * as store from './store.js';
 import * as community from './community.js';
+import { HIDE_AT, classifyText, lookupTexts } from './writing.js';
 import { getSettings } from './settings.js';
 import { channelRule, isValidId, platformOf } from './ids.js';
+
+/** Where the writing check applies. Never YouTube (RESEARCH.md section 7). */
+const WRITING_PLATFORMS = new Set(['x', 'linkedin']);
+
+/** How a cached verdict got there, so tier 1 can say why rather than guess. */
+const isWritingSource = (source) => typeof source === 'string' && source.endsWith(':writing');
 
 const listeners = new Set();
 
@@ -108,7 +121,9 @@ export async function resolveBatch(items, platform = 'youtube') {
     const hit = cached.get(videoId);
     if (hit && hit.verdict !== VERDICT.UNKNOWN) {
       if (hit.verdict === VERDICT.AI) {
-        verdicts[videoId] = { slop: true, reason: 'disclosure' };
+        // A cached "yes" from the writing check must not claim the platform
+        // labelled it: that would be a stronger claim than we can make.
+        verdicts[videoId] = { slop: true, reason: isWritingSource(hit.source) ? 'writing' : 'disclosure' };
       } else {
         // Known clean by disclosure, but the channel may still condemn it.
         const cv = channelVerdict(channelRecord(channelId), settings, platform);
@@ -179,19 +194,66 @@ export async function resolveBatch(items, platform = 'youtube') {
     remaining = next;
   }
 
-  // Tier 4 — YouTube: hand back to the content script to probe. Elsewhere
-  // there is nothing left to ask, and saying so stops the page asking again;
-  // an X label that turns up later arrives through recordObservations().
+  // Tiers 4 and 5 — hand back to the content script, which has what we don't:
+  // an origin YouTube will answer, and the post's own text. With nothing left
+  // to ask, say so, which stops the page asking again; an X label that turns
+  // up later arrives through recordObservations().
+  const check = [];
   for (const item of remaining) {
-    if (platform !== 'youtube') {
-      verdicts[item.videoId] = { slop: false, reason: 'none' };
-    } else if (settings.useDisclosure) {
+    if (platform === 'youtube') {
+      if (settings.useDisclosure) {
+        verdicts[item.videoId] = { slop: false, reason: 'pending', pending: true };
+        probe.push({ videoId: item.videoId, channelId: item.channelId ?? null });
+      }
+    } else if (settings.useWritingCheck && WRITING_PLATFORMS.has(platform)) {
       verdicts[item.videoId] = { slop: false, reason: 'pending', pending: true };
-      probe.push({ videoId: item.videoId, channelId: item.channelId ?? null });
+      check.push({ videoId: item.videoId, channelId: item.channelId ?? null });
+    } else {
+      verdicts[item.videoId] = { slop: false, reason: 'none' };
     }
   }
 
-  return { verdicts, probe };
+  return { verdicts, probe, check };
+}
+
+/**
+ * Record what the writing check made of posts the other tiers could not place.
+ *
+ * The page has already read the text and held back everything its local gate
+ * found unremarkable, so what arrives here is the short list. Each text is
+ * looked up by hash first, and only a text nobody has had checked before is
+ * sent anywhere.
+ *
+ * A post the check cannot answer for is left undecided rather than accused:
+ * no cache entry, no verdict, and the next scan may try again.
+ *
+ * @param {Array<{id:string, text:string}>} posts
+ * @param {string} platform
+ * @returns {Promise<{verdicts:Object}>}
+ */
+export async function recordWriting(posts, platform) {
+  const settings = await getSettings();
+  const verdicts = {};
+  if (!settings.enabled || !settings.useWritingCheck) return { verdicts };
+  if (!WRITING_PLATFORMS.has(platform) || !settings.platforms[platform]) return { verdicts };
+
+  const valid = (posts || []).filter(
+    (p) => isValidId(p?.id, 'video') && platformOf(p.id) === platform && typeof p.text === 'string' && p.text
+  );
+  if (!valid.length) return { verdicts };
+
+  // One request per bucket for everything already known, before anything is sent.
+  const known = await lookupTexts([...new Set(valid.map((p) => p.text))]);
+
+  for (const p of valid) {
+    const answer = known.get(p.text) ?? (await classifyText(p.text, platform));
+    if (!answer) continue;
+    const slop = answer.score >= HIDE_AT;
+    await store.putVideo(p.id, slop ? VERDICT.AI : VERDICT.CLEAN, `${platform}:writing`);
+    verdicts[p.id] = slop ? { slop: true, reason: 'writing' } : { slop: false, reason: 'clean' };
+    if (slop) emit({ videoId: p.id, slop: true, reason: 'writing' });
+  }
+  return { verdicts };
 }
 
 /**

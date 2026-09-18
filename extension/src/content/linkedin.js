@@ -50,6 +50,11 @@
       return id ? { id, channelId: author(el) } : null;
     },
 
+    // What the writing check reads. LinkedIn has no AI label of its own
+    // (RESEARCH.md section 18), so on this platform the words are the only
+    // thing there has ever been to go on.
+    text: (el) => el.querySelector('[data-testid="expandable-text-box"]')?.innerText.trim() || '',
+
     meta(el) {
       const text = el.querySelector('[data-testid="expandable-text-box"]')?.innerText.trim() || '';
       return { title: text.replace(/\s+/g, ' ').slice(0, 120) || null, channel: authorName(el) };

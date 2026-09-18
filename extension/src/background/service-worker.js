@@ -51,6 +51,19 @@ const handlers = {
     return { ok: res.ok };
   },
 
+  /**
+   * Posts the other tiers could not place, checked by their writing. The page
+   * has already dropped everything its local gate found unremarkable; the cap
+   * is a bound on what one page can ask for at once.
+   */
+  async checkWriting({ posts, platform }) {
+    const res = await verdict.recordWriting(Array.isArray(posts) ? posts.slice(0, 40) : [], platform);
+    for (const [id, v] of Object.entries(res.verdicts)) {
+      if (v.slop) hiddenThisSession.add(id);
+    }
+    return res;
+  },
+
   async override({ id, kind, slop, meta }) {
     const settings = await getSettings();
     return verdict.submitOverride({ id, kind, slop, meta, share: settings.shareReports });
