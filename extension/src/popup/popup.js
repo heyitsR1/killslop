@@ -1,4 +1,4 @@
-import { DEFAULTS, PLATFORMS } from '../core/settings.js';
+import { DEFAULTS, PLATFORMS, getSettings, setSettings } from '../core/settings.js';
 
 const send = (type, payload = {}) =>
   new Promise((resolve) => {
@@ -30,7 +30,7 @@ function wireSwitch(el, read, write) {
   el.addEventListener('click', async () => {
     const next = el.getAttribute('aria-checked') !== 'true';
     paintSwitch(el, next);
-    settings = await send('setSettings', { patch: write(next) });
+    settings = await setSettings(write(next));
     paint();
   });
   paintSwitch(el, read());
@@ -64,9 +64,7 @@ function renderPlatforms() {
     sw.addEventListener('click', async () => {
       const next = sw.getAttribute('aria-checked') !== 'true';
       paintSwitch(sw, next);
-      settings = await send('setSettings', {
-        patch: { platforms: { ...settings.platforms, [p.id]: next } },
-      });
+      settings = await setSettings({ platforms: { ...settings.platforms, [p.id]: next } });
       paint();
     });
     row.appendChild(sw);
@@ -112,39 +110,72 @@ function paint() {
         : "Community list and sharing are off. Only YouTube's label check sends a request, to YouTube, without your cookies.";
 }
 
-async function refreshStats() {
-  const s = await send('getStats');
-  if (!s) return;
-  $('stat-session').textContent = s.hiddenThisSession ?? 0;
-  $('stat-videos').textContent = s.videos ?? 0;
-  $('stat-channels').textContent = s.channels ?? 0;
+/** Last counts seen, so the tiles have something true to show immediately. */
+const STATS_CACHE = 'statsCache';
 
-  const marks = (await send('listOverrides')) || [];
+function paintStats({ session, videos, channels, marks }) {
+  $('stat-session').textContent = session ?? 0;
+  $('stat-videos').textContent = videos ?? 0;
+  $('stat-channels').textContent = channels ?? 0;
+  $('marks-desc').textContent = marks || 'Nothing marked yet';
+}
+
+/**
+ * The counts live in IndexedDB, which only the background can reach, so these
+ * are the one thing the popup cannot read for itself. They are therefore also
+ * the one thing it must not wait on: last known values paint at once, the
+ * worker catches them up, and the two calls go together rather than in turn.
+ */
+async function refreshStats() {
+  const cached = await chrome.storage.local
+    .get(STATS_CACHE)
+    .then((r) => r[STATS_CACHE])
+    .catch(() => null);
+  if (cached) paintStats(cached);
+
+  const [s, overrides] = await Promise.all([send('getStats'), send('listOverrides')]);
+  if (!s) return;
+
+  const marks = overrides || [];
   const slop = marks.filter((m) => m.slop).length;
   const clean = marks.length - slop;
-  $('marks-desc').textContent = marks.length
-    ? [slop && `${slop} AI slop`, clean && `${clean} not slop`].filter(Boolean).join(' · ')
-    : 'Nothing marked yet';
+  const fresh = {
+    session: s.hiddenThisSession ?? 0,
+    videos: s.videos ?? 0,
+    channels: s.channels ?? 0,
+    marks: marks.length
+      ? [slop && `${slop} AI slop`, clean && `${clean} not slop`].filter(Boolean).join(' · ')
+      : 'Nothing marked yet',
+  };
+  paintStats(fresh);
+  chrome.storage.local.set({ [STATS_CACHE]: fresh }).catch(() => {});
 }
 
 /* ------------------------------------------------------------------- init */
 
 (async () => {
   /**
-   * A popup that cannot reach the background must still open and still work.
-   * This used to return early when the background did not answer, which left
-   * the markup on screen with nothing wired to it: the popup looked fine and
-   * every switch was dead, which is indistinguishable from the extension being
-   * broken. Fall back to the defaults, wire everything, and say so.
+   * Read settings straight from storage instead of asking the background.
+   *
+   * Measured 2026-09-18: the first sendMessage of a popup's life cost 394ms,
+   * because it has to start the service worker and load everything the worker
+   * imports; the same settings read directly cost 2ms. Nothing the first paint
+   * needs lives in the worker, so nothing the first paint needs should wait
+   * for it. The worker is now woken only for the counts, which are allowed to
+   * arrive late.
+   *
+   * Falling back to defaults rather than returning early matters too: this
+   * used to bail out after the markup had rendered, leaving a popup that
+   * looked fine with every control dead.
    */
-  const live = await send('getSettings');
-  settings = live ?? { ...DEFAULTS, unreachable: true };
+  settings = await getSettings().catch(() => ({ ...DEFAULTS, unreachable: true }));
 
   renderPlatforms();
 
   $('master').addEventListener('click', async () => {
     const next = $('master').getAttribute('aria-checked') !== 'true';
-    settings = await send('setSettings', { patch: { enabled: next } });
+    paintSwitch($('master'), next); // flip now; the write is fast but not free
+    settings = await setSettings({ enabled: next });
     paint();
   });
 
@@ -172,7 +203,7 @@ async function refreshStats() {
   $('action').addEventListener('click', async (ev) => {
     const value = ev.target?.dataset?.value;
     if (!value) return;
-    settings = await send('setSettings', { patch: { action: value } });
+    settings = await setSettings({ action: value });
     paint();
   });
 
