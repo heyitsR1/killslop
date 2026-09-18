@@ -422,6 +422,7 @@ async function setReview(row, next) {
   }
   state.offset -= 1;
   dropRow(row, $('list'), $('empty'), EMPTY[state.tab]);
+  paintBulk();
   refreshCounts();
   toast(`${DONE[next ?? 'queue']}: ${e.title || e.id}`, {
     label: 'Undo',
@@ -437,6 +438,99 @@ async function setReview(row, next) {
   });
 }
 
+/* ------------------------------------------------------- reviewing in bulk */
+
+/** The worker refuses a longer list of hashes in one call (setReview). */
+const BULK_MAX = 90;
+
+/**
+ * One call per BULK_MAX hashes: a queue with a few pages loaded is longer than
+ * a single call allows. The calls go one after another rather than at once, so
+ * a bulk action cannot spend the console's rate limit in a burst.
+ */
+async function reviewMany(hashes, review) {
+  for (let i = 0; i < hashes.length; i += BULK_MAX) {
+    await api('/admin/api/review', { hashes: hashes.slice(i, i + BULK_MAX), review });
+  }
+}
+
+/**
+ * Approve or reject every queue row on the page at once. It acts on the rows
+ * that are loaded, never on the unseen rest of the queue, so the number on the
+ * button is the whole of what the click does.
+ */
+async function bulkReview(next, rows) {
+  const hashes = rows.map((row) => rowEntry.get(row).hash);
+  if (!hashes.length) return;
+  for (const row of rows) row.classList.add('entry--busy');
+  $('bulk').hidden = true;
+
+  let failed = null;
+  try {
+    await reviewMany(hashes, next);
+  } catch (err) {
+    failed = err;
+  }
+  // Repaint from the database either way: a run that failed part way through
+  // has already committed the batches before the one that broke.
+  refreshCounts();
+  loadEntries(true);
+  if (failed) {
+    toast(failed.message);
+    return;
+  }
+  toast(`${DONE[next]} ${plural(hashes.length, 'entry', 'entries')}.`, {
+    label: 'Undo',
+    run: async () => {
+      try {
+        await reviewMany(hashes, null); // every one of them came from the queue
+      } catch (err) {
+        toast(err.message);
+      }
+      refreshCounts();
+      loadEntries(true);
+    },
+  });
+}
+
+/** Two clicks rather than a confirm() dialog, like the feedback Delete button. */
+function bulkButton(label, review, rows, modifiers) {
+  const idle = `${label} all ${rows.length}`;
+  let armed = 0;
+  const b = button(idle, modifiers, () => {
+    if (!armed) {
+      b.textContent = `Click again to ${label.toLowerCase()} ${rows.length}`;
+      b.classList.add('btn--danger');
+      armed = setTimeout(() => {
+        armed = 0;
+        b.textContent = idle;
+        b.classList.remove('btn--danger');
+      }, 4000);
+      return;
+    }
+    clearTimeout(armed);
+    bulkReview(review, rows);
+  });
+  return b;
+}
+
+/**
+ * The bar above the queue. Rebuilt on every change to the list, which is also
+ * what disarms a half-pressed button when the rows under it move.
+ */
+function paintBulk() {
+  const bar = $('bulk');
+  const rows = state.tab === 'queue' ? [...$('list').querySelectorAll('.entry')] : [];
+  bar.hidden = !rows.length;
+  if (!rows.length) return;
+  bar.replaceChildren(
+    el('span', 'bulk__count', `${plural(rows.length, 'entry', 'entries')} loaded`),
+    el('span', 'spacer'),
+    bulkButton('Reject', 'clean', rows, 'btn--sm'),
+    bulkButton('Approve', 'slop', rows, 'btn--sm btn--primary')
+  );
+}
+
 async function loadEntries(reset) {
   const mine = ++seq;
   if (reset) {
@@ -446,6 +540,7 @@ async function loadEntries(reset) {
     $('more').hidden = true;
     $('empty').hidden = true;
   }
+  paintBulk();
   const q = new URLSearchParams({ status: state.tab, sort: state.sort, offset: String(state.offset) });
   if (state.kind) q.set('kind', state.kind);
 
@@ -453,7 +548,10 @@ async function loadEntries(reset) {
   try {
     data = await api(`/admin/api/entries?${q}`);
   } catch (err) {
-    if (mine === seq) $('list').replaceChildren(el('p', 'error', err.message));
+    if (mine === seq) {
+      $('list').replaceChildren(el('p', 'error', err.message));
+      paintBulk();
+    }
     return;
   }
   if (mine !== seq) return;
@@ -463,6 +561,7 @@ async function loadEntries(reset) {
   $('more').hidden = !data.more;
   $('empty').textContent = EMPTY[state.tab];
   $('empty').hidden = $('list').childElementCount > 0;
+  paintBulk();
 }
 
 async function addLink(ev) {

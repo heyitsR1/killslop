@@ -194,6 +194,21 @@ body {
   display: inline-flex;
 }
 
+/* Sits directly above the rows it acts on, and counts them out loud: it only
+   ever reviews what is on the page, never the unseen rest of the queue. */
+.bulk {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.bulk__count {
+  color: var(--fg-muted);
+  font-size: 13px;
+}
+
 .hint {
   display: flex;
   flex-wrap: wrap;
