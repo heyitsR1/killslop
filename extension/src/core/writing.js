@@ -22,18 +22,31 @@ const PREFIX_LEN = 4;
 /**
  * What the model's 0-4 score has to reach before a post is hidden.
  *
- * Measured 2026-09-18 on 12 posts, 4 slop and 8 human, the human half chosen
- * to be hard: two non-native-English posts, a polished essay-style tweet and a
- * human marketing post. At 2.5 the check caught 4 of 4 with no false
- * positives; at 3.0 it caught 3 of 4, also with none. Hiding is the harsher
- * action, so the bar is the harsher one, and it is the number RESEARCH.md
- * section 23 exists to re-measure on a real sample.
+ * Measured 2026-09-18 over 50 labelled posts, 15 slop and 35 human, 18 of the
+ * human half written to be hard: non-native English in several registers,
+ * polished technical prose, genuine announcements, and human writing that uses
+ * the same contrast structure the rubric looks for (RESEARCH.md section 23).
+ *
+ * The two classes separate cleanly, which is what picks the number:
+ *
+ *   highest human   1.75
+ *   lowest slop     2.97
+ *
+ * 2.5 sits in that gap, with 0.75 of headroom above the worst human case, and
+ * scores 1.000 precision and 1.000 recall on the set. A higher bar is not a
+ * safer one: 3.0 falls inside the bottom of the slop cluster and loses the
+ * LinkedIn humblebrag and announcement, which are the commonest shapes there.
+ * 2.0 also scores perfectly but leaves only 0.25 of headroom, which is too
+ * little to carry off this corpus.
+ *
+ * Precision is the number that protects people, so if this is ever moved,
+ * move it up. Recall costs a post nobody reads; precision costs a person.
  *
  * Author-level writing evidence is not gathered here. It comes from the
  * crawler's own measurement (scripts/), so that deciding a person writes with
  * a machine never rests on what happened to cross one user's feed.
  */
-export const HIDE_AT = 3.0;
+export const HIDE_AT = 2.5;
 
 /** Answers already fetched this session: prefix -> Map(hash -> answer) */
 const bucketCache = new Map();

@@ -37,9 +37,10 @@ import {
   isValidWriting,
   sha256Hex,
 } from '../worker/src/policy.js';
-
-/** The score at or above which one post counts as reading AI-written. */
-const HIDE_AT = 3.0;
+// Imported, never copied: the crawler must count a post as AI-written on
+// exactly the bar the extension hides one on, or the list it seeds would
+// describe a threshold nobody ships.
+import { HIDE_AT } from '../extension/src/core/writing.js';
 
 /** Posts read per account. Fewer than this and the share means little. */
 const SAMPLE = 12;

@@ -139,10 +139,20 @@
     if (ENGAGEMENT_BAIT.test(text)) hits.push('engagement_bait');
     if (emDashesPer100Words(text) >= 3) hits.push('em_dashes');
 
-    // One strong structural tell is enough on its own; the softer ones have to
-    // agree with something else, or ordinary enthusiastic writing would trip.
-    const strong = hits.includes('negative_parallelism') || hits.includes('listicle_formatting');
-    return { suspicious: strong || hits.length >= 2, hits, text };
+    // Any sign at all is enough to ask about.
+    //
+    // This started stricter, needing a structural sign or two softer ones, on
+    // the reasoning that one sign alone would catch enthusiastic human writing.
+    // Measured over 50 labelled posts on 2026-09-18, that reasoning was wrong
+    // in both directions: it held back 7 of 15 slop posts before the model ever
+    // saw them, every one of which had tripped exactly one sign, and it saved
+    // nothing, because 32 of the 35 human posts trip no sign at all. The number
+    // of human posts sent was identical under both rules.
+    //
+    // Which is the gate's whole bargain. It does not decide what is slop; it
+    // decides what is worth asking about, and a post it holds back is never
+    // looked at again. When in doubt it should ask.
+    return { suspicious: hits.length >= 1, hits, text };
   }
 
   globalThis.KillSlopSigns = { normalizeText, prefilter, MIN_CHARS };

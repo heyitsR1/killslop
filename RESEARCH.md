@@ -437,7 +437,7 @@ reaction button, `Comment` and `Repost`.
 Measured 2026-09-18 against Jev 1.13 (TypeSafe), one post per request, through
 the same code path the worker uses (`worker/src/jev.js`).
 
-## 23. Reading the words catches what no label does, and the bar is 3.0
+## 23. Reading the words catches what no label does, and the bar is 2.5
 
 §13 and §15 leave X's text posts unlabelled, and §18 leaves LinkedIn with no
 signal at all, so a post made of words reached the end of the ladder and was
@@ -445,43 +445,50 @@ called clean. §7's known limitation anticipated exactly this tier and set its
 condition: detection that reads the content rather than a label "should stay
 opt-in if it is ever added". It is, and this is the measurement it rests on.
 
-Twelve posts, four template slop and eight human. The human half was chosen to
-be hard rather than easy: two non-native-English posts (one taken off a live
-timeline), a polished essay-style tweet, a human marketing post and a formal
-outage note. Each was scored 0 to 4 on the rubric adapted from Wikipedia's
-*Signs of AI writing* (ATTRIBUTION.md).
+Fifty labelled posts (`test/fixtures/writing-eval.json`), 15 slop and 35
+human, scored 0 to 4 on the rubric adapted from Wikipedia's *Signs of AI
+writing* (ATTRIBUTION.md). Eighteen of the human half were written to be hard
+rather than easy: non-native English in several registers, polished technical
+prose, genuine enthusiastic announcements, and human writing that uses the
+same "not X, but Y" contrast the rubric looks for. Four are real posts taken
+off a live timeline. Run it with `node scripts/eval-classifier.mjs labelled`.
 
-| Post | Truth | Score |
-|---|---|---|
-| X thread template ("It's not. It's about leverage.") | slop | 3.91 |
-| LinkedIn listicle ("3 crucial lessons") | slop | 3.98 |
-| X puffery ("marks a pivotal shift") | slop | 3.55 |
-| LinkedIn announcement ("thrilled to announce") | slop | 2.94 |
-| Formal outage note | human | 1.68 |
-| Polished open-source essay | human | 1.43 |
-| Prank video caption | human | 1.28 |
-| Non-native English, medical | human | 0.89 |
-| Non-native English, business register | human | 0.88 |
-| Creator announcement | human | 0.84 |
-| Human marketing post | human | 0.70 |
-| Debugging complaint | human | 0.07 |
+| Threshold | Caught | False positives | Precision | Recall |
+|---|---|---|---|---|
+| 2.0 | 15/15 | 0/35 | 1.000 | 1.000 |
+| 2.5 | 15/15 | 0/35 | 1.000 | 1.000 |
+| 3.0 | 14/15 | 0/35 | 1.000 | 0.933 |
+| 3.5 | 9/15 | 0/35 | 1.000 | 0.600 |
 
-| Threshold | Caught | False positives |
-|---|---|---|
-| 2.0 | 4/4 | 1/8 |
-| 2.5 | 4/4 | 0/8 |
-| 3.0 | 3/4 | 0/8 |
+The threshold is chosen by where the two classes separate, not by the table:
 
-**Default: `HIDE_AT = 3.0`** (`extension/src/core/writing.js`). 2.5 scored
-better on this sample, but hiding is the harsher action and twelve posts are
-far too few to spend someone's visibility on the difference.
+| | Score |
+|---|---|
+| Highest human ("It's not that remote work doesn't function. It's that...") | 1.75 |
+| Lowest slop (LinkedIn humblebrag, "Humbled and honored to share...") | 2.97 |
+
+**Default: `HIDE_AT = 2.5`** (`extension/src/core/writing.js`), which sits in
+that 1.22-wide gap with 0.75 of headroom above the worst human case.
+
+A higher bar is not automatically a safer one. 3.0 falls *inside* the bottom of
+the slop cluster and loses the humblebrag and the announcement, which are the
+two commonest shapes on LinkedIn. 2.0 scores identically to 2.5 here but leaves
+only 0.25 of headroom, which is too little to carry off this corpus. If this
+number is ever moved, move it up: recall costs a post nobody reads, precision
+costs a person.
 
 ### Known limitation
 
-Twelve posts is a sample, not a study. It fixes no precision or recall figure
-worth quoting, and the human half was written for the purpose rather than
-drawn from a feed. Re-measure on a larger labelled sample, drawn from real
-timelines, before moving the threshold or claiming a rate.
+Fifty posts is a sample, not a study, and 31 of them were written for the
+purpose rather than drawn from a feed, which flatters separation: real writing
+is messier than either class here. Precision of 1.000 means no false positive
+was observed in 35 human posts, not that the rate is zero.
+
+Two things remain unmeasured. The share of a real timeline the gate sends is
+still unknown, because X's feed virtualization defeated three attempts to
+harvest a usable sample; `scripts/eval-classifier.mjs feed` exists to measure
+it as soon as one can be collected. And nothing here measures LinkedIn prose
+specifically, which is where the check matters most.
 
 ## 24. Trap: the rubric flags non-native English unless told not to
 
@@ -517,3 +524,33 @@ answer about a real person.
 Cost at one post per request, two questions: about 835 input tokens, roughly
 **$0.035 per thousand posts**, about 1 second each and parallelisable. The
 local gate holds back most of a feed before any of that is spent.
+
+## 26. Trap: the gate was the bottleneck, not the model
+
+The local gate (`extension/src/content/slopsigns.js`) first shipped requiring
+either a structural sign (negative parallelism, an arrow or numbered listicle)
+or two softer ones, reasoning that a lone sign would catch enthusiastic human
+writing. Measured over the 50-post set, that reasoning was wrong twice:
+
+| Gate rule | Slop sent | Slop held back | Human posts sent |
+|---|---|---|---|
+| Structural sign, or two soft | 8/15 | **7** | 3/35 |
+| **Any sign at all** | 15/15 | **0** | **3/35** |
+
+Every one of the seven held back had tripped exactly one sign, and they were
+the commonest shapes on LinkedIn: the humblebrag, the generic motivational
+post, the corporate abstract noun pile. Meanwhile the strict rule saved
+nothing, because **32 of the 35 human posts trip no sign at all** — the gate
+simply does not see ordinary human writing, so demanding two signs only ever
+penalised slop. Loosening it moved recall at the shipping threshold from 0.53
+to 1.000 and left both cost and text egress unchanged.
+
+The lesson is about where a filter's errors hide. End-to-end recall was poor
+while the model was performing perfectly; the loss was upstream, in a cheap
+local rule nobody was measuring. A tier that silently declines to ask is
+indistinguishable, from the outside, from a tier that asks and gets it wrong.
+
+Worth saying plainly, because it nearly stood: the gate's own unit test
+asserted "slop wrongly held back: 0" and passed the whole time. It was checked
+against five posts, and the gate had been written against those same five. It
+took a corpus the gate had never seen to show the rule was wrong.

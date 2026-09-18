@@ -58,17 +58,36 @@ test('one strong structural tell is enough on its own', () => {
   ]);
 });
 
-test('a single soft tell is not enough, but two are', () => {
-  // One AI-vocabulary word is ordinary English and must not spend a request.
+test('one sign is enough to ask about', () => {
+  // The rule this replaced wanted two. Measured over 50 labelled posts, that
+  // held back 7 of 15 slop posts, each of which had tripped exactly one sign,
+  // and saved nothing: the human posts it let through trip no sign at all.
+  const soft = 'Honestly a real game-changer for how we work, and everyone will feel it soon.';
+  assert.deepEqual(hits(soft), ['significance_puffery']);
+  assert.ok(sends(soft), 'a lone soft sign must still be asked about');
+});
+
+test('the single-sign shapes that used to be dropped are all sent', () => {
+  // Every one of these was a miss under the old rule, and each trips exactly
+  // one sign. They are the commonest slop on LinkedIn, so missing them missed
+  // most of the point.
+  const wasMissed = [
+    'Humbled and honored to share that our team has been recognized for excellence in innovation. This recognition belongs to every single person who showed up.',
+    'Great leaders do three things consistently: they listen deeply, they act decisively, and they empower relentlessly. This is a game-changer for any organization.',
+    'As we navigate the ever-evolving landscape of digital transformation, it becomes crucial to foster a holistic approach that empowers every stakeholder.',
+    'Your network is your net worth. But the quality of your connections matters far more than the quantity. Agree or disagree? Let me know below.',
+  ];
+  for (const text of wasMissed) {
+    assert.ok(sends(text), `would never be checked: ${text.slice(0, 40)}`);
+    assert.equal(hits(text).length, 1, 'and it is carried by a single sign');
+  }
+});
+
+test('a post that trips nothing is settled in the page and never sent', () => {
+  // The saving is here, not in being strict about which signs count.
   const one = 'This is a crucial change and I am glad we finally found the time for it.';
   assert.equal(hits(one).length, 0, 'one vocabulary word is not yet a signal');
   assert.equal(sends(one), false);
-
-  const soft = 'Honestly a real game-changer for how we work, and everyone will feel it soon.';
-  assert.deepEqual(hits(soft), ['significance_puffery']);
-  assert.equal(sends(soft), false, 'one soft tell alone must not spend a request');
-
-  assert.ok(sends('A crucial, pivotal moment that will redefine the landscape of our whole industry.'));
 });
 
 test('the tightest negative parallelism is caught', () => {
