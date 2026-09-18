@@ -17,6 +17,8 @@ export const MAX_ID_LEN = 128;
 export const MIN_VOTES = 3;
 /** Distinct reporters before a measured channel is served without review. */
 export const MIN_TALLIES = 2;
+/** The same, for the weaker writing evidence. */
+export const MIN_WRITINGS = 2;
 
 export const PLATFORMS = ['youtube', 'x', 'linkedin'];
 
@@ -30,6 +32,21 @@ export const PLATFORMS = ['youtube', 'x', 'linkedin'];
 export const TALLY_RULES = {
   youtube: { minSamples: 5, threshold: 0.6, maxSamples: 500 },
   x: { minSamples: 8, threshold: 0.25, maxSamples: 500 },
+};
+
+/**
+ * The same shape for the writing check (src/jev.js), which reads the words
+ * rather than counting a label the platform published. It covers LinkedIn,
+ * where there is no label to count at all and this is the only signal there
+ * has ever been.
+ *
+ * The bar is higher than X's disclosure bar because the evidence is weaker:
+ * half an author's checked posts, not a quarter. These are starting points to
+ * re-measure, not settled constants; see RESEARCH.md.
+ */
+export const WRITING_RULES = {
+  x: { minSamples: 6, threshold: 0.5, maxSamples: 500 },
+  linkedin: { minSamples: 6, threshold: 0.5, maxSamples: 500 },
 };
 
 /**
@@ -120,11 +137,25 @@ export function isValidTally(ai, total, platform = 'youtube') {
   return ai / total >= rule.threshold;
 }
 
+/** A writing claim we are willing to record. Integers, sane, over threshold. */
+export function isValidWriting(ai, total, platform) {
+  const rule = Object.hasOwn(WRITING_RULES, platform ?? '') ? WRITING_RULES[platform] : null;
+  if (!rule) return false;
+  if (!Number.isInteger(ai) || !Number.isInteger(total)) return false;
+  if (total < rule.minSamples || total > rule.maxSamples) return false;
+  if (ai < 0 || ai > total) return false;
+  return ai / total >= rule.threshold;
+}
+
 /**
  * What the list says about an entry, or null to keep it in mind unserved.
  * `evidence` tells clients what backs a served entry: 'disclosure' (clients
- * measured the channel's own AI labels), 'vote' (people's clicks), or
- * 'review' (a maintainer checked it and nothing was measured).
+ * measured the channel's own AI labels), 'writing' (the writing check read
+ * this author's posts as AI-written), 'vote' (people's clicks), or 'review'
+ * (a maintainer checked it and nothing was measured).
+ *
+ * The order is the order of strength. A label the platform itself published
+ * outranks a model's reading of the words, which outranks a click.
  */
 export function decide(row, mode = 'all') {
   if (row.review === 'clean') return null;
@@ -137,6 +168,18 @@ export function decide(row, mode = 'all') {
   // Measurement stands unless enough people push back.
   if (row.tallies >= MIN_TALLIES && score > -MIN_VOTES) return { slop: true, evidence: 'disclosure' };
   if (mode === 'votes') return null;
+
+  // Weaker than a tally, so it never publishes in 'votes' mode the way a
+  // measurement does: only with review off entirely, and only while nobody
+  // has pushed back. Absent columns read as zero, so an older caller's SELECT
+  // simply never reaches here.
+  if (
+    (row.writings ?? 0) >= MIN_WRITINGS &&
+    isValidWriting(row.writing_ai, row.writing_total, row.platform) &&
+    score > -MIN_VOTES
+  ) {
+    return { slop: true, evidence: 'writing' };
+  }
 
   if (score >= MIN_VOTES) return { slop: true, evidence: 'vote' };
   if (score <= -MIN_VOTES) return { slop: false, evidence: 'vote' };

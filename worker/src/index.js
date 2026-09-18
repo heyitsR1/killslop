@@ -42,6 +42,7 @@ import {
   reviewMode,
   sha256Hex,
 } from './policy.js';
+import { MAX_TEXT_CHARS, askJev } from './jev.js';
 import { clientNetwork, overLimit, readJson } from './http.js';
 import { handleAdmin } from './admin.js';
 import { SITE_HOST, handleShared, handleSite, isSiteHost } from './site.js';
@@ -99,7 +100,9 @@ async function getBucket(env, prefix) {
   if (!/^[0-9a-f]{4}$/.test(prefix)) return json({ error: 'bad prefix' }, 400);
 
   const { results } = await env.DB.prepare(
-    `SELECT hash, kind, up, down, tallies, review FROM entries WHERE prefix = ?1`
+    `SELECT hash, kind, platform, up, down, tallies,
+            writings, writing_ai, writing_total, review
+       FROM entries WHERE prefix = ?1`
   )
     .bind(prefix)
     .all();
@@ -129,34 +132,54 @@ async function getBucket(env, prefix) {
 }
 
 /**
- * The decided channel list in the clear, for consumers that cannot do a
+ * The decided account list in the clear, for consumers that cannot do a
  * bucket lookup (uBlock lists, ReVanced-style patches, researchers).
- * Channels are public entities; videos are not exported.
+ *
+ * Accounts only, on every platform. A channel, an X account and a LinkedIn
+ * author are public entities; the videos and posts they made are not exported,
+ * and a LinkedIn post's id is a one-way hash that would mean nothing anyway.
  */
-async function getExport(env) {
+const EXPORTS = {
+  '/api/v1/export/youtube-channels.json': { platform: 'youtube', key: 'channels' },
+  '/api/v1/export/x-accounts.json': { platform: 'x', key: 'accounts' },
+  '/api/v1/export/linkedin-authors.json': { platform: 'linkedin', key: 'authors' },
+};
+
+async function getExport(env, { platform, key }) {
   const { results } = await env.DB.prepare(
-    `SELECT id, up, down, tallies, tally_ai, tally_total, review, updated FROM entries
-      WHERE kind = 'channel' AND platform = 'youtube'
+    `SELECT id, platform, up, down, tallies, tally_ai, tally_total,
+            writings, writing_ai, writing_total, review, updated
+       FROM entries
+      WHERE kind = 'channel' AND platform = ?1
       ORDER BY updated DESC LIMIT 50000`
-  ).all();
+  )
+    .bind(platform)
+    .all();
 
   const mode = reviewMode(env);
-  const channels = [];
+  const rows = [];
   for (const r of results || []) {
     const d = decide(r, mode);
     if (!d || !d.slop) continue;
-    channels.push({
+    rows.push({
       id: r.id,
       evidence: d.evidence,
       reviewed: r.review === 'slop',
       score: r.up - r.down,
       tallies: r.tallies,
       sampled: r.tally_total ? { ai: r.tally_ai, total: r.tally_total } : null,
+      // What the writing check read, when that is what put it here.
+      read: r.writing_total ? { ai: r.writing_ai, total: r.writing_total } : null,
       updated: r.updated,
     });
   }
   return json(
-    { license: 'CC-BY-SA-4.0', attribution: 'KillSlop (https://killslop.app)', generated: Date.now(), channels },
+    {
+      license: 'CC-BY-SA-4.0',
+      attribution: 'KillSlop (https://killslop.app)',
+      generated: Date.now(),
+      [key]: rows,
+    },
     200,
     { 'cache-control': 'public, max-age=3600' }
   );
@@ -326,9 +349,104 @@ async function postFeedback(request, env) {
 
 async function getStats(env) {
   const { results } = await env.DB.prepare(
-    `SELECT kind, id, up, down, tallies, review, json_extract(meta, '$.ucid') AS ucid FROM entries`
+    `SELECT kind, id, platform, up, down, tallies, writings, writing_ai, writing_total,
+            review, json_extract(meta, '$.ucid') AS ucid
+       FROM entries`
   ).all();
   return json(countStats(results || [], reviewMode(env)), 200, { 'cache-control': 'public, max-age=60' });
+}
+
+/* --------------------------------------------------------- writing check */
+
+/**
+ * A bucket of writing-check answers, keyed by the hash of the post's text
+ * rather than by an id. Same blindness as the entry buckets: the client sends
+ * four hex characters and finds its own answer in what comes back, so a post
+ * anyone has had checked before costs no text at all.
+ */
+async function getTextBucket(env, prefix) {
+  if (!/^[0-9a-f]{4}$/.test(prefix)) return json({ error: 'bad prefix' }, 400);
+
+  const { results } = await env.DB.prepare(
+    `SELECT hash, score, signal, conf, model FROM texts WHERE prefix = ?1`
+  )
+    .bind(prefix)
+    .all();
+
+  return json({ prefix, entries: results || [] }, 200, {
+    'cache-control': 'public, max-age=300',
+  });
+}
+
+/**
+ * Model calls made in the last day. Every call inserts exactly one row and a
+ * cache hit inserts none, so the table counts itself and needs no meter.
+ */
+async function writingSpentToday(env) {
+  const row = await env.DB.prepare(`SELECT COUNT(*) AS n FROM texts WHERE created > ?1`)
+    .bind(Date.now() - DAY_MS)
+    .first();
+  return row?.n ?? 0;
+}
+
+/**
+ * Check one post's writing, and remember the answer for everyone.
+ *
+ * The text arrives already normalized by the client (KillSlopSigns in
+ * content/slopsigns.js) because the hash has to be the same on both sides.
+ * It is hashed, asked about, and dropped: only the hash and the answer are
+ * stored, so this table can never be read back into anyone's feed.
+ *
+ * This is the one endpoint that spends money, and it is unauthenticated, so
+ * it is bounded four ways: the platform allow-list, the length cap, the
+ * per-network limiter, and a hard daily ceiling across everyone.
+ */
+async function postWriting(request, env) {
+  const body = await readJson(request);
+  if (!body) return json({ error: 'bad json' }, 400);
+
+  const { text, platform } = body;
+  // YouTube is deliberately absent: guessing from titles was rejected in
+  // RESEARCH.md section 7, and that has not changed.
+  if (platform !== 'x' && platform !== 'linkedin') return json({ error: 'bad platform' }, 400);
+  if (typeof text !== 'string' || !text.trim()) return json({ error: 'bad text' }, 400);
+  if (text.length > MAX_TEXT_CHARS) return json({ error: 'text too long' }, 400);
+
+  const hash = await sha256Hex(text);
+  const cached = await env.DB.prepare(
+    `SELECT hash, score, signal, conf, model FROM texts WHERE hash = ?1`
+  )
+    .bind(hash)
+    .first();
+  if (cached) return json({ ...cached, cached: true });
+
+  if (!env.TYPESAFE_API_KEY) return json({ error: 'writing check is off' }, 503);
+
+  const budget = Number(env.WRITING_BUDGET_PER_DAY) || 0;
+  if (budget > 0 && (await writingSpentToday(env)) >= budget) {
+    return json({ error: 'budget spent' }, 429, { 'retry-after': '3600' });
+  }
+
+  const answer = await askJev(text, env);
+  // The check is the last tier, so no answer simply means undecided.
+  if (!answer) return json({ error: 'no answer' }, 502);
+
+  await env.DB.prepare(
+    `INSERT INTO texts (hash, prefix, score, signal, conf, model, created)
+     VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)
+     ON CONFLICT(hash) DO NOTHING`
+  )
+    .bind(hash, hash.slice(0, PREFIX_LEN), answer.score, answer.signal, answer.conf, answer.model, Date.now())
+    .run();
+
+  return json({
+    hash,
+    score: answer.score,
+    signal: answer.signal,
+    conf: answer.conf,
+    model: answer.model,
+    cached: false,
+  });
 }
 
 /* ----------------------------------------------------------------- router */
@@ -358,7 +476,9 @@ export default {
       if (await overLimit(env, 'RL_READ', request)) return tooMany();
       const bucket = path.match(/^\/api\/v1\/bucket\/([0-9a-f]{1,8})$/);
       if (bucket) return getBucket(env, bucket[1]);
-      if (path === '/api/v1/export/youtube-channels.json') return getExport(env);
+      const text = path.match(/^\/api\/v1\/text\/([0-9a-f]{1,8})$/);
+      if (text) return getTextBucket(env, text[1]);
+      if (Object.hasOwn(EXPORTS, path)) return getExport(env, EXPORTS[path]);
       if (path === '/api/v1/stats') return getStats(env);
     }
 
@@ -366,6 +486,10 @@ export default {
       if (path === '/api/v1/feedback') {
         if (await overLimit(env, 'RL_FEEDBACK', request)) return tooMany();
         return postFeedback(request, env);
+      }
+      if (path === '/api/v1/writing') {
+        if (await overLimit(env, 'RL_WRITING', request)) return tooMany();
+        return postWriting(request, env);
       }
       const write = Object.hasOwn(WRITES, path) ? WRITES[path] : null;
       if (write) {

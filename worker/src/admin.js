@@ -180,8 +180,11 @@ const SORT_SQL = {
   recent: 'updated DESC',
   reviewed: 'reviewed_at DESC, updated DESC',
 };
+// decide() reads the writing columns too, so the console's "served" state
+// depends on them being selected here.
 const ENTRY_COLUMNS =
-  'hash, id, kind, platform, up, down, tallies, tally_ai, tally_total, created, updated, ' +
+  'hash, id, kind, platform, up, down, tallies, tally_ai, tally_total, ' +
+  'writings, writing_ai, writing_total, created, updated, ' +
   'review, reviewed_at, title, meta, meta_at';
 
 const pick = (table, key, fallback) => (Object.hasOwn(table, key ?? '') ? key : fallback);

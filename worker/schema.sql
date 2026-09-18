@@ -7,7 +7,7 @@
 -- for rebuilding buckets and for the channel export; it is never returned by
 -- the bucket endpoint.
 --
--- Two kinds of evidence live on one row and are never mixed:
+-- Three kinds of evidence live on one row and are never mixed:
 --
 --   up / down   human opinion: "this is slop" / "this is not slop" clicks.
 --   tallies     objective measurement: how many distinct reporters saw this
@@ -16,9 +16,13 @@
 --               X: >=25% of >=8 media posts carry X's AI disclosure; see
 --               TALLY_RULES in src/policy.js). tally_ai and tally_total are
 --               the summed samples behind them, for the record.
+--   writings    how many distinct reporters saw this author's posts read as
+--               AI-written to the writing check (src/jev.js). A model's
+--               reading of the words, not a label anyone published, so it is
+--               weaker than a tally and is counted apart from it.
 --
--- A third column, review, is the maintainer's call from the console at /admin.
--- It outranks both (see decide() in src/policy.js).
+-- A fourth column, review, is the maintainer's call from the console at /admin.
+-- It outranks all three (see decide() in src/policy.js).
 --
 -- Ids never share a spelling across platforms, because the hash is of the id
 -- alone: YouTube's are bare (the list began with them), X's start 'x:' and
@@ -36,6 +40,9 @@ CREATE TABLE IF NOT EXISTS entries (
   tallies     INTEGER NOT NULL DEFAULT 0,
   tally_ai    INTEGER NOT NULL DEFAULT 0,
   tally_total INTEGER NOT NULL DEFAULT 0,
+  writings      INTEGER NOT NULL DEFAULT 0,
+  writing_ai    INTEGER NOT NULL DEFAULT 0,
+  writing_total INTEGER NOT NULL DEFAULT 0,
   created     INTEGER NOT NULL,
   updated     INTEGER NOT NULL,
   review      TEXT,                 -- NULL waiting | 'slop' approved | 'clean' rejected
@@ -48,6 +55,25 @@ CREATE TABLE IF NOT EXISTS entries (
 CREATE INDEX IF NOT EXISTS idx_entries_prefix ON entries (prefix);
 CREATE INDEX IF NOT EXISTS idx_entries_kind ON entries (kind, platform);
 CREATE INDEX IF NOT EXISTS idx_entries_review ON entries (review, kind);
+
+-- The writing check's cache. The post's text is never stored, only the hash of
+-- it and what the model said, so nothing here can be read back into anyone's
+-- feed. Two people who saw the same post share one answer, which is what lets
+-- a client ask by hash prefix and send no text at all.
+CREATE TABLE IF NOT EXISTS texts (
+  hash    TEXT PRIMARY KEY,     -- sha256(normalized text), lowercase hex
+  prefix  TEXT NOT NULL,        -- first 4 chars, as for entries
+  score   REAL NOT NULL,        -- 0 to 4, the model's slop_level
+  signal  TEXT,                 -- strongest matching sign, so the card can say why
+  conf    REAL,
+  model   TEXT NOT NULL,        -- a model change can invalidate cleanly
+  created INTEGER NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_texts_prefix ON texts (prefix);
+-- The daily spend is counted as rows created in the last day, on every cache
+-- miss, so that count must not walk the whole table.
+CREATE INDEX IF NOT EXISTS idx_texts_created ON texts (created);
 
 -- One row per person per entry per source. A person is two keys, each
 -- sha256(... + entry hash + secret salt), so one person's rows on different
