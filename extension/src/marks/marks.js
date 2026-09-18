@@ -19,6 +19,22 @@ const watchUrl = (id) => `https://www.youtube.com/watch?v=${id}`;
 const channelUrl = (id) =>
   id.startsWith('@') ? `https://www.youtube.com/${id}` : `https://www.youtube.com/channel/${id}`;
 
+/** Ids follow core/ids.js: X and LinkedIn ids carry a prefix, YouTube's none. */
+const platformOf = (id) => (id.startsWith('x:') ? 'x' : id.startsWith('li:') ? 'linkedin' : 'youtube');
+const PLATFORM_LABEL = { youtube: 'YouTube', x: 'X', linkedin: 'LinkedIn' };
+const CHANNEL_NOUN = { youtube: 'channel', x: 'account', linkedin: 'author' };
+
+/** Where a mark points, or null for a LinkedIn post: its id is a one-way hash. */
+function urlOf({ id, kind }) {
+  if (id.startsWith('x:u:')) return `https://x.com/i/user/${id.slice(4)}`;
+  if (id.startsWith('x:@')) return `https://x.com/${id.slice(3)}`;
+  if (id.startsWith('x:')) return `https://x.com/i/status/${id.slice(2)}`;
+  const author = /^li:(in|company|showcase):(.+)$/.exec(id);
+  if (author) return `https://www.linkedin.com/${author[1]}/${author[2]}/`;
+  if (id.startsWith('li:')) return null;
+  return kind === 'channel' ? channelUrl(id) : watchUrl(id);
+}
+
 const rtf = new Intl.RelativeTimeFormat(undefined, { numeric: 'auto' });
 function ago(ts) {
   const mins = Math.round((ts - Date.now()) / 60_000);
@@ -37,7 +53,9 @@ function el(tag, className) {
   return node;
 }
 
+/** A link that opens in a new tab, or a plain span when there is nowhere to go. */
 function link(className, href) {
+  if (!href) return el('span', className);
   const a = el('a', className);
   a.href = href;
   a.target = '_blank';
@@ -61,35 +79,46 @@ async function lookUp(videoId) {
 
 function row(m) {
   const isChannel = m.kind === 'channel';
-  const url = isChannel ? channelUrl(m.id) : watchUrl(m.id);
+  const platform = platformOf(m.id);
+  const isVideo = platform === 'youtube' && !isChannel;
+  const url = urlOf(m);
   const item = el('div', 'item');
 
-  const thumb = link(isChannel ? 'item__thumb item__thumb--channel' : 'item__thumb', url);
+  const thumb = link(isVideo ? 'item__thumb' : 'item__thumb item__thumb--channel', url);
   thumb.tabIndex = -1;
   thumb.setAttribute('aria-hidden', 'true');
-  if (isChannel) {
-    const avatar = el('span', 'item__avatar');
-    avatar.textContent = (m.meta?.title || m.id).replace(/^@/, '').charAt(0).toUpperCase();
-    thumb.append(avatar);
-  } else {
+  if (isVideo) {
     const img = el('img');
     img.src = `https://i.ytimg.com/vi/${m.id}/mqdefault.jpg`;
     img.alt = '';
     img.loading = 'lazy';
     thumb.append(img);
+  } else {
+    // No thumbnail to show without asking the site: an initial stands in.
+    const avatar = el('span', 'item__avatar');
+    const name = isChannel ? m.meta?.title : m.meta?.channel || m.meta?.title;
+    avatar.textContent = (name || m.id.replace(/^(x|li):(u:|in:|company:|showcase:)?/, ''))
+      .replace(/^@/, '')
+      .charAt(0)
+      .toUpperCase();
+    thumb.append(avatar);
   }
 
   const body = el('div', 'item__body');
   const title = link('item__title', url);
   const meta = el('div', 'item__meta');
   const paint = (info) => {
-    title.textContent = info?.title || m.id;
-    meta.textContent = [isChannel ? 'Whole channel' : info?.channel, `marked ${ago(m.ts)}`]
+    title.textContent = info?.title || (platform === 'linkedin' && !isChannel ? 'LinkedIn post' : m.id);
+    meta.textContent = [
+      platform !== 'youtube' && PLATFORM_LABEL[platform],
+      isChannel ? `Whole ${CHANNEL_NOUN[platform]}` : info?.channel,
+      `marked ${ago(m.ts)}`,
+    ]
       .filter(Boolean)
       .join(' · ');
   };
   paint(m.meta);
-  if (!isChannel && !m.meta?.title) lookUp(m.id).then((info) => info && paint(info));
+  if (isVideo && !m.meta?.title) lookUp(m.id).then((info) => info && paint(info));
   body.append(title, meta);
 
   const remove = el('button', 'btn btn--sm');
@@ -120,8 +149,8 @@ function render() {
   const list = $('list');
   list.replaceChildren();
   for (const [kind, label] of [
-    ['channel', 'Channels'],
-    ['video', 'Videos'],
+    ['channel', 'Channels and accounts'],
+    ['video', 'Videos and posts'],
   ]) {
     const items = shown.filter((m) => m.kind === kind);
     if (!items.length) continue;
@@ -137,7 +166,7 @@ function render() {
   $('empty').hidden = shown.length > 0;
   $('empty').textContent =
     tab === 'slop'
-      ? 'Nothing marked yet. Press AI SLOP under any YouTube video or Short.'
+      ? 'Nothing marked yet. Press AI SLOP under a YouTube video, an X post or a LinkedIn post.'
       : 'Nothing here yet. Things you tell KillSlop are not slop show up here.';
 }
 
@@ -153,7 +182,7 @@ $('tabs').addEventListener('click', (ev) => {
   render();
 });
 
-// Marks made in a YouTube tab show up when you come back here.
+// Marks made in another tab show up when you come back here.
 document.addEventListener('visibilitychange', () => {
   if (!document.hidden) load();
 });

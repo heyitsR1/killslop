@@ -710,6 +710,10 @@ body {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.cells--4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
 .cell {
   padding: 36px 32px 40px;
   background: var(--page);
@@ -1437,7 +1441,8 @@ body {
     padding-bottom: 0;
   }
 
-  .cells--3 {
+  .cells--3,
+  .cells--4 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -1524,6 +1529,7 @@ body {
     display: none;
   }
 
+  .cells--4,
   .cells--3,
   .cells--2 {
     grid-template-columns: minmax(0, 1fr);

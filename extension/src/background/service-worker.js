@@ -5,6 +5,9 @@ import * as store from '../core/store.js';
 import * as community from '../core/community.js';
 import { getSettings, setSettings } from '../core/settings.js';
 
+/** Every page a content script runs on; the hosts in the manifest. */
+const CONTENT_TABS = ['*://*.youtube.com/*', 'https://x.com/*', 'https://www.linkedin.com/*'];
+
 /**
  * Session counter shown in the popup, reset on browser restart. Tracked as a
  * set of ids rather than a running total: a feed is re-resolved on every scroll
@@ -13,8 +16,9 @@ import { getSettings, setSettings } from '../core/settings.js';
 const hiddenThisSession = new Set();
 
 verdict.onResolved((update) => {
-  // Push late-resolving probe results to every YouTube tab.
-  chrome.tabs.query({ url: '*://*.youtube.com/*' }, (tabs) => {
+  // Push late-resolving results to every tab we run in. Ids are namespaced
+  // per platform, so a tab simply finds nothing of its own in another's.
+  chrome.tabs.query({ url: CONTENT_TABS }, (tabs) => {
     for (const tab of tabs) {
       chrome.tabs.sendMessage(tab.id, { type: 'killslop:update', update }).catch(() => {});
     }
@@ -22,8 +26,8 @@ verdict.onResolved((update) => {
 });
 
 const handlers = {
-  async resolve({ items }) {
-    const { verdicts, probe } = await verdict.resolveBatch(items);
+  async resolve({ items, platform = 'youtube' }) {
+    const { verdicts, probe } = await verdict.resolveBatch(items, platform);
     for (const [videoId, v] of Object.entries(verdicts)) {
       if (v.slop) hiddenThisSession.add(videoId);
     }
@@ -34,10 +38,17 @@ const handlers = {
    * A probe result from a content script. The fetch has to happen there —
    * YouTube 403s InnerTube requests carrying an extension origin.
    */
-  async probeResult({ videoId, channelId, verdict: v, source, header }) {
-    const res = await verdict.recordProbe({ videoId, channelId, verdict: v, source, header });
+  async probeResult({ videoId, channelId, verdict: v, source, header, owner }) {
+    const res = await verdict.recordProbe({ videoId, channelId, verdict: v, source, header, owner });
     if (res.slop) hiddenThisSession.add(videoId);
     return res;
+  },
+
+  /** What the X content script read off X's own post data. */
+  async observe({ posts }) {
+    const res = await verdict.recordObservations(Array.isArray(posts) ? posts.slice(0, 500) : []);
+    for (const id of res.ai || []) hiddenThisSession.add(id);
+    return { ok: res.ok };
   },
 
   async override({ id, kind, slop, meta }) {

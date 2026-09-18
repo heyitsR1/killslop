@@ -2,8 +2,8 @@
 
 export const PLATFORMS = {
   youtube: { id: 'youtube', label: 'YouTube', status: 'live' },
-  linkedin: { id: 'linkedin', label: 'LinkedIn', status: 'planned' },
-  x: { id: 'x', label: 'X / Twitter', status: 'planned' },
+  x: { id: 'x', label: 'X', status: 'live' },
+  linkedin: { id: 'linkedin', label: 'LinkedIn', status: 'live' },
   reddit: { id: 'reddit', label: 'Reddit', status: 'planned' },
   pinterest: { id: 'pinterest', label: 'Pinterest', status: 'planned' },
   google: { id: 'google', label: 'Google Images', status: 'planned' },
@@ -12,12 +12,12 @@ export const PLATFORMS = {
 
 export const DEFAULTS = {
   enabled: true,
-  platforms: { youtube: true },
+  platforms: { youtube: true, x: true, linkedin: true },
 
   /** 'hide' removes the tile; 'dim' greys it out with a label. */
   action: 'hide',
 
-  /** Trust YouTube's own per-video disclosure. */
+  /** Trust the platform's own AI label: YouTube's disclosure, X's AI media mark. */
   useDisclosure: true,
 
   /**

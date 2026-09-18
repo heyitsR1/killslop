@@ -12,6 +12,8 @@
  * clicked, not their browsing history.
  */
 
+import { platformOf } from './ids.js';
+
 const API_BASE = 'https://api.killslop.app';
 const PREFIX_LEN = 4;
 
@@ -114,7 +116,7 @@ export async function lookup(ids) {
  * Submit a report. `kind` is 'video' or 'channel', `slop` is the user's claim.
  * Fire-and-forget: a failed report must never block the UI.
  */
-export async function report({ id, kind, slop, platform = 'youtube', evidence = null }) {
+export async function report({ id, kind, slop, platform = platformOf(id), evidence = null }) {
   try {
     const res = await fetch(`${API_BASE}/api/v1/report`, {
       method: 'POST',

@@ -1,7 +1,8 @@
-# KillSlop — YouTube research
+# KillSlop research
 
-Everything here was measured, not assumed. Reproduce with `npm run test:live`
-and the probe scripts under `test/`. Measured 2026-08-16.
+Everything here was measured, not assumed. Sections 1 to 11 cover YouTube
+(measured from 2026-08-16; reproduce with `npm run test:live` and the probe
+scripts under `test/`), 12 to 17 X, and 18 to 22 LinkedIn.
 
 ---
 
@@ -224,3 +225,207 @@ kids' content, AI voice-over-stock-footage, or AI music — which is exactly
 where channel inference and the community list have to carry the load. The
 §6 measurement (11.1% of a slop-heavy sample labelled) was taken after this
 change.
+
+---
+
+# X
+
+Measured 2026-09-15 on the logged-in desktop web client (x.com), reading the
+page's own API responses from inside the page.
+
+## 12. X puts the AI signal in the feed itself
+
+| Source | Carries AI disclosure? |
+|---|---|
+| Timeline JSON (home `…/flow/timeline.json`, GraphQL `SearchTimeline`, and the same `Tweet` object everywhere) | **Yes**, on every post that has one. |
+| The rendered post | Yes, as plain text under the media: "Made with AI", "Made with Grok Imagine". |
+| Public API v2 | **No.** `paid_partnership` is documented; nothing AI-related. |
+
+The field, on the `Tweet` object next to `legacy` and `core`:
+
+```
+content_disclosure.ai_generated_disclosure
+  has_ai_generated_media           true
+  can_edit                         false   X detected it
+                                   true    the author declared it
+  ai_generated_detection_source    "C2paClient"     C2PA manifest in the upload
+                                   "GrokSignature"  made with X's own Grok
+                                   "UserDeclared"   the author's toggle
+                                   (absent)         seen with can_edit: true
+```
+
+This is the opposite of YouTube (§1): the feed response already says which
+posts are labelled, so **X needs no probe tier at all**. Reading the label
+costs nothing beyond the requests the page makes anyway.
+
+| Sample | Posts | Labelled | Sources |
+|---|---|---|---|
+| Search "grok imagine" | 29 | 11 | 8 C2paClient, 3 GrokSignature |
+| Search "chatgpt image filter:images" | 23 | 7 | 4 C2paClient, 1 UserDeclared, 2 no source |
+| Home, For You, four pages | ~26 | 0 | |
+
+## 13. Trap: the label is a media label, and only as good as provenance
+
+The key is `has_ai_generated_media`. No text-only post carried it: not in the
+samples above, and not among the replies under a 50M-view AI video. AI-written
+text on X, which is most reply slop, has no platform signal at all.
+
+Media is labelled only when the file proves where it came from (C2PA, Grok's
+own signature) or the author says so. Screenshots, re-encodes and generators
+that do not sign leave no trace, which is why the accounts in §15 are far
+from fully labelled.
+
+## 14. Trap: the rendered label is not a stable hook
+
+The "Made with AI" line has no `data-testid`, no `aria-label` and no role; it
+is a text node, and its wording changes with the tool ("Made with Grok
+Imagine"). Matching it would repeat YouTube's localised-text trap (§3).
+
+So the X adapter reads the JSON, not the label. A content script's isolated
+world never sees the page's own requests, which leaves one route: a script in
+the page's world (`"world": "MAIN"`, at `document_start`, before X's bundle
+captures `fetch`) that wraps `fetch` and `XMLHttpRequest`, walks each API
+response for `__typename: "Tweet"` objects, and hands the isolated content
+script `{post id, author id, handle, labelled, source}`. It sends nothing
+anywhere and changes no request.
+
+## 15. Accounts are not bimodal on X
+
+The YouTube finding (§7) does not carry over. Media posts per account, from
+`from:<handle> filter:media`, first two pages:
+
+| Account | Media posts labelled |
+|---|---|
+| AI image account A | 23/34 (68%) |
+| AI image account B | 12/24 (50%) |
+| AI prompt-sharing account C | 8/20 (40%) |
+| AI celebrity-image account D | 7/20 (35%) |
+| Grok video account E | 4/20 (20%) |
+| AI illustration account F | 3/21 (14%) |
+| NASA | 0/21 |
+| NatGeo | 0/20 |
+| elonmusk | 0/20 |
+
+AI accounts are identified by name and bio and label 14-68% of their media.
+Ordinary accounts label nothing: 0 of 61. The patchiness is not an artefact of
+the label's age: restricted to posts since 2026-06-01, D, E and F came out at
+4/20, 3/20 and 2/20.
+
+YouTube's rule (at least 60% of at least 5) would catch one of these six
+accounts. A lower bar still separates this sample cleanly: **at least 25% of at
+least 8 media posts** catches A to D and none of the controls. Treat that as a
+starting point to re-measure on a larger sample, not a settled constant; E and
+F show the label alone will never find every AI account.
+
+## 16. Stable ids
+
+| Thing | Id | Where it is |
+|---|---|---|
+| Post | `rest_id`, numeric string | JSON, and every `/<handle>/status/<id>` link |
+| Author | `user.rest_id`, numeric string | JSON only |
+| Author handle | `core.screen_name` | JSON, and the post's `User-Name` links |
+
+The handle is the only author id in the page, but its owner can change it. So,
+as on YouTube (§9): tally by `rest_id`, keep handles as aliases.
+
+DOM facts the adapter relies on: a post is `article[data-testid="tweet"]`
+inside a `cellInnerDiv`; its own permalink is the `/status/` link that wraps a
+`<time>`, which keeps a quoted post's link from being taken for the outer
+one; the author is the first link in `[data-testid="User-Name"]`; the action
+row is `[role="group"]` holding `reply`, `retweet`, `like` and `bookmark`.
+
+## 17. What X does itself
+
+From X's own announcements, not measured here: the synthetic-media policy
+(2020) labels or removes deceptive media; Community Notes can attach to every
+copy of an image; since 2026-03 Premium users can downvote a reply as "AI
+generated", which only affects reply ranking and is not exposed; accounts
+that automate replies with chatbots are removed in batches. None of these
+appear in the post data the page receives, except `content_disclosure`.
+
+---
+
+# LinkedIn
+
+Measured 2026-09-15 on the logged-in desktop web client, in a Playwright
+browser, reading DOM and responses only.
+
+## 18. There is no AI signal in the feed
+
+LinkedIn's web client moved to server-driven UI rendered as React Server
+Components. The feed is the initial HTML plus `POST
+/flagship-web/rsc-action/actions/pagination?sduiid=com.linkedin.sdui.pagers.feed.mainFeed`
+(3.6 MB for eight posts). The old `voyager` REST and GraphQL calls now serve
+navigation and messaging, not posts. Class names are hashed and posts carry
+no `data-urn`.
+
+| Source | Carries AI disclosure? |
+|---|---|
+| Feed payload | **No.** Only whether media has a C2PA manifest (`viewName: "c2pa-button"`). |
+| "CR" button on the media | Presence of provenance, not AI (§19). |
+| C2PA manifest request, `sduiid=…media.c2pa.manifest.data` (7.7 KB, one POST per asset) | Issuer and app, as display text only. |
+| The image file on `media.licdn.com` | **No.** 0 of 9 files, including three with a CR button, kept any C2PA, XMP or EXIF bytes. |
+| "Seems like AI slop" in the post menu | Goes to LinkedIn; nothing comes back into the page. |
+
+## 19. Trap: the CR button is not an AI flag
+
+The same trap as YouTube's "How this was made" (§2). The panel reads
+identically for an AI image and an edited photo:
+
+```
+                    App or device used          Issued by
+  ChatGPT image     OpenAI Media Service API    OpenAI OpCo, LLC
+  ad photo          Adobe Photoshop             Adobe Inc.
+```
+
+Above both: "Source or history information is available for this media."
+The words "AI" or "generated" appear nowhere. Only the issuer tells them apart,
+and reading it costs a POST per image. On the main feed 1 of 8 posts had a CR
+button (the Photoshop ad); on a search for "made with chatgpt" images, 3 of 9
+results did, all issued by OpenAI.
+
+## 20. Posts are identified by a hash of their URN
+
+A post is `[role="listitem"]` whose `componentkey` is
+
+```
+expanded + base64url(sha256("urn:li:activity:<id>")) + FeedType_MAIN_FEED_RELEVANCE
+```
+
+(`FeedType_FLAGSHIP_SEARCH` on search results). Hashing every URN found in the
+payloads matched 6 of 8 feed posts; the two misses were both ads. The URN
+itself reached the DOM for 1 of 8 posts, and only through a rendered comment
+(`replaceableComment_urn:li:comment:(activity:<id>,<id>)`).
+
+So the post id the page gives us is the 43-character hash. It is stable, it is
+what any client sees for the same post, and a maintainer can compute it from
+a pasted post link. It cannot be reversed into a URN, which suits a list that
+never needs one.
+
+## 21. Author ids
+
+The author is a `/in/<slug>` (person) or `/company/<slug>` link. The first
+profile link in a post is often someone else: "X and Y reacted to this" sits
+above the author. What identifies the author reliably is the post's menu
+button, `aria-label="Open control menu for post by <Name>"`: the author's link
+is the first `/in/` or `/company/` link whose text contains that name. That
+held for 8 of 8 posts, ads included. Slugs are vanity names the owner can
+change; the member URN appears only on Connect buttons.
+
+The action row under a post is three buttons with stable labels: the
+reaction button, `Comment` and `Repost`.
+
+## 22. What this means for LinkedIn
+
+- **No label tier and no channel inference.** Nothing free says a post is AI,
+  so there is nothing to tally. LinkedIn runs on the community list and the
+  user's own marks until LinkedIn exposes something.
+- **Passive only.** The feed loads bot defence (`li.protechts.net` with
+  `uc=scraping`, reCAPTCHA Enterprise), and LinkedIn's help centre bans
+  extensions that "scrape, modify the appearance of, or automate activity".
+  The adapter reads the DOM it is given and makes no requests to LinkedIn of
+  its own; the CR manifest request of §19 stays unused.
+- **Text is the slop.** Undisclosed AI-written posts and comments are what
+  LinkedIn users mean by slop, and no platform signal covers them. LinkedIn's
+  own answer (2026-07-30) is the private "Seems like AI slop" report plus
+  reduced reach, with no public label.

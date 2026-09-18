@@ -71,12 +71,31 @@ const fullDate = (ts) => new Date(ts).toLocaleString('en', { dateStyle: 'medium'
 const plural = (n, one, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
 const initial = (text) => (text || '?').replace(/^@/, '').trim().charAt(0).toUpperCase() || '?';
 
-const ytUrl = (e) =>
-  e.kind === 'video'
-    ? `https://www.youtube.com/watch?v=${e.id}`
-    : e.id.startsWith('@')
-      ? `https://www.youtube.com/${e.id}`
-      : `https://www.youtube.com/channel/${e.id}`;
+/** Mirrors platformOf() in worker/src/policy.js: X ids start 'x:', LinkedIn's 'li:'. */
+const platformOf = (id) => (id.startsWith('x:') ? 'x' : id.startsWith('li:') ? 'linkedin' : 'youtube');
+const PLATFORM_LABEL = { youtube: 'YouTube', x: 'X', linkedin: 'LinkedIn' };
+/** What each kind is called on its platform: [video, channel]. */
+const KIND_LABEL = { youtube: ['Video', 'Channel'], x: ['Post', 'Account'], linkedin: ['Post', 'Author'] };
+const kindLabel = (e) => KIND_LABEL[platformOf(e.id)][e.kind === 'channel' ? 1 : 0];
+
+/**
+ * Where to see an entry, or null. A LinkedIn post id is a hash of the post's
+ * URN (RESEARCH.md section 20) and cannot be turned back into a link.
+ */
+function entryUrl(e) {
+  const platform = platformOf(e.id);
+  if (platform === 'x') {
+    if (e.kind === 'video') return `https://x.com/i/status/${e.id.slice(2)}`;
+    return e.id.startsWith('x:u:') ? `https://x.com/i/user/${e.id.slice(4)}` : `https://x.com/${e.id.slice(3)}`;
+  }
+  if (platform === 'linkedin') {
+    if (e.kind === 'video') return null;
+    const [, type, slug] = e.id.split(':');
+    return `https://www.linkedin.com/${type}/${slug}/`;
+  }
+  if (e.kind === 'video') return `https://www.youtube.com/watch?v=${e.id}`;
+  return e.id.startsWith('@') ? `https://www.youtube.com/${e.id}` : `https://www.youtube.com/channel/${e.id}`;
+}
 const thumbUrl = (videoId) => `https://i.ytimg.com/vi/${videoId}/mqdefault.jpg`;
 
 /* ------------------------------------------------------------------- copy */
@@ -92,9 +111,9 @@ const MODE = {
 
 const LEDE = {
   queue:
-    'Reported by people using KillSlop and not reviewed yet. Check each one on YouTube, then approve it into the final database or reject it.',
+    'Reported by people using KillSlop and not reviewed yet. Check each one on its platform, then approve it into the final database or reject it.',
   slop:
-    'The final database: what clients are served, and what the public export at /api/v1/export/youtube-channels.json contains.',
+    'The final database: what clients are served. Its YouTube channels are the public export at /api/v1/export/youtube-channels.json.',
   clean:
     'Rejected entries are never served, whatever the votes say. Move one back to the queue to reconsider it.',
 };
@@ -294,8 +313,10 @@ function channelCheck(check, meta) {
 function signals(e) {
   const out = [];
   if (e.tallies) {
+    // X labels media, not posts (RESEARCH.md section 13), so X samples are media posts.
+    const sampled = platformOf(e.id) === 'x' ? 'sampled media posts' : 'sampled uploads';
     out.push([
-      `Measured by ${plural(e.tallies, 'reporter')}: ${e.tally_ai} of ${e.tally_total} sampled uploads labelled AI`,
+      `Measured by ${plural(e.tallies, 'reporter')}: ${e.tally_ai} of ${e.tally_total} ${sampled} labelled AI`,
       'strong',
     ]);
   }
@@ -318,17 +339,22 @@ function entryRow(e) {
   const row = el('article', 'entry');
   row.tabIndex = 0;
   rowEntry.set(row, e);
-  const url = ytUrl(e);
+  const platform = platformOf(e.id);
+  const url = entryUrl(e);
+  // Only YouTube videos have a thumbnail the console's CSP allows.
+  const thumb = platform === 'youtube' && e.kind === 'video';
 
-  const media = link(url, e.kind === 'video' ? 'entry__media' : 'entry__media entry__media--channel');
+  const mediaClass = thumb ? 'entry__media' : 'entry__media entry__media--channel';
+  const media = url ? link(url, mediaClass) : el('span', mediaClass);
   media.tabIndex = -1;
   media.setAttribute('aria-hidden', 'true');
-  media.append(e.kind === 'video' ? img(thumbUrl(e.id)) : el('span', 'entry__avatar', initial(e.title || e.id)));
+  const bare = e.id.replace(/^(x:(u:)?@?|li:((in|company|showcase):)?)/, '');
+  media.append(thumb ? img(thumbUrl(e.id)) : el('span', 'entry__avatar', initial(e.title || bare)));
 
   const head = el('div', 'entry__head');
   head.append(
-    el('span', 'tag', e.kind === 'channel' ? 'Channel' : 'Video'),
-    link(url, 'entry__title', e.title || e.id)
+    el('span', 'tag', `${PLATFORM_LABEL[platform]} ${kindLabel(e).toLowerCase()}`),
+    url ? link(url, 'entry__title', e.title || e.id) : el('span', 'entry__title', e.title || e.id)
   );
 
   const chips = el('div', 'chips');
@@ -343,8 +369,22 @@ function entryRow(e) {
   }
 
   row.append(media, body, actions);
-  if (e.meta_at) paintMeta(row, { title: e.title, meta: e.meta });
-  else loadMeta(row);
+  if (platform !== 'youtube') {
+    // The console looks things up on YouTube only; say what this row is instead.
+    row.querySelector('.check').append(
+      el(
+        'span',
+        'check__muted',
+        url
+          ? `Not looked up here. Open it on ${PLATFORM_LABEL[platform]} to check.`
+          : 'LinkedIn post (hash). LinkedIn shows only this hash of the post, so there is no link to open.'
+      )
+    );
+  } else if (e.meta_at) {
+    paintMeta(row, { title: e.title, meta: e.meta });
+  } else {
+    loadMeta(row);
+  }
   return row;
 }
 

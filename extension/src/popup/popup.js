@@ -89,12 +89,13 @@ function paint() {
   }
 
   // Say exactly what still leaves the browser: marks are shared whenever
-  // "Contribute reports" is on, and the label check always asks YouTube.
+  // "Contribute reports" is on, and YouTube's label check always asks YouTube.
+  // X's label is read from the page itself and sends nothing.
   $('privacy').textContent = settings.useCommunity
-    ? 'Lookups are sent as a 4-character hash prefix, so the list never learns which videos you watched.'
+    ? 'Lookups are sent as a 4-character hash prefix, so the list never learns what you watched or read.'
     : settings.shareReports
       ? 'Community list is off, so nothing is looked up in it. Your marks are still shared; turn off Contribute reports to keep them here.'
-      : 'Community list and sharing are off. Only the AI label check talks to YouTube, without your cookies.';
+      : "Community list and sharing are off. Only YouTube's label check sends a request, to YouTube, without your cookies.";
 }
 
 async function refreshStats() {
@@ -134,13 +135,16 @@ async function refreshStats() {
     );
   }
 
-  // Opened from a YouTube tab, the feedback page offers to attach that page,
-  // which is what a "wrong call" report needs. The URL is readable because
-  // YouTube is in host_permissions; no other tab's address is ever read.
+  // Opened from a YouTube, X or LinkedIn tab, the feedback page offers to
+  // attach that page, which is what a "wrong call" report needs. The URL is
+  // readable because those sites are in host_permissions; no other tab's
+  // address is ever read.
   $('feedback').addEventListener('click', async () => {
     const url = new URL(chrome.runtime.getURL('src/feedback/feedback.html'));
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    if (tab?.url && /^https:\/\/(www\.|m\.)?youtube\.com\//.test(tab.url)) url.searchParams.set('from', tab.url);
+    if (tab?.url && /^https:\/\/((www\.|m\.)?youtube\.com|x\.com|www\.linkedin\.com)\//.test(tab.url)) {
+      url.searchParams.set('from', tab.url);
+    }
     chrome.tabs.create({ url: url.href });
   });
 

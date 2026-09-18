@@ -1,8 +1,8 @@
 # KillSlop
 
-A browser extension that hides AI-generated slop, and an open,
-evidence-backed list of it that anyone can use. YouTube first, then
-LinkedIn, then X. The code is GPL-3.0; the list is CC BY-SA 4.0.
+A browser extension that hides AI-generated slop on YouTube, X and LinkedIn,
+and an open, evidence-backed list of it that anyone can use. The code is
+GPL-3.0; the list is CC BY-SA 4.0.
 
 Website: **[killslop.app](https://killslop.app)**. Privacy policy:
 [killslop.app/privacy](https://killslop.app/privacy).
@@ -38,30 +38,39 @@ as the label itself, needs no moderator, and works on day one with an empty
 community list. The community tier sits on top, and keeps measurement and
 opinion apart so users choose how much opinion they want.
 
+The other platforms get as much of this as they allow. X marks AI media on the
+post itself, so KillSlop reads that mark for free and counts it per account,
+though X accounts are far less clear-cut than YouTube channels (RESEARCH.md
+section 15). LinkedIn marks nothing, so there KillSlop runs on your own marks
+and the community list.
+
 ## How it decides
 
-Five tiers, cheapest first. The first one that answers wins.
+Five tiers, cheapest first. The first one that answers wins. Not every
+platform has every tier.
 
 | # | Tier | Cost | Notes |
 |---|---|---|---|
-| 0 | Your own override | free | Absolute. Your "not slop" click outranks YouTube and the community. |
+| 0 | Your own override | free | Absolute. Your "not slop" click outranks the platform and the community. |
 | 1 | Local cache | free | Verdicts don't expire: a disclosure never changes. |
-| 2 | Channel inference | free | Where the coverage comes from. At least 60% of at least 5 sampled uploads labelled means the channel is hidden. |
+| 2 | Channel inference | free | YouTube: at least 60% of at least 5 sampled uploads labelled hides the channel. X: at least 25% of at least 8 media posts. None on LinkedIn, which has no label to count. |
 | 3 | Community list | 1 request per hash bucket | Batched, privacy-preserving, evidence-tagged (below). |
-| 4 | InnerTube probe | ~1 KB per video | Throttled, background, once per video ever. |
+| 4 | InnerTube probe | ~1 KB per video | YouTube only. Throttled, background, once per video ever. X needs none: its label arrives with the feed. |
 
 ## Marking things yourself
 
-Watch pages get an **AI SLOP** button beside like/dislike, and Shorts get one
-in the action bar. Grey means you can press it. Pressed, it turns solid red:
-the video is hidden from your feeds at once, and the confirmation offers
-**Hide whole channel** and **Undo**. A red *tint* means KillSlop already treats
-it as slop; hovering says why, and pressing it offers **Not slop**.
+On YouTube, watch pages get an **AI SLOP** button beside like/dislike, and
+Shorts get one in the action bar. On X and LinkedIn every post gets one at the
+end of its row of actions. Grey means you can press it. Pressed, it turns solid
+red: the video or post is hidden from your feeds at once, and the confirmation
+offers to hide the whole channel (the account on X, the author on LinkedIn) or
+**Undo**. A red *tint* means KillSlop already treats it as slop; hovering says
+why, and pressing it offers **Not slop**.
 
 Your mark hides things **for you**, instantly. It hides nothing for anyone
 else. The server keeps each vote in mind, and while the list is young a
-maintainer checks every entry before it is served to anyone (see the review
-queue below). One person cannot bury a channel. What counts as a "person" is
+maintainer checks every voted entry before it is served to anyone (see the
+review queue below). One person cannot bury a channel. What counts as a "person" is
 under Privacy.
 
 Everything you have marked is listed on the **Your marks** page (popup, then
@@ -71,33 +80,59 @@ Your marks), each with a Remove button.
 
 Each entry says *why* it is on the list:
 
-- **`disclosure`**: another client's sampler watched this channel cross the
-  tier-2 threshold on YouTube's own labels. Clients share this automatically
-  when "Contribute reports" is on. The server re-checks the numbers and
-  records one per reporter.
+- **`disclosure`**: another client's sampler watched this channel or X account
+  cross the tier-2 threshold on the platform's own labels. Clients share this
+  automatically when "Contribute reports" is on. The server re-checks the
+  numbers against the same platform's threshold and records one per reporter.
+  The project's crawler (below) measures YouTube channels the same way, in
+  bulk.
 - **`vote`**: people clicked "slop" or "not slop".
 - **`review`**: a maintainer checked it by hand and nothing was measured.
 
 Turning off "Include opinion votes" in the popup restricts the list to
 measured entries, which cannot produce an opinion-based false positive.
 
-Decided channels are exported in the clear under
+Decided YouTube channels are exported in the clear under
 [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) at
 <https://api.killslop.app/api/v1/export/youtube-channels.json>, so uBlock
 lists, ReVanced-style patches and researchers can consume them without
 running the extension. Anyone may use and share the list, commercially too,
 as long as they credit KillSlop and release what they build from it under
-the same licence.
+the same licence. X and LinkedIn entries are served to the extension but not
+exported yet.
+
+### The crawler
+
+`scripts/measure-channels.mjs` fills the list without waiting for users to
+stumble on every slop farm. It finds candidate channels in YouTube search on
+topics where labelled slop clusters (RESEARCH.md section 6) and in public
+blocklists (ATTRIBUTION.md), then samples each channel's 12 newest uploads with
+the extension's own probe and classifier. Being listed somewhere proves
+nothing: a candidate enters only if its own uploads carry YouTube's AI label.
+A channel at 75% of at least 8 uploads is approved on the measurement; one
+between that and the extension's bar (60% of at least 5) waits in the review
+queue.
+
+```bash
+node scripts/measure-channels.mjs measure .crawl --lists cevval,aislist
+node scripts/measure-channels.mjs sql .crawl > seed.sql
+cd worker && npx wrangler d1 execute killslop --remote --file=../seed.sql
+```
+
+A run resumes where the last one stopped, and the SQL only adds new rows, so
+it never overrides a review.
 
 ## The review queue
 
-Every vote and measurement lands in a queue in the maintainer console at
+Every vote and measurement, except a crawler measurement well clear of the
+bar, lands in a queue in the maintainer console at
 `api.killslop.app/admin`, behind a password. For each entry the console shows how
-many people reported it and how strongly, and runs its own check against
-YouTube: the video's AI label, or the labels on a channel's six most recent
-uploads, with thumbnails. Approving an entry puts it in the **final
-database**; rejecting it keeps it off the list whatever the votes say. The
-same console holds the feedback inbox.
+many people reported it and how strongly. For YouTube entries it runs its own
+check against YouTube: the video's AI label, or the labels on a channel's six
+most recent uploads, with thumbnails. X and LinkedIn entries link to the post
+or account instead. Approving an entry puts it in the **final database**;
+rejecting it keeps it off the list whatever the votes say. The same console
+holds the feedback inbox.
 
 Review is a switch, not an architecture. `REVIEW_MODE` in
 `worker/wrangler.toml` is `"all"` today: nothing is served until it is
@@ -111,14 +146,18 @@ to the other spelling.
 ## Feedback
 
 The popup has a **Send feedback** page: a category, a message, and an
-optional email for a reply. Opened from a YouTube tab, it offers to attach
-that page's link. Messages go to the console's inbox.
+optional email for a reply. Opened from a YouTube, X or LinkedIn tab, it
+offers to attach that page's link. Messages go to the console's inbox.
 
 ## Roadmap
 
+The goal is a computer you can use without wading through AI slop, whatever
+you are scrolling:
+
 1. **YouTube**: live.
-2. **LinkedIn**: AI-written posts and comments.
-3. **X**.
+2. **X**: live. X's own AI media label, account inference and the list.
+3. **LinkedIn**: live. Your marks and the list; LinkedIn exposes no AI label.
+4. **Later**: Reddit, Pinterest, Google Images, Spotify.
 
 The database is keyed by platform from the start (a `platform` column on
 every entry), so a new platform is a content script and an id validator, not
@@ -128,9 +167,11 @@ a migration. CONTRIBUTING.md has the steps.
 
 ```
 extension/
-  src/core/          policy: classification, cache, community client, settings
+  src/core/          policy: classification, cache, community client, settings, ids
   src/background/    message router; owns storage and the community list
-  src/content/       DOM adapter + the probe queue (see below)
+  src/content/       one adapter per site: youtube.js (with the probe queue,
+                     below); x.js and linkedin.js on the shared feed.js;
+                     x-page.js reads X's own label (below)
   src/popup/         popup UI
   src/marks/         "Your marks" page
   src/feedback/      "Send feedback" page
@@ -154,33 +195,42 @@ for InnerTube requests carrying a `chrome-extension://` origin, so the service
 worker physically cannot make them. The worker decides *what* to probe; the
 content script performs the fetch and reports back.
 
+**X's label is read in X's own page world.** A content script never sees the
+page's requests, so `x-page.js` runs in the page (`"world": "MAIN"`), reads
+the AI mark on each post in the API responses X already receives, and passes
+a summary to `x.js`. It sends nothing and changes no request (RESEARCH.md
+section 14).
+
 ## Privacy
 
 Community lookups use SponsorBlock's hash-prefix trick: the client sends the
-first 4 hex characters of `sha256(videoId)` and filters the returned bucket
-locally. The server never receives an id you are asking about, so it cannot
-reconstruct a watch history. 4 characters = 65,536 buckets.
+first 4 hex characters of `sha256(id)`, where the id is a video, post, channel
+or account, and filters the returned bucket locally. The server never receives
+an id you are asking about, so it cannot reconstruct what you watched or read.
+4 characters = 65,536 buckets.
 
 Three things do send data, and none of them is a browsing trail:
 
 - a **vote**, when you click "not slop" or mark something: the id you
   marked;
-- a **tally**, when a channel you encountered crosses the disclosure
-  threshold: the channel id and the sampled counts, once;
+- a **tally**, when a channel or X account you encountered crosses the
+  disclosure threshold: its id and the sampled counts, once;
 - **feedback**, when you send it: your message, the optional email, and the
   extension version. It is stored for the maintainer to read and never
   published.
 
 Each vote carries a random install id. The server stores that id, and your
 network (IPv4 address or IPv6 /64), only as `sha256(value + entry + salt)`.
-That is enough to count you once per video, and not enough to link your votes
-on two different videos to each other. Voting twice on the same video takes a
+That is enough to count you once per entry, and not enough to link your votes
+on two different entries to each other. Voting twice on the same entry takes a
 new install **and** a new network. Feedback keeps the network only as a salted
 hash, to cap how much one network can send in a day.
 
 Requests are rate-limited per network by Cloudflare's rate limiter, which
 counts without storing anything. Probes are sent with `credentials: 'omit'`,
-so they are never tied to your YouTube account.
+so they are never tied to your YouTube account. On X, the AI label is read
+from data X has already sent to the page, which costs no request of our own.
+On LinkedIn, KillSlop only reads the page and sends LinkedIn nothing.
 
 ## Development
 
@@ -240,6 +290,11 @@ and invisible to a label-based filter. Since 2026-05-27 YouTube auto-labels
 voice-over-stock-footage and AI music stay outside the label by design.
 Channel inference, the community list and the review queue exist to close
 that gap. See RESEARCH.md sections 6, 7 and 11.
+
+On X the label covers media only: AI-written posts and replies carry nothing,
+and many AI accounts label only some of their images (RESEARCH.md sections 13
+and 15). LinkedIn labels nothing at all (section 18); there, only people's
+marks find slop.
 
 ## Licence and credit
 

@@ -11,19 +11,26 @@
 --
 --   up / down   human opinion: "this is slop" / "this is not slop" clicks.
 --   tallies     objective measurement: how many distinct reporters saw this
---               channel cross the disclosure-sampling threshold (>=60% of >=5
---               sampled uploads carry YouTube's own AI label). tally_ai and
---               tally_total are the summed samples behind them, for the record.
+--               channel cross its platform's disclosure-sampling threshold
+--               (YouTube: >=60% of >=5 uploads carry YouTube's own AI label;
+--               X: >=25% of >=8 media posts carry X's AI disclosure; see
+--               TALLY_RULES in src/policy.js). tally_ai and tally_total are
+--               the summed samples behind them, for the record.
 --
 -- A third column, review, is the maintainer's call from the console at /admin.
 -- It outranks both (see decide() in src/policy.js).
+--
+-- Ids never share a spelling across platforms, because the hash is of the id
+-- alone: YouTube's are bare (the list began with them), X's start 'x:' and
+-- LinkedIn's 'li:'. The kinds stay 'video' and 'channel'; on X and LinkedIn
+-- they mean a post and its author.
 
 CREATE TABLE IF NOT EXISTS entries (
   hash        TEXT PRIMARY KEY,     -- sha256(id), lowercase hex
   prefix      TEXT NOT NULL,        -- first 4 chars of hash
-  id          TEXT NOT NULL,        -- 'dQw4w9WgXcQ', '@channelhandle' or 'UC...'
-  kind        TEXT NOT NULL,        -- 'video' | 'channel'
-  platform    TEXT NOT NULL DEFAULT 'youtube',
+  id          TEXT NOT NULL,        -- 'dQw4w9WgXcQ', '@handle', 'UC...', 'x:<post>', 'x:u:<user>', 'x:@handle', 'li:<hash>', 'li:in:<slug>'
+  kind        TEXT NOT NULL,        -- 'video' | 'channel' (post | author on X and LinkedIn)
+  platform    TEXT NOT NULL DEFAULT 'youtube', -- 'youtube' | 'x' | 'linkedin'
   up          INTEGER NOT NULL DEFAULT 0,
   down        INTEGER NOT NULL DEFAULT 0,
   tallies     INTEGER NOT NULL DEFAULT 0,

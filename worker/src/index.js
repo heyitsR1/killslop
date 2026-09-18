@@ -9,10 +9,12 @@
  * Two kinds of evidence, kept apart end to end:
  *
  *   vote   a human said "slop" / "not slop" about a video or channel.
- *   tally  a client's disclosure sampler saw a channel cross the threshold:
- *          >= 60% of >= 5 sampled uploads carry YouTube's own AI label.
- *          Objective, needs no moderator, and cannot be gamed without also
- *          gaming YouTube's own labelling.
+ *   tally  a client's disclosure sampler saw a channel cross its platform's
+ *          threshold (TALLY_RULES in policy.js): on YouTube >= 60% of >= 5
+ *          uploads carry YouTube's own AI label, on X >= 25% of >= 8 media
+ *          posts carry X's. Objective, needs no moderator, and cannot be
+ *          gamed without also gaming the platform's own labelling. LinkedIn
+ *          shows no label, so it only has votes.
  *
  * The bucket endpoint returns both, and says which is which, so the client
  * can let the user choose how much opinion they want on top of measurement.
@@ -27,13 +29,16 @@ import {
   FEEDBACK_PER_DAY,
   MIN_TALLIES,
   MIN_VOTES,
+  PLATFORMS,
   PREFIX_LEN,
   cleanFeedback,
+  countStats,
   decide,
   isValidId,
   isValidInstallId,
   isValidTally,
   networkOf,
+  platformOf,
   reviewMode,
   sha256Hex,
 } from './policy.js';
@@ -174,7 +179,10 @@ async function postReport(request, env) {
   const { id, kind, slop, platform = 'youtube', voter } = body;
   if (!isValidId(id, kind)) return json({ error: 'bad id' }, 400);
   if (typeof slop !== 'boolean') return json({ error: 'bad slop' }, 400);
-  if (!['youtube'].includes(platform)) return json({ error: 'bad platform' }, 400);
+  // The id's spelling names its platform; a body that disagrees is confused.
+  if (!PLATFORMS.includes(platform) || platform !== platformOf(id)) {
+    return json({ error: 'bad platform' }, 400);
+  }
 
   const hash = await sha256Hex(id);
   const prefix = hash.slice(0, PREFIX_LEN);
@@ -228,8 +236,11 @@ async function postTally(request, env) {
 
   const { id, ai, total, platform = 'youtube', voter } = body;
   if (!isValidId(id, 'channel')) return json({ error: 'bad id' }, 400);
-  if (!isValidTally(ai, total)) return json({ error: 'bad tally' }, 400);
-  if (!['youtube'].includes(platform)) return json({ error: 'bad platform' }, 400);
+  if (!PLATFORMS.includes(platform) || platform !== platformOf(id)) {
+    return json({ error: 'bad platform' }, 400);
+  }
+  // Each platform's own bar; LinkedIn has no label to count, so none passes.
+  if (!isValidTally(ai, total, platform)) return json({ error: 'bad tally' }, 400);
 
   const hash = await sha256Hex(id);
   const prefix = hash.slice(0, PREFIX_LEN);
@@ -315,23 +326,9 @@ async function postFeedback(request, env) {
 
 async function getStats(env) {
   const { results } = await env.DB.prepare(
-    `SELECT kind, up, down, tallies, review FROM entries`
+    `SELECT kind, id, up, down, tallies, review, json_extract(meta, '$.ucid') AS ucid FROM entries`
   ).all();
-  const mode = reviewMode(env);
-  const out = { mode, entries: 0, pending: 0, reviewed: 0, videos: 0, channels: 0, channelsByDisclosure: 0 };
-  for (const r of results || []) {
-    out.entries += 1;
-    if (r.review === 'slop') out.reviewed += 1;
-    const d = decide(r, mode);
-    if (!d) out.pending += 1; // kept in mind, waiting for review or more people
-    if (!d?.slop) continue;
-    if (r.kind === 'video') out.videos += 1;
-    if (r.kind === 'channel') {
-      out.channels += 1;
-      if (d.evidence === 'disclosure') out.channelsByDisclosure += 1;
-    }
-  }
-  return json(out, 200, { 'cache-control': 'public, max-age=60' });
+  return json(countStats(results || [], reviewMode(env)), 200, { 'cache-control': 'public, max-age=60' });
 }
 
 /* ----------------------------------------------------------------- router */

@@ -16,7 +16,7 @@
     <meta property="og:site_name" content="KillSlop" />
     <meta property="og:url" content="https://killslop.app/privacy" />
     <meta property="og:title" content="KillSlop privacy policy" />
-    <meta property="og:description" content="Built not to know what you watch. What KillSlop keeps, what it sends, and why." />
+    <meta property="og:description" content="What the KillSlop extension keeps on your device, what it sends, and what the server stores." />
     <meta property="og:image" content="https://killslop.app/site/og.png" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content="https://killslop.app/site/og.png" />
@@ -37,6 +37,7 @@
         <nav class="nav__links" aria-label="Main">
           <a href="/#how">How it works</a>
           <a href="/#list">The list</a>
+          <a href="/#roadmap">Roadmap</a>
           <a href="/privacy" aria-current="page">Privacy</a>
           <a href="https://github.com/heyitsR1/killslop">GitHub</a>
         </nav>
@@ -54,7 +55,7 @@
           <header class="doc__head">
             <p class="eyebrow">Legal</p>
             <h1 class="doc__title">Privacy policy</h1>
-            <p class="doc__meta"><span>Effective 13 September 2026</span><span>Applies to the extension and api.killslop.app</span></p>
+            <p class="doc__meta"><span>Effective 15 September 2026</span><span>Applies to the extension and api.killslop.app</span></p>
           </header>
 
           <div class="doc__body">
@@ -64,12 +65,12 @@
                 <ul>
                   <li>KillSlop has no accounts, ads, analytics or tracking, and never sells data.</li>
                   <li>
-                    It is built so the server cannot learn what you watch: the extension looks things up by a
-                    4-character hash prefix, never by the video you are asking about.
+                    The server cannot learn what you watch or read. The extension looks things up by the first 4
+                    characters of a hash, never by the video or post itself.
                   </li>
                   <li>
-                    Only three deliberate things send anything that names a video or channel: a mark you make, a
-                    channel measurement, and feedback you write. Each can be switched off.
+                    Only three things send the ID of a video, post, channel or account: a mark you make, a channel
+                    measurement, and feedback you write. You can turn each of them off.
                   </li>
                   <li>The only service provider is Cloudflare, which hosts the API and this site.</li>
                 </ul>
@@ -77,9 +78,9 @@
 
               <h2 id="who">Who we are</h2>
               <p>
-                KillSlop is an open-source browser extension that hides AI-generated videos on YouTube, and a small
-                public API at <code>api.killslop.app</code> that serves an open list of them. It is run by its
-                maintainer ("we" below). The source code is public at
+                KillSlop is an open-source browser extension that hides AI-generated videos and posts on YouTube, X
+                and LinkedIn, and a small public API at <code>api.killslop.app</code> that serves an open list of
+                them. It is run by its maintainer ("we" below). The source code is public at
                 <a href="https://github.com/heyitsR1/killslop">github.com/heyitsR1/killslop</a>, so every statement
                 in this policy can be checked against the code.
               </p>
@@ -88,13 +89,14 @@
               <p>The extension keeps these in your browser, inside its own storage. We never receive them.</p>
               <ul>
                 <li>
-                  <strong>A verdict cache</strong> (IndexedDB): for each video it has checked, whether YouTube labels
-                  it as AI, where that verdict came from and when; for each channel, how many of its sampled uploads
-                  carried the label; and which <code>@handle</code> belongs to which channel id.
+                  <strong>A verdict cache</strong> (IndexedDB): for each YouTube video it has checked, and each X post
+                  with images or video it has seen, whether the platform labels it as AI, where that verdict came from
+                  and when; for each channel or X account, how many of its sampled uploads carried the label; and
+                  which handle belongs to which channel or account id.
                 </li>
                 <li>
-                  <strong>Your marks</strong>: each video or channel you called AI slop or not slop, when, and the
-                  title and channel name shown on the Your marks page.
+                  <strong>Your marks</strong>: each video, post, channel or account you called AI slop or not slop,
+                  when, and the title and name shown on the Your marks page.
                 </li>
                 <li>
                   <strong>Your settings</strong>, in <code>chrome.storage.sync</code>: the on/off switches and your
@@ -105,45 +107,51 @@
                   <strong>A random install id</strong>, 32 hexadecimal characters in <code>chrome.storage.local</code>,
                   used only to count your votes once (see below).
                 </li>
-                <li>A count of videos hidden since Chrome started, held in memory and gone on restart.</li>
+                <li>A count of items hidden since Chrome started, held in memory and gone on restart.</li>
               </ul>
               <p>
-                The extension reads the YouTube pages you open, in your browser, to find the video and channel ids on
-                them. That reading happens locally. Nothing about the pages you view is sent to us.
+                The extension reads the YouTube, X and LinkedIn pages you open, in your browser, to find the video,
+                post, channel and account ids on them. On X it also reads, inside the page, the post data X has
+                already sent to that page, to see which posts X itself labels as made with AI. That reading happens
+                locally. Nothing about the pages you view is sent to us.
               </p>
 
               <h2 id="sent">What leaves your device, and when</h2>
 
               <h3>Looking things up in the community list</h3>
               <p>
-                When the Community list switch is on, the extension computes the SHA-256 hash of each video or channel
-                id on the page and sends only the <strong>first 4 hexadecimal characters</strong> to
-                <code>api.killslop.app</code>. The server replies with every entry in that bucket, one of 65,536, and
-                the extension finds its own matches locally. The server never receives an id you are asking about, so
-                it cannot reconstruct what you watched.
+                When the Community list switch is on, the extension computes the SHA-256 hash of each video, post,
+                channel or account id on the page and sends only the <strong>first 4 hexadecimal characters</strong>
+                to <code>api.killslop.app</code>. The server replies with every entry in that bucket, one of 65,536,
+                and the extension finds its own matches locally. The server never receives an id you are asking
+                about, so it cannot reconstruct what you watched or read.
               </p>
 
               <h3>Your marks</h3>
               <p>
-                When Contribute reports is on and you press AI SLOP or Not slop, or hide a whole channel, the extension
-                sends the id of the video or channel you marked, whether you called it slop, the platform
-                (<code>youtube</code>) and your random install id. Removing a mark on the Your marks page sends the
-                same id again to take the vote back. With Contribute reports off, your marks stay on your device.
+                When Contribute reports is on and you press AI SLOP or Not slop, or hide a whole channel or account,
+                the extension sends the id of what you marked, whether you called it slop, the platform
+                (<code>youtube</code>, <code>x</code> or <code>linkedin</code>) and your random install id. Removing a
+                mark on the Your marks page sends the same id again to take the vote back. With Contribute reports
+                off, your marks stay on your device.
               </p>
 
               <h3>Channel measurements</h3>
               <p>
-                When Contribute reports and the Community list are both on, and the videos you come across show that
-                a channel crosses the threshold (at least 60% of at least 5 sampled uploads carry YouTube's AI label),
-                the extension sends that channel's id and <code>@handle</code> if known, the two counts, and your
-                install id. It does this once per channel.
+                When Contribute reports and the Community list are both on, and what you come across shows that a
+                YouTube channel or an X account crosses the threshold (on YouTube, at least 60% of at least 5 sampled
+                uploads carry YouTube's AI label; on X, at least 25% of at least 8 posts with images or video carry
+                X's AI label), the extension sends that channel's or account's id and handle if known, the two
+                counts, and your install id. It does this once per channel or account. LinkedIn has no AI label, so
+                nothing is measured there.
               </p>
 
               <h3>Feedback</h3>
               <p>
                 Only when you send it from the Send feedback page: the category, your message, your email address if
-                you choose to give one, and the extension version. If you opened the page from a YouTube tab and leave
-                "Include the page you were on" ticked, that page's link is added to your message.
+                you choose to give one, and the extension version. If you opened the page from a YouTube, X or
+                LinkedIn tab and leave "Include the page you were on" ticked, that page's link is added to your
+                message.
               </p>
 
               <h3>Requests to YouTube</h3>
@@ -153,7 +161,7 @@
                 background, about 1 KB at a time, once per video. The Your marks page shows thumbnails from YouTube's
                 image server (<code>i.ytimg.com</code>) and, for older marks saved without a title, fetches the title
                 from YouTube's public oEmbed endpoint, also without cookies. These requests go to YouTube, under
-                Google's privacy policy, and not to us.
+                Google's privacy policy, and not to us. The extension makes no requests of its own to X or LinkedIn.
               </p>
 
               <h2 id="server">What the server keeps, and for how long</h2>
@@ -176,8 +184,9 @@
                     <tr>
                       <td>List entry</td>
                       <td>
-                        A video or channel id, the platform, vote and measurement counts, the review decision, and
-                        times. For the maintainer's review, the public title and channel name looked up from YouTube.
+                        A video, post, channel or account id, the platform, vote and measurement counts, the review
+                        decision, and times. For the maintainer's review of YouTube entries, the public title and
+                        channel name looked up from YouTube.
                       </td>
                       <td>As long as the list exists</td>
                     </tr>
@@ -207,21 +216,21 @@
                 </table>
               </div>
               <p>
-                Because each key is hashed together with one entry, the keys are enough to count you once per video,
-                and not enough to link your votes on two different videos to each other, or back to you. We cannot
+                Because each key is hashed together with one entry, the keys are enough to count you once per entry,
+                and not enough to link your votes on two different entries to each other, or back to you. We cannot
                 tell which votes or measurements are yours.
               </p>
 
               <h2 id="public">What is public</h2>
               <p>
-                Decided channels are published under
+                Decided YouTube channels are published under
                 <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> at
                 <a href="https://api.killslop.app/api/v1/export/youtube-channels.json"><code>/api/v1/export/youtube-channels.json</code></a>:
                 the channel id, the kind of evidence, whether it was reviewed, the vote score, the measurement counts
-                and when it last changed. The lookup endpoint serves the same decisions by hash, and
-                <code>/api/v1/stats</code> publishes totals. Videos are never exported, and nothing about who voted,
-                measured or sent feedback is ever published. The votes and measurements you contribute become part
-                of that list under the same licence.
+                and when it last changed. The lookup endpoint serves the same decisions, and those for X and
+                LinkedIn, by hash, and <code>/api/v1/stats</code> publishes totals. Videos and posts are never
+                exported, and nothing about who voted, measured or sent feedback is ever published. The votes and
+                measurements you contribute become part of that list under the same licence.
               </p>
 
               <h2 id="security">How it is protected</h2>
@@ -250,7 +259,7 @@
               <ul>
                 <li>Sell, rent or trade any data.</li>
                 <li>Use data for advertising, credit decisions or profiling, or pass it to data brokers.</li>
-                <li>Build a history of what anyone watches, on the device or on the server.</li>
+                <li>Build a history of what anyone watches or reads, on the device or on the server.</li>
                 <li>
                   Let anyone read what you sent, apart from the maintainer reading feedback and reviewing list
                   entries.
@@ -268,6 +277,7 @@
               <ul>
                 <li><strong>Community list off</strong>: no lookups and no channel measurements are sent.</li>
                 <li><strong>Contribute reports off</strong>: no marks and no measurements are sent; your marks stay on your device.</li>
+                <li><strong>Platforms</strong>, in the popup: turn KillSlop off on YouTube, X or LinkedIn separately.</li>
                 <li><strong>Reset local data</strong>, in the popup: clears the verdict cache and your marks.</li>
                 <li><strong>Uninstall</strong>: Chrome removes everything the extension stored on your device.</li>
               </ul>
@@ -331,24 +341,25 @@
               <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="6" fill="currentColor"/><circle class="mark__glyph" cx="12" cy="12" r="6"/><path class="mark__glyph" d="M7.76 7.76l8.48 8.48"/></svg>
               <span class="wordmark">KillSlop</span>
             </a>
-            <p class="footer__tag">Hides AI slop on YouTube, and builds an open list of it.</p>
+            <p class="footer__tag">Hides AI slop from your feed and keeps a public list of it.</p>
           </div>
           <nav class="footer__col" aria-label="Product">
             <p class="footer__head">Product</p>
-            <a href="/#features">What it does</a>
+            <a href="/#features">Features</a>
             <a href="/#how">How it decides</a>
             <a href="/#list">The list</a>
+            <a href="/#roadmap">Roadmap</a>
             <a href="/privacy">Privacy</a>
           </nav>
           <nav class="footer__col" aria-label="Project">
             <p class="footer__head">Project</p>
             <a href="https://github.com/heyitsR1/killslop">GitHub</a>
             <a href="https://github.com/heyitsR1/killslop/issues/new/choose">Report a problem</a>
-            <a href="https://api.killslop.app/api/v1/export/youtube-channels.json">Export (JSON)</a>
+            <a href="https://api.killslop.app/api/v1/export/youtube-channels.json">Download the list (JSON)</a>
           </nav>
           <div class="footer__legal">
             <span>&copy; 2026 KillSlop</span>
-            <span>Not affiliated with YouTube or Google.</span>
+            <span>Not affiliated with YouTube, Google, X or LinkedIn.</span>
           </div>
         </footer>
       </main>

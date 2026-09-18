@@ -1,26 +1,30 @@
 /**
- * Verdict engine. Decides "is this slop?" for a batch of feed items.
+ * Verdict engine. Decides "is this slop?" for a batch of feed items on one
+ * platform.
  *
  * Tiers, cheapest first. The first tier that answers wins:
  *
  *   0. User override      — free, instant, absolute. Your "not slop" click
- *                           outranks YouTube and the community both.
+ *                           outranks the platform and the community both.
  *   1. Local cache        — free. Verdicts don't expire; disclosures don't change.
- *   2. Channel inference  — free once a channel is tallied. This is where the
- *                           coverage comes from (see RESEARCH.md): slop farms
- *                           label ~100% of uploads, real channels 0%.
+ *   2. Channel inference  — free once a channel is tallied. On YouTube this is
+ *                           where the coverage comes from (see RESEARCH.md):
+ *                           slop farms label ~100% of uploads, real channels 0%.
  *   3. Community list     — one batched request per hash bucket.
- *   4. InnerTube probe    — ~210KB per video, and it cannot happen here.
+ *   4. InnerTube probe    — YouTube only, and it cannot happen here.
  *
  * Tier 4 is delegated: YouTube 403s any request carrying an extension origin,
  * so the content script issues the probe and calls recordProbe() with the
- * result. This module decides *what* to probe and what the answer means.
+ * result. X needs no probe: its feed already carries the label, and the X
+ * content script hands over what it read through recordObservations().
+ * LinkedIn has no label at all, so only tiers 0 and 3 ever answer there.
  */
 
 import { VERDICT } from './innertube.js';
 import * as store from './store.js';
 import * as community from './community.js';
 import { getSettings } from './settings.js';
+import { channelRule, isValidId, platformOf } from './ids.js';
 
 const listeners = new Set();
 
@@ -39,31 +43,36 @@ function emit(update) {
   }
 }
 
-export function channelVerdict(record, settings) {
+/** A handle: the tally knows it under a stable id once it has seen one. */
+const isAlias = (id) => id.startsWith('@') || id.startsWith('x:@');
+
+export function channelVerdict(record, settings, platform = 'youtube') {
   if (!record || !settings.useChannelInference) return null;
-  if (record.total < settings.channelMinSamples) return null;
+  const rule = channelRule(platform, settings);
+  if (!rule || record.total < rule.minSamples) return null;
   const rate = record.ai / record.total;
-  if (rate >= settings.channelThreshold) return { slop: true, reason: 'channel', rate };
+  if (rate >= rule.threshold) return { slop: true, reason: 'channel', rate };
   return null;
 }
 
 /**
  * @param {Array<{videoId:string, channelId?:string}>} items
+ * @param {string} platform  a key of PLATFORMS; every item belongs to it
  * @returns {Promise<{verdicts:Object, probe:Array<{videoId,channelId}>}>}
  */
-export async function resolveBatch(items) {
+export async function resolveBatch(items, platform = 'youtube') {
   const settings = await getSettings();
   const verdicts = {};
   const probe = [];
-  if (!settings.enabled || !settings.platforms.youtube) return { verdicts, probe };
+  if (!settings.enabled || !settings.platforms[platform]) return { verdicts, probe };
 
   const videoIds = [...new Set(items.map((i) => i.videoId).filter(Boolean))];
   const rawChannelIds = [...new Set(items.map((i) => i.channelId).filter(Boolean))];
 
-  // Tiles link to a channel by handle or by UC id, and the probe reports the UC
-  // id. Tallies live under the UC id whenever we know it; a handle we've seen
+  // Tiles link to a channel by handle or by a stable id (YouTube's UC id, X's
+  // user id), and the stable id is what gets tallied. A handle we've seen
   // resolved before is translated so both spellings land on the same record.
-  const aliases = await store.getAliases(rawChannelIds.filter((id) => id.startsWith('@')));
+  const aliases = await store.getAliases(rawChannelIds.filter(isAlias));
   const canon = (id) => (id && aliases.get(id)) || id || null;
   const channelKeys = [...new Set(rawChannelIds.flatMap((id) => [id, canon(id)]))];
 
@@ -102,7 +111,7 @@ export async function resolveBatch(items) {
         verdicts[videoId] = { slop: true, reason: 'disclosure' };
       } else {
         // Known clean by disclosure, but the channel may still condemn it.
-        const cv = channelVerdict(channelRecord(channelId), settings);
+        const cv = channelVerdict(channelRecord(channelId), settings, platform);
         verdicts[videoId] = cv
           ? { slop: true, reason: 'channel' }
           : { slop: false, reason: 'clean' };
@@ -111,7 +120,7 @@ export async function resolveBatch(items) {
     }
 
     // Tier 2 — channel inference, before we spend anything.
-    if (channelVerdict(channelRecord(channelId), settings)) {
+    if (channelVerdict(channelRecord(channelId), settings, platform)) {
       verdicts[videoId] = { slop: true, reason: 'channel' };
       continue;
     }
@@ -137,6 +146,7 @@ export async function resolveBatch(items) {
 
     // Opinion-only entries are dropped when the user wants measurement only.
     const usable = (e) => e && (settings.trustVotes || e.evidence === 'disclosure');
+    const rule = channelRule(platform, settings);
 
     const next = [];
     for (const item of remaining) {
@@ -156,14 +166,11 @@ export async function resolveBatch(items) {
               ? 'community-measured'
               : 'community-channel',
         };
-        if (entry.slop && c && !v) {
+        if (entry.slop && c && !v && rule) {
           // Remember community channel verdicts locally so the next feed is free.
-          await store.setChannelTally(
-            canon(item.channelId),
-            settings.channelMinSamples,
-            settings.channelMinSamples,
-            { fromCommunity: true }
-          );
+          await store.setChannelTally(canon(item.channelId), rule.minSamples, rule.minSamples, {
+            fromCommunity: true,
+          });
         }
         continue;
       }
@@ -172,15 +179,38 @@ export async function resolveBatch(items) {
     remaining = next;
   }
 
-  // Tier 4 — hand back to the content script to probe.
-  if (settings.useDisclosure) {
-    for (const item of remaining) {
+  // Tier 4 — YouTube: hand back to the content script to probe. Elsewhere
+  // there is nothing left to ask, and saying so stops the page asking again;
+  // an X label that turns up later arrives through recordObservations().
+  for (const item of remaining) {
+    if (platform !== 'youtube') {
+      verdicts[item.videoId] = { slop: false, reason: 'none' };
+    } else if (settings.useDisclosure) {
       verdicts[item.videoId] = { slop: false, reason: 'pending', pending: true };
       probe.push({ videoId: item.videoId, channelId: item.channelId ?? null });
     }
   }
 
   return { verdicts, probe };
+}
+
+/**
+ * Fold one labelled-or-not sample into a channel's tally, and publish the
+ * channel once it crosses its platform's threshold.
+ */
+async function tallySample(key, spellings, slop, platform, settings) {
+  const tally = await store.tallyChannel(key, slop);
+  if (!channelVerdict(tally, settings, platform)) return;
+  emit({ channelId: key, channelIds: spellings, slop: true, reason: 'channel' });
+  // Share the measurement once. It is a fact about the channel's own labels,
+  // not an opinion, which is what makes it safe to publish.
+  if (settings.shareReports && settings.useCommunity && !tally.shared) {
+    const ids = spellings.filter((s) => isValidId(s, 'channel'));
+    community
+      .tally({ ids, ai: tally.ai, total: tally.total, platform })
+      .then((r) => (r.ok ? store.markChannelShared(key) : null))
+      .catch(() => {});
+  }
 }
 
 /**
@@ -198,30 +228,59 @@ export async function recordProbe({ videoId, channelId, verdict, source, header,
   // fallback. Every other spelling we saw becomes an alias of the key.
   const ucid = owner?.ucid ?? null;
   const key = ucid ?? channelId ?? owner?.handle ?? null;
-  const spellings = new Set([key, channelId, owner?.handle].filter(Boolean));
+  const spellings = [...new Set([key, channelId, owner?.handle].filter(Boolean))];
   if (ucid) {
     for (const s of spellings) if (s.startsWith('@')) await store.setAlias(s, ucid);
   }
 
-  if (key) {
-    const tally = await store.tallyChannel(key, slop);
-    const settings = await getSettings();
-    if (channelVerdict(tally, settings)) {
-      emit({ channelId: key, channelIds: [...spellings], slop: true, reason: 'channel' });
-      // Share the measurement once. It is a fact about the channel's own
-      // labels, not an opinion, which is what makes it safe to publish.
-      if (settings.shareReports && settings.useCommunity && !tally.shared) {
-        const ids = [...spellings].filter((s) => /^(UC[\w-]{22}|@[\w.-]{1,48})$/.test(s));
-        community
-          .tally({ ids, ai: tally.ai, total: tally.total })
-          .then((r) => (r.ok ? store.markChannelShared(key) : null))
-          .catch(() => {});
-      }
-    }
-  }
+  if (key) await tallySample(key, spellings, slop, 'youtube', await getSettings());
 
   emit({ videoId, slop, reason: slop ? 'disclosure' : 'clean' });
   return { ok: true, slop, channelId: key };
+}
+
+/**
+ * Record what the X content script read off X's own post data (RESEARCH.md
+ * section 12): for each post with media, whether X labelled it AI. X's label
+ * only exists on media (section 13), so text-only posts are not samples.
+ *
+ * The same post turns up on every scroll and every visit, so only posts not
+ * seen before are counted; otherwise one popular post would fill its author's
+ * tally on its own.
+ *
+ * @param {Array<{id, channelId, alias, media, ai, source}>} posts
+ * @returns {Promise<{ok:boolean, ai?:string[]}>}  ai: newly labelled post ids
+ */
+export async function recordObservations(posts) {
+  const settings = await getSettings();
+  if (!settings.enabled || !settings.useDisclosure) return { ok: false };
+  const samples = posts.filter(
+    (p) => p?.media === true && isValidId(p.id, 'video') && settings.platforms[platformOf(p.id)]
+  );
+  if (!samples.length) return { ok: true, ai: [] };
+
+  const seen = await store.getVideos(samples.map((p) => p.id));
+  const ai = [];
+  for (const p of samples) {
+    if (seen.has(p.id)) continue;
+    seen.set(p.id, true); // a batch can repeat a post
+    const platform = platformOf(p.id);
+    const slop = p.ai === true;
+    await store.putVideo(p.id, slop ? VERDICT.AI : VERDICT.CLEAN, `${platform}:${p.source || 'label'}`);
+
+    const key = isValidId(p.channelId, 'channel') ? p.channelId : null;
+    const alias = isValidId(p.alias, 'channel') ? p.alias : null;
+    if (key && alias) await store.setAlias(alias, key);
+    if (key || alias) {
+      await tallySample(key || alias, [key, alias].filter(Boolean), slop, platform, settings);
+    }
+
+    if (slop) {
+      ai.push(p.id);
+      emit({ videoId: p.id, slop: true, reason: 'disclosure' });
+    }
+  }
+  return { ok: true, ai };
 }
 
 /** Record the user's correction, locally first and to the community second. */

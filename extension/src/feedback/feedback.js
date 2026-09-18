@@ -28,11 +28,13 @@ const ERRORS = {
   offline: 'Could not reach the server. Your message is still here, so you can try again.',
 };
 
-/** The YouTube page the popup was opened on, if any. Nothing else is accepted. */
+/** The YouTube, X or LinkedIn page the popup was opened on, if any. Nothing else is accepted. */
 function pageFrom(raw) {
   try {
     const u = new URL(raw);
-    return u.protocol === 'https:' && /^(www\.|m\.)?youtube\.com$/.test(u.hostname) ? u.href : null;
+    return u.protocol === 'https:' && /^((www\.|m\.)?youtube\.com|x\.com|www\.linkedin\.com)$/.test(u.hostname)
+      ? u.href
+      : null;
   } catch {
     return null;
   }

@@ -68,13 +68,18 @@ export async function handleSite(request, env, url) {
 
   const path = url.pathname.length > 1 ? url.pathname.replace(/\/+$/, '') : '/';
   if (path === '/get') return Response.redirect(INSTALL_URL, 302);
+  // no-transform stops Cloudflare injecting its Web Analytics beacon into the
+  // pages, which a zone can have switched on without anyone asking. The site
+  // promises no analytics, so that promise must not rest on a dashboard toggle.
   const file = Object.hasOwn(PAGES, path) ? PAGES[path] : SITE_FILE.test(path) ? path : null;
-  const page = file && (await asset(env, request, file, { headers: { ...SITE_HEADERS, 'cache-control': 'public, max-age=300' } }));
+  const page =
+    file &&
+    (await asset(env, request, file, { headers: { ...SITE_HEADERS, 'cache-control': 'public, max-age=300, no-transform' } }));
   if (page) return page;
 
   const missing = await asset(env, request, '/site/404.html', {
     status: 404,
-    headers: { ...SITE_HEADERS, 'cache-control': 'no-store' },
+    headers: { ...SITE_HEADERS, 'cache-control': 'no-store, no-transform' },
   });
   return missing || new Response('Not found\n', { status: 404, headers: SITE_HEADERS });
 }

@@ -18,6 +18,7 @@ Projects looked at and deliberately **not** copied because they carry no
 licence: SlopBlock (lydonator), youtube-ai-slop-dataset, Slop Evader,
 youtube-ai-slop-visual-blocker.
 
-Community lists we may consume as *verification candidates* (never as
-verdicts) and their terms: CevvalYoutubeAIBlocklist (CC0); AiSList (CC BY-NC
-4.0), only with its author's permission.
+Community lists `scripts/measure-channels.mjs` reads as *verification
+candidates* (never as verdicts: a channel enters the list only on its own
+uploads' AI labels, measured by us) and their terms: CevvalYoutubeAIBlocklist
+(CC0); AiSList (CC BY-NC 4.0), only with its author's permission.

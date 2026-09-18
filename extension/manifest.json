@@ -1,13 +1,15 @@
 {
   "manifest_version": 3,
-  "name": "KillSlop: Block AI Slop Videos on YouTube",
+  "name": "KillSlop: Hide AI Slop on YouTube, X and LinkedIn",
   "version": "0.1.0",
   "minimum_chrome_version": "116",
-  "description": "Hides AI slop videos from YouTube feeds, search and Shorts, using YouTube's own AI label, channel patterns and an open list.",
+  "description": "Hides AI slop on YouTube, X and LinkedIn, using the platforms' own AI labels, account patterns and an open list.",
   "homepage_url": "https://killslop.app",
   "permissions": ["storage", "unlimitedStorage"],
   "host_permissions": [
     "*://*.youtube.com/*",
+    "https://x.com/*",
+    "https://www.linkedin.com/*",
     "https://api.killslop.app/*"
   ],
   "background": {
@@ -20,6 +22,27 @@
       "js": ["src/content/parse.js", "src/content/probe.js", "src/content/youtube.js"],
       "css": ["src/content/youtube.css"],
       "run_at": "document_start",
+      "all_frames": false
+    },
+    {
+      "matches": ["https://x.com/*"],
+      "js": ["src/content/x-page.js"],
+      "run_at": "document_start",
+      "world": "MAIN",
+      "all_frames": false
+    },
+    {
+      "matches": ["https://x.com/*"],
+      "js": ["src/content/parse.js", "src/content/feed.js", "src/content/x.js"],
+      "css": ["src/content/feed.css"],
+      "run_at": "document_start",
+      "all_frames": false
+    },
+    {
+      "matches": ["https://www.linkedin.com/*"],
+      "js": ["src/content/parse.js", "src/content/feed.js", "src/content/linkedin.js"],
+      "css": ["src/content/feed.css"],
+      "run_at": "document_idle",
       "all_frames": false
     }
   ],

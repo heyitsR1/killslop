@@ -5,7 +5,8 @@
  */
 
 export const PREFIX_LEN = 4;
-export const MAX_ID_LEN = 64;
+/** Room for a LinkedIn slug whose letters are percent-encoded. */
+export const MAX_ID_LEN = 128;
 
 /**
  * Nothing one person does changes what anyone else sees. With review off, a
@@ -16,10 +17,20 @@ export const MAX_ID_LEN = 64;
 export const MIN_VOTES = 3;
 /** Distinct reporters before a measured channel is served without review. */
 export const MIN_TALLIES = 2;
-/** Server-side re-check of the client's sampling threshold. */
-export const TALLY_MIN_SAMPLES = 5;
-export const TALLY_THRESHOLD = 0.6;
-export const TALLY_MAX_SAMPLES = 500;
+
+export const PLATFORMS = ['youtube', 'x', 'linkedin'];
+
+/**
+ * Server-side re-check of each platform's sampling threshold, the same one
+ * the extension applies before it shares a tally. YouTube slop farms label
+ * nearly every upload (RESEARCH.md section 7); AI accounts on X label 14-68%
+ * of their media and ordinary accounts none (section 15). LinkedIn has no
+ * label to count (section 22), so it takes no tallies at all.
+ */
+export const TALLY_RULES = {
+  youtube: { minSamples: 5, threshold: 0.6, maxSamples: 500 },
+  x: { minSamples: 8, threshold: 0.25, maxSamples: 500 },
+};
 
 /**
  * How much a maintainer has to approve before the list serves it. Set by the
@@ -61,19 +72,52 @@ export function networkOf(ip) {
 
 export const isValidInstallId = (id) => typeof id === 'string' && /^[0-9a-f]{32}$/.test(id);
 
+/**
+ * The list is keyed by sha256(id) alone, so ids from different platforms must
+ * never share a spelling: X and LinkedIn ids carry a prefix, YouTube's stay
+ * bare because the list already holds them that way. Kinds stay 'video' and
+ * 'channel'; on X and LinkedIn they mean a post and its author. The extension
+ * mirrors this in extension/src/core/ids.js.
+ *
+ *   youtube   video   dQw4w9WgXcQ
+ *             channel UC... (24) or @handle
+ *   x         video   x:<post rest_id>
+ *             channel x:u:<user rest_id>, or x:@handle as an alias of it
+ *   linkedin  video   li:<base64url(sha256("urn:li:activity:<id>"))>, the hash
+ *                     LinkedIn itself puts on the post (RESEARCH.md section 20)
+ *             channel li:in:<slug>, li:company:<slug> or li:showcase:<slug>
+ */
+const ID_SHAPES = {
+  youtube: { video: /^[\w-]{11}$/, channel: /^(@[\w.-]{1,48}|UC[\w-]{22})$/ },
+  x: { video: /^x:\d{1,20}$/, channel: /^x:(u:\d{1,20}|@[a-z0-9_]{1,15})$/ },
+  linkedin: {
+    video: /^li:[A-Za-z0-9_-]{43}$/,
+    channel: /^li:(in|company|showcase):[a-z0-9%_-]{2,100}$/,
+  },
+};
+
+export function platformOf(id) {
+  if (typeof id !== 'string') return null;
+  if (id.startsWith('x:')) return 'x';
+  if (id.startsWith('li:')) return 'linkedin';
+  return 'youtube';
+}
+
 export function isValidId(id, kind) {
   if (typeof id !== 'string' || !id.length || id.length > MAX_ID_LEN) return false;
-  if (kind === 'video') return /^[\w-]{11}$/.test(id);
-  if (kind === 'channel') return /^(@[\w.-]{1,48}|UC[\w-]{22})$/.test(id);
-  return false;
+  // Own keys only: a kind of 'constructor' must be a 400, not a thrown 500.
+  const shapes = ID_SHAPES[platformOf(id)];
+  return Object.hasOwn(shapes, kind ?? '') && shapes[kind].test(id);
 }
 
 /** A tally claim we are willing to record. Integers, sane, over threshold. */
-export function isValidTally(ai, total) {
+export function isValidTally(ai, total, platform = 'youtube') {
+  const rule = Object.hasOwn(TALLY_RULES, platform ?? '') ? TALLY_RULES[platform] : null;
+  if (!rule) return false;
   if (!Number.isInteger(ai) || !Number.isInteger(total)) return false;
-  if (total < TALLY_MIN_SAMPLES || total > TALLY_MAX_SAMPLES) return false;
+  if (total < rule.minSamples || total > rule.maxSamples) return false;
   if (ai < 0 || ai > total) return false;
-  return ai / total >= TALLY_THRESHOLD;
+  return ai / total >= rule.threshold;
 }
 
 /**
@@ -100,6 +144,42 @@ export function decide(row, mode = 'all') {
 }
 
 /**
+ * The public counts behind /api/v1/stats. A channel can be stored twice, as
+ * @handle and as UC id (applyToTwins in admin.js, and the crawler), so its
+ * rows count once wherever the handle's UC id is known (`ucid`, read from the
+ * row's meta). Of two spellings, one with a review stands for both.
+ */
+export function countStats(rows, mode = 'all') {
+  const channels = new Map();
+  const others = [];
+  for (const r of rows) {
+    if (r.kind !== 'channel') {
+      others.push(r);
+      continue;
+    }
+    const key = r.id.startsWith('UC') ? r.id : r.ucid || r.id;
+    const seen = channels.get(key);
+    if (!seen || (seen.review == null && r.review != null)) channels.set(key, r);
+  }
+
+  const out = { mode, entries: 0, pending: 0, reviewed: 0, videos: 0, channels: 0, channelsByDisclosure: 0 };
+  for (const r of [...others, ...channels.values()]) {
+    out.entries += 1;
+    if (r.review === 'slop') out.reviewed += 1;
+    const d = decide(r, mode);
+    // Kept in mind, waiting for review or more people. A rejection is not waiting.
+    if (!d && r.review !== 'clean') out.pending += 1;
+    if (!d?.slop) continue;
+    if (r.kind === 'video') out.videos += 1;
+    else {
+      out.channels += 1;
+      if (d.evidence === 'disclosure') out.channelsByDisclosure += 1;
+    }
+  }
+  return out;
+}
+
+/**
  * A pasted YouTube link or bare id, as {id, kind}, or null. Accepts watch,
  * youtu.be, Shorts, embed and live links, /channel/UC... and /@handle.
  */
@@ -107,8 +187,10 @@ export function parseYouTubeInput(raw) {
   if (typeof raw !== 'string') return null;
   const s = raw.trim();
   if (!s || s.length > 500) return null;
-  if (isValidId(s, 'channel')) return { id: s, kind: 'channel' };
-  if (isValidId(s, 'video')) return { id: s, kind: 'video' };
+  // 'x:123' is a valid id too, but not a YouTube one.
+  const yt = (id, kind) => platformOf(id) === 'youtube' && isValidId(id, kind);
+  if (yt(s, 'channel')) return { id: s, kind: 'channel' };
+  if (yt(s, 'video')) return { id: s, kind: 'video' };
 
   let url;
   try {
@@ -118,13 +200,13 @@ export function parseYouTubeInput(raw) {
   }
   const host = url.hostname.toLowerCase().replace(/^(www|m|music)\./, '');
   const parts = url.pathname.split('/').filter(Boolean);
-  const video = (id) => (isValidId(id, 'video') ? { id, kind: 'video' } : null);
+  const video = (id) => (yt(id, 'video') ? { id, kind: 'video' } : null);
 
   if (host === 'youtu.be') return video(parts[0]);
   if (host !== 'youtube.com') return null;
   if (parts[0] === 'watch') return video(url.searchParams.get('v'));
   if (['shorts', 'embed', 'live', 'v'].includes(parts[0])) return video(parts[1]);
-  if (parts[0] === 'channel') return isValidId(parts[1], 'channel') ? { id: parts[1], kind: 'channel' } : null;
+  if (parts[0] === 'channel') return yt(parts[1], 'channel') ? { id: parts[1], kind: 'channel' } : null;
   if (parts[0]?.startsWith('@')) {
     let handle;
     try {
@@ -132,8 +214,101 @@ export function parseYouTubeInput(raw) {
     } catch {
       return null;
     }
-    return isValidId(handle, 'channel') ? { id: handle, kind: 'channel' } : null;
+    return yt(handle, 'channel') ? { id: handle, kind: 'channel' } : null;
   }
+  return null;
+}
+
+/**
+ * The list id of a LinkedIn post: the same hash LinkedIn puts on the post in
+ * the page (RESEARCH.md section 20), so a pasted link and a client agree.
+ */
+export async function linkedinPostId(activityId) {
+  const digest = await crypto.subtle.digest(
+    'SHA-256',
+    new TextEncoder().encode(`urn:li:activity:${activityId}`)
+  );
+  const b64 = btoa(String.fromCharCode(...new Uint8Array(digest)));
+  return `li:${b64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')}`;
+}
+
+const X_HOSTS = new Set(['x.com', 'twitter.com', 'mobile.x.com', 'mobile.twitter.com']);
+/** First path segments on x.com that are pages, not handles. */
+const X_PAGES = new Set([
+  'home', 'explore', 'search', 'i', 'settings', 'notifications', 'messages', 'compose',
+  'hashtag', 'login', 'logout', 'signup', 'intent', 'share', 'tos', 'privacy',
+]);
+
+function parseXPath(parts) {
+  const post = (n) => {
+    const id = `x:${n}`;
+    return isValidId(id, 'video') ? { id, kind: 'video', platform: 'x' } : null;
+  };
+  const account = (id) => (isValidId(id, 'channel') ? { id, kind: 'channel', platform: 'x' } : null);
+  if (parts[0] === 'i') {
+    if (parts[1] === 'status') return post(parts[2]);
+    if (parts[1] === 'web' && parts[2] === 'status') return post(parts[3]);
+    if (parts[1] === 'user') return account(`x:u:${parts[2]}`);
+    return null;
+  }
+  if (!parts[0] || X_PAGES.has(parts[0].toLowerCase())) return null;
+  if (parts[1] === 'status') return post(parts[2]);
+  // Handles are case-insensitive on X; one spelling keeps votes together.
+  return account(`x:@${parts[0].toLowerCase()}`);
+}
+
+async function parseLinkedInPath(parts) {
+  if (['in', 'company', 'showcase'].includes(parts[0]) && parts[1]) {
+    // The slug stays percent-encoded, as the page's own links carry it.
+    const id = `li:${parts[0]}:${parts[1].toLowerCase()}`;
+    return isValidId(id, 'channel') ? { id, kind: 'channel', platform: 'linkedin' } : null;
+  }
+  let activity = null;
+  if (parts[0] === 'feed' && parts[1] === 'update' && parts[2]) {
+    try {
+      activity = /^urn:li:activity:(\d{1,25})$/.exec(decodeURIComponent(parts[2]))?.[1] ?? null;
+    } catch {
+      return null;
+    }
+  } else if (parts[0] === 'posts' && parts[1]) {
+    activity = /-activity-(\d{1,25})-/.exec(parts[1])?.[1] ?? null;
+  }
+  return activity ? { id: await linkedinPostId(activity), kind: 'video', platform: 'linkedin' } : null;
+}
+
+/**
+ * A pasted link or id from any platform, as {id, kind, platform}, or null.
+ * YouTube input goes through parseYouTubeInput. Async because a LinkedIn post
+ * link has to be hashed into the id clients see.
+ */
+export async function parseInput(raw) {
+  const yt = parseYouTubeInput(raw);
+  if (yt) return { ...yt, platform: 'youtube' };
+  if (typeof raw !== 'string') return null;
+  let s = raw.trim();
+  if (!s || s.length > 500) return null;
+
+  // A bare id in its own spelling. Handles and slugs are case-insensitive.
+  if (/^(x:@|li:(in|company|showcase):)/i.test(s)) s = s.toLowerCase();
+  if (/^(x|li):/.test(s)) {
+    for (const kind of ['video', 'channel']) {
+      if (isValidId(s, kind)) return { id: s, kind, platform: platformOf(s) };
+    }
+    return null;
+  }
+  const urn = /^urn:li:activity:(\d{1,25})$/.exec(s);
+  if (urn) return { id: await linkedinPostId(urn[1]), kind: 'video', platform: 'linkedin' };
+
+  let url;
+  try {
+    url = new URL(/^https?:\/\//i.test(s) ? s : `https://${s}`);
+  } catch {
+    return null;
+  }
+  const host = url.hostname.toLowerCase().replace(/^www\./, '');
+  const parts = url.pathname.split('/').filter(Boolean);
+  if (X_HOSTS.has(host)) return parseXPath(parts);
+  if (/^([a-z]{2}\.)?linkedin\.com$/.test(host)) return parseLinkedInPath(parts);
   return null;
 }
 

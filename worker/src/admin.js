@@ -12,7 +12,7 @@
  * ever served through the checks below.
  */
 
-import { PREFIX_LEN, decide, parseYouTubeInput, reviewMode, sha256Hex } from './policy.js';
+import { PREFIX_LEN, decide, parseInput, platformOf, reviewMode, sha256Hex } from './policy.js';
 import { overLimit, readJson } from './http.js';
 import { VERDICT, probeWith } from '../../extension/src/core/innertube.js';
 
@@ -253,6 +253,8 @@ async function applyToTwins(env, hashes, review, at) {
   const now = Date.now();
   const statements = [];
   for (const row of results || []) {
+    // Only YouTube spells one channel two ways; an X handle's alias is not a twin.
+    if (platformOf(row.id) !== 'youtube') continue;
     const ucid = row.id.startsWith('UC') ? row.id : parseMeta(row.meta)?.ucid;
     if (!ucid) continue;
     if (review === 'slop' && ucid !== row.id) {
@@ -300,16 +302,16 @@ async function setReview(request, env) {
 /** Put a pasted link straight into the final database. */
 async function addEntry(request, env) {
   const body = await readJson(request);
-  const parsed = parseYouTubeInput(body?.input);
-  if (!parsed) return json({ error: 'That is not a YouTube video or channel link.' }, 400);
+  const parsed = await parseInput(body?.input);
+  if (!parsed) return json({ error: 'That is not a YouTube, X or LinkedIn link.' }, 400);
 
   const hash = await sha256Hex(parsed.id);
   const now = Date.now();
   await env.DB.batch([
     env.DB.prepare(
       `INSERT INTO entries (hash, prefix, id, kind, platform, created, updated)
-       VALUES (?1, ?2, ?3, ?4, 'youtube', ?5, ?5) ON CONFLICT(hash) DO NOTHING`
-    ).bind(hash, hash.slice(0, PREFIX_LEN), parsed.id, parsed.kind, now),
+       VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?6) ON CONFLICT(hash) DO NOTHING`
+    ).bind(hash, hash.slice(0, PREFIX_LEN), parsed.id, parsed.kind, parsed.platform, now),
     env.DB.prepare(`UPDATE entries SET review = 'slop', reviewed_at = ?2 WHERE hash = ?1`).bind(hash, now),
   ]);
 
@@ -342,6 +344,9 @@ async function entryMeta(request, env, url) {
 }
 
 async function refreshMeta(env, row) {
+  // Lookups exist for YouTube only. Elsewhere there is nothing to fetch, which
+  // is an answer, not a network failure, so it is neither stored nor retried.
+  if (platformOf(row.id) !== 'youtube') return { title: null, meta: null };
   let info;
   try {
     info = row.kind === 'video' ? await videoInfo(row.id) : await channelInfo(row.id);
@@ -462,8 +467,11 @@ function decodeXml(s) {
   });
 }
 
-/** Channel name and uploads, newest first, from a channel's RSS feed. */
-function parseFeed(xml) {
+/**
+ * Channel name and uploads, newest first, from a channel's RSS feed. Also used
+ * by scripts/measure-channels.mjs.
+ */
+export function parseFeed(xml) {
   const head = xml.split('<entry>')[0];
   const title = decodeXml(/<title>([^<]*)<\/title>/.exec(head)?.[1] ?? '') || null;
   const videos = [];

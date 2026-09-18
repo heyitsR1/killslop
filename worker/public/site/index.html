@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>KillSlop: Block AI slop videos on YouTube</title>
+    <title>KillSlop: Hide AI slop from your feed, starting with YouTube</title>
     <meta
       name="description"
-      content="KillSlop is a free, open-source Chrome extension that hides AI-generated slop from YouTube: your feed, search, recommendations and Shorts. It reads YouTube's own AI label, measures whole channels, and checks an open list that people review."
+      content="KillSlop is a free, open-source Chrome extension that hides AI-generated videos on YouTube: in your home feed, search, recommendations and Shorts. LinkedIn and X are next."
     />
     <link rel="canonical" href="https://killslop.app/" />
     <meta name="color-scheme" content="light dark" />
@@ -15,20 +15,20 @@
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="KillSlop" />
     <meta property="og:url" content="https://killslop.app/" />
-    <meta property="og:title" content="KillSlop: Block AI slop videos on YouTube" />
+    <meta property="og:title" content="KillSlop: Hide AI slop from your feed" />
     <meta
       property="og:description"
-      content="A free, open-source Chrome extension that hides AI-generated videos from YouTube, and an open, reviewed list of them."
+      content="A free Chrome extension that hides AI-generated videos on YouTube, with LinkedIn and X next. It also keeps a public list of AI slop channels."
     />
     <meta property="og:image" content="https://killslop.app/site/og.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="KillSlop. Block AI slop on YouTube." />
+    <meta property="og:image:alt" content="KillSlop. Hide AI slop from your feed." />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="KillSlop: Block AI slop videos on YouTube" />
+    <meta name="twitter:title" content="KillSlop: Hide AI slop from your feed" />
     <meta
       name="twitter:description"
-      content="A free, open-source Chrome extension that hides AI-generated videos from YouTube, and an open, reviewed list of them."
+      content="A free Chrome extension that hides AI-generated videos on YouTube, with LinkedIn and X next. It also keeps a public list of AI slop channels."
     />
     <meta name="twitter:image" content="https://killslop.app/site/og.png" />
     <link rel="icon" href="/site/favicon.svg" type="image/svg+xml" />
@@ -49,6 +49,7 @@
         <nav class="nav__links" aria-label="Main">
           <a href="#how">How it works</a>
           <a href="#list">The list</a>
+          <a href="#roadmap">Roadmap</a>
           <a href="/privacy">Privacy</a>
           <a href="https://github.com/heyitsR1/killslop">GitHub</a>
         </nav>
@@ -66,12 +67,12 @@
         <section class="section hero" aria-labelledby="hero-title">
           <div class="hero__bg" aria-hidden="true"></div>
           <div class="hero__copy">
-            <p class="hero__eyebrow"><span class="dot" aria-hidden="true"></span>Free Chrome extension for YouTube</p>
-            <h1 class="hero__title" id="hero-title">Block AI slop on YouTube.</h1>
+            <p class="hero__eyebrow"><span class="dot" aria-hidden="true"></span>Works on YouTube now. LinkedIn and X are next.</p>
+            <h1 class="hero__title" id="hero-title">Hide AI slop from your feed.</h1>
             <p class="hero__lead">
-              KillSlop hides AI-generated videos from your feed, search, recommendations and Shorts.
-              <span class="muted">It reads YouTube's own AI label, measures whole channels, and checks an open list
-              that people review.</span>
+              KillSlop is a free Chrome extension that hides AI-generated videos on YouTube. It works on your home
+              page, in search, in recommendations and in Shorts.
+              <span class="muted">Each hidden video says why it was hidden, and one click brings it back.</span>
             </p>
             <div class="hero__actions">
               <a class="btn btn--primary btn--xl btn--pill" href="/get">Get KillSlop</a>
@@ -196,70 +197,114 @@
 
         <!-- ------------------------------------------------------- statement -->
         <section class="section" aria-label="The problem">
+          <p class="statement">
+            AI slop is in every feed now.
+            <span class="muted">YouTube has AI-made documentaries and music. LinkedIn has posts written by chatbots.
+            X has bots that post AI replies. This content costs almost nothing to make, so there is a lot of it,
+            and the platforms keep recommending it.</span>
+          </p>
+        </section>
+
+        <!-- --------------------------------------------------------- roadmap -->
+        <section class="section" id="roadmap" aria-labelledby="roadmap-title">
           <span class="plus plus--l" aria-hidden="true"></span>
           <span class="plus plus--r" aria-hidden="true"></span>
-          <p class="statement">
-            AI slop is filling YouTube.
-            <span class="muted">Generated documentaries, AI voice-overs on stock footage, synthetic music and
-            animated kids' content, uploaded faster than anyone could watch it. YouTube labels some of it, then
-            recommends it anyway.</span>
-          </p>
+          <div class="head">
+            <p class="eyebrow">Roadmap</p>
+            <h2 class="h2" id="roadmap-title">YouTube first, then LinkedIn and X.</h2>
+            <p class="lead">
+              We are adding one site at a time. Every site will use the same public list, so a report on one helps
+              people on all of them.
+            </p>
+          </div>
+          <div class="cells cells--4">
+            <div class="cell">
+              <p class="chip">Live now</p>
+              <h3 class="cell__title">YouTube</h3>
+              <p class="cell__text">
+                Hides AI videos on your home page, in search, in recommendations and in Shorts. It reads YouTube's
+                AI label, checks whole channels and looks them up in the public list.
+              </p>
+            </div>
+            <div class="cell">
+              <p class="chip">Next</p>
+              <h3 class="cell__title">LinkedIn</h3>
+              <p class="cell__text">
+                Hides posts and comments written by AI. Each hidden post will show a short note with the reason
+                and a button to show it.
+              </p>
+            </div>
+            <div class="cell">
+              <p class="chip">After LinkedIn</p>
+              <h3 class="cell__title">X</h3>
+              <p class="cell__text">
+                Hides AI reply bots and AI-generated posts. You will be able to report the accounts behind them.
+              </p>
+            </div>
+            <div class="cell">
+              <p class="chip">Later</p>
+              <h3 class="cell__title">Other sites</h3>
+              <p class="cell__text">Reddit, Pinterest, Google Images and Spotify come after that.</p>
+            </div>
+          </div>
         </section>
 
         <!-- -------------------------------------------------------- features -->
         <section class="section" id="features" aria-labelledby="features-title">
           <div class="head">
-            <p class="eyebrow">What it does</p>
-            <h2 class="h2" id="features-title">Your feed, minus the slop.</h2>
-            <p class="lead">Three independent signals decide what gets hidden, and your own clicks outrank all of them.</p>
+            <p class="eyebrow">Features</p>
+            <h2 class="h2" id="features-title">What it does on YouTube.</h2>
+            <p class="lead">
+              KillSlop uses three signals to find AI videos. If you disagree with any of them, your choice wins.
+            </p>
           </div>
           <div class="cells cells--3">
             <div class="cell">
               <svg class="cell__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12.2V4a1 1 0 0 1 1-1h8.2a1 1 0 0 1 .7.3l8 8a1 1 0 0 1 0 1.4l-8.2 8.2a1 1 0 0 1-1.4 0l-8-8a1 1 0 0 1-.3-.7z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>
-              <h3 class="cell__title">Reads YouTube's own label</h3>
+              <h3 class="cell__title">Reads YouTube's AI label</h3>
               <p class="cell__text">
-                Creators must disclose realistic AI content, and YouTube now labels some of it itself. KillSlop
-                reads that label on each video: about 1 KB per check, once per video, ever.
+                YouTube asks creators to label realistic AI content, and adds the label itself in some cases.
+                KillSlop checks each video for this label once. A check uses about 1 KB.
               </p>
             </div>
             <div class="cell">
               <svg class="cell__icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/></svg>
-              <h3 class="cell__title">Catches whole channels</h3>
+              <h3 class="cell__title">Checks the whole channel</h3>
               <p class="cell__text">
-                Slop farms label nearly every upload; real channels label none. When at least 60% of five or
-                more sampled uploads carry the label, the channel is hidden.
+                Channels that mass-produce AI videos label almost every upload. Normal channels label none. When
+                60% or more of at least 5 checked uploads have the label, KillSlop hides the whole channel.
               </p>
             </div>
             <div class="cell">
               <svg class="cell__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h12M9 12h12M9 18h12"/><path d="M3.5 6h.01M3.5 12h.01M3.5 18h.01" stroke-width="2.5"/></svg>
-              <h3 class="cell__title">Checks an open, reviewed list</h3>
+              <h3 class="cell__title">Uses a public list</h3>
               <p class="cell__text">
-                Every entry says why it is there: measured, voted or reviewed. While the list is young, a person
-                checks each entry before it is served to anyone.
+                Each channel on the list shows why it is there. Either its videos carry the AI label, or a
+                maintainer checked it. Votes alone never add a channel.
               </p>
             </div>
             <div class="cell">
               <svg class="cell__icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M6 6l12 12"/></svg>
-              <h3 class="cell__title">One click, and yours wins</h3>
+              <h3 class="cell__title">Adds an AI SLOP button</h3>
               <p class="cell__text">
-                AI SLOP sits beside like and dislike, and in the Shorts bar. Your mark hides a video for you at
-                once, and your Not slop outranks everything else.
+                The button sits next to Like and Dislike, and in the Shorts bar. Press it and the video is hidden
+                for you right away. Press Not slop and the video stays, whatever else says.
               </p>
             </div>
             <div class="cell">
               <svg class="cell__icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5h.01"/></svg>
-              <h3 class="cell__title">Always says why</h3>
+              <h3 class="cell__title">Tells you why</h3>
               <p class="cell__text">
-                A hidden video leaves a thin note with the reason, a Show button and a Not slop button. Nothing
-                disappears without a trace.
+                A hidden video is replaced by a short note that gives the reason. The note has a Show button and a
+                Not slop button.
               </p>
             </div>
             <div class="cell">
               <svg class="cell__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3l18 18M10.6 10.6a2 2 0 0 0 2.8 2.8M9.9 5.1A10 10 0 0 1 12 5c5 0 8.5 4.5 9.5 7a13 13 0 0 1-2.2 3.4M6.6 6.6A13 13 0 0 0 2.5 12c1 2.5 4.5 7 9.5 7a9.6 9.6 0 0 0 5.4-1.6"/></svg>
-              <h3 class="cell__title">Hide it or dim it</h3>
+              <h3 class="cell__title">Hide or dim</h3>
               <p class="cell__text">
-                Remove slop from the page, or grey it out so you can still see what was caught. One switch
-                pauses everything.
+                Remove AI videos from the page, or grey them out so you can still see what was caught. One switch
+                turns KillSlop off.
               </p>
             </div>
           </div>
@@ -271,20 +316,20 @@
           <span class="plus plus--r" aria-hidden="true"></span>
           <div class="head">
             <p class="eyebrow">How it decides</p>
-            <h2 class="h2" id="how-title">Five checks, cheapest first.</h2>
+            <h2 class="h2" id="how-title">Five checks, in order.</h2>
             <p class="lead">
-              The first check that answers wins. Your own word comes first, ahead of YouTube and the community
-              alike.
+              KillSlop runs the free checks first and stops at the first one that has an answer. Your own marks
+              come before everything else.
             </p>
           </div>
           <div class="table-wrap">
             <table class="tiers">
               <thead>
                 <tr>
-                  <th scope="col">Tier</th>
+                  <th scope="col">Step</th>
                   <th scope="col">Check</th>
                   <th scope="col">Cost</th>
-                  <th scope="col">What it means</th>
+                  <th scope="col">What it does</th>
                 </tr>
               </thead>
               <tbody>
@@ -292,33 +337,33 @@
                   <td class="tiers__n">00</td>
                   <td class="tiers__name">Your mark</td>
                   <td class="tiers__cost"><span class="cost">free</span></td>
-                  <td class="tiers__note">Absolute. Your Not slop outranks YouTube and the community.</td>
+                  <td class="tiers__note">Always wins. If you said Not slop, the video stays.</td>
                 </tr>
                 <tr>
                   <td class="tiers__n">01</td>
-                  <td class="tiers__name">Local cache</td>
+                  <td class="tiers__name">Saved results</td>
                   <td class="tiers__cost"><span class="cost">free</span></td>
-                  <td class="tiers__note">Verdicts never expire, because a disclosure never changes.</td>
+                  <td class="tiers__note">Answers from earlier checks, kept on your device. They do not expire.</td>
                 </tr>
                 <tr>
                   <td class="tiers__n">02</td>
-                  <td class="tiers__name">Channel inference</td>
+                  <td class="tiers__name">Channel check</td>
                   <td class="tiers__cost"><span class="cost">free</span></td>
                   <td class="tiers__note">
-                    At least 60% of at least 5 sampled uploads labelled AI, and the whole channel is hidden.
+                    If 60% or more of at least 5 checked uploads have the AI label, the whole channel is hidden.
                   </td>
                 </tr>
                 <tr>
                   <td class="tiers__n">03</td>
-                  <td class="tiers__name">Community list</td>
+                  <td class="tiers__name">Public list</td>
                   <td class="tiers__cost"><span class="cost">1 request / bucket</span></td>
-                  <td class="tiers__note">Batched, private by design, and every entry is tagged with its evidence.</td>
+                  <td class="tiers__note">Looked up in batches, in a way that keeps your viewing private.</td>
                 </tr>
                 <tr>
                   <td class="tiers__n">04</td>
                   <td class="tiers__name">Label check<small>InnerTube probe</small></td>
                   <td class="tiers__cost"><span class="cost">~1 KB / video</span></td>
-                  <td class="tiers__note">Throttled, in the background, once per video ever.</td>
+                  <td class="tiers__note">Asks YouTube for the video's label, in the background, once per video.</td>
                 </tr>
               </tbody>
             </table>
@@ -329,25 +374,25 @@
         <section class="section" id="list" aria-labelledby="list-title">
           <div class="split split--list">
             <div>
-              <p class="eyebrow">The open list</p>
-              <h2 class="h2" id="list-title">An open list of slop that anyone can use.</h2>
+              <p class="eyebrow">The list</p>
+              <h2 class="h2" id="list-title">A public list of AI slop channels.</h2>
               <p class="lead">
-                Every channel the list has decided is published in the clear under CC BY-SA 4.0. Blocklists,
-                researchers and other filters can use it without running KillSlop, as long as they credit KillSlop
-                and share what they build from it under the same licence.
+                The list is open under CC BY-SA 4.0. Anyone can download it and use it, including blocklists,
+                researchers and other tools, as long as they credit KillSlop and share what they build from it
+                under the same licence. You do not need KillSlop to use it.
               </p>
               <dl class="evidence">
                 <div class="evidence__item">
                   <dt><span class="tag">disclosure</span></dt>
-                  <dd>Measured. Other KillSlop users saw the channel's own uploads carry YouTube's AI label.</dd>
+                  <dd>The channel's own videos carry YouTube's AI label. KillSlop users or our open crawler counted them.</dd>
                 </div>
                 <div class="evidence__item">
                   <dt><span class="tag">vote</span></dt>
-                  <dd>Opinion. People pressed AI SLOP or Not slop. You can switch votes off and keep measurement only.</dd>
+                  <dd>People pressed AI SLOP or Not slop. On this list, votes only decide what a maintainer checks next.</dd>
                 </div>
                 <div class="evidence__item">
                   <dt><span class="tag">review</span></dt>
-                  <dd>Checked by hand. A maintainer looked at it, and that call wins in every mode.</dd>
+                  <dd>A maintainer checked the channel by hand. This decision overrides the other two.</dd>
                 </div>
               </dl>
             </div>
@@ -380,7 +425,7 @@
     }
   ]
 }</code></pre>
-                <p class="code__caption">Channels only. Videos and voters are never published.</p>
+                <p class="code__caption">Only channels are published. Videos and voters are not.</p>
               </div>
 
               <div class="stats" id="stats" hidden>
@@ -391,8 +436,8 @@
                     <span class="stat__label">Channels on the list</span>
                   </div>
                   <div class="stat">
-                    <span class="stat__value" data-stat="reviewed"></span>
-                    <span class="stat__label">Reviewed by hand</span>
+                    <span class="stat__value" data-stat="channelsByDisclosure"></span>
+                    <span class="stat__label">Found by their AI labels</span>
                   </div>
                   <div class="stat">
                     <span class="stat__value" data-stat="pending"></span>
@@ -410,44 +455,44 @@
           <span class="plus plus--r" aria-hidden="true"></span>
           <div class="head">
             <p class="eyebrow">Privacy</p>
-            <h2 class="h2" id="privacy-title">Built not to know what you watch.</h2>
+            <h2 class="h2" id="privacy-title">What KillSlop sends.</h2>
             <p class="lead">
-              No account, no ads, no analytics. The few things that leave your browser are listed here, and in
-              full in the <a class="link" href="/privacy">privacy policy</a>.
+              KillSlop has no account, ads or analytics. This is everything that leaves your browser. The
+              <a class="link" href="/privacy">privacy policy</a> has the full details.
             </p>
           </div>
           <div class="cells cells--2">
             <div class="cell">
               <p class="chip">sha256(id) &rarr; 4 characters</p>
-              <h3 class="cell__title">Lookups by hash prefix</h3>
+              <h3 class="cell__title">Lookups use part of a hash</h3>
               <p class="cell__text">
-                To check a video, the extension sends the first 4 characters of a hash of its id. The server
-                answers with the whole bucket, one of 65,536, and the match happens in your browser. The list never
-                learns which video you asked about.
+                To look up a video, the extension hashes its ID and sends only the first 4 characters. The server
+                sends back every entry that starts with them, one group out of 65,536. Your browser finds the match,
+                so the server never learns which video you asked about.
               </p>
             </div>
             <div class="cell">
               <p class="chip">vote &middot; measurement &middot; feedback</p>
-              <h3 class="cell__title">Only what you choose to send</h3>
+              <h3 class="cell__title">Reports you choose to send</h3>
               <p class="cell__text">
-                A mark sends the id you marked. A channel measurement sends a channel id and its counts, once.
-                Feedback sends what you typed. Switch off Contribute reports and your marks stay on your device.
+                Marking a video sends that video's ID. Finding an AI channel sends the channel's ID and its counts,
+                once. Feedback sends what you typed. Turn off Contribute reports and your marks stay on your device.
               </p>
             </div>
             <div class="cell">
               <p class="chip">sha256(value + entry + salt)</p>
-              <h3 class="cell__title">Salted and unlinkable</h3>
+              <h3 class="cell__title">Votes cannot be linked</h3>
               <p class="cell__text">
-                A random install id and your network are stored only as salted hashes, scoped to the one entry you
-                voted on. Enough to count you once, never enough to link two of your votes.
+                Your random install ID and your network are stored only as salted hashes, each tied to one entry.
+                That lets us count your vote once, but not connect two of your votes to each other.
               </p>
             </div>
             <div class="cell">
               <p class="chip">credentials: 'omit'</p>
               <h3 class="cell__title">No cookies, no account</h3>
               <p class="cell__text">
-                Label checks go to YouTube without your cookies, so they are never tied to your YouTube account.
-                KillSlop has no sign-in, and no way to know who you are.
+                Label checks go to YouTube without your cookies, so they are not tied to your YouTube account.
+                KillSlop has no sign-in and does not know who you are.
               </p>
             </div>
           </div>
@@ -458,15 +503,15 @@
           <div class="limits">
             <div>
               <p class="bignum">11<span>%</span></p>
-              <p class="bignum__caption">of AI slop carries YouTube's label, by our measurement.</p>
+              <p class="bignum__caption">of 208 videos from slop-heavy YouTube searches had the AI label, in our test.</p>
             </div>
             <div>
-              <p class="eyebrow">Honest limits</p>
-              <h2 class="h2" id="limits-title">It will not catch everything.</h2>
+              <p class="eyebrow">Limits</p>
+              <h2 class="h2" id="limits-title">It does not catch everything.</h2>
               <p class="lead">
-                A filter that only reads the label misses most slop. Channel measurement, the open list and
-                human review exist to close that gap, and some will still get through. When KillSlop gets one wrong,
-                one click puts it back.
+                Most AI videos have no label, so checking labels alone misses most of them. Channel checks, the
+                public list and manual review catch more, but some will still get through. If KillSlop hides a video
+                by mistake, one click brings it back.
               </p>
             </div>
           </div>
@@ -479,20 +524,20 @@
           <div class="split split--even">
             <div>
               <p class="eyebrow">Open source</p>
-              <h2 class="h2" id="source-title">Open code. Open data.</h2>
+              <h2 class="h2" id="source-title">The code and the list are open.</h2>
               <p class="lead">
-                The extension and the API are GPL-3.0, and the list is CC BY-SA 4.0. Read how every verdict is made, run
-                your own list, or build on ours.
+                The extension and the server are GPL-3.0, and the list is CC BY-SA 4.0. You can read how every decision is
+                made, run your own list, or build on ours.
               </p>
               <div class="actions">
                 <a class="btn btn--lg btn--pill" href="https://github.com/heyitsR1/killslop">View on GitHub</a>
               </div>
             </div>
             <div class="links">
-              <p class="links__label">Get involved</p>
+              <p class="links__label">Help out</p>
               <ul>
                 <li><a href="https://github.com/heyitsR1/killslop/blob/main/CONTRIBUTING.md">Contribute code or research</a></li>
-                <li><a href="https://github.com/heyitsR1/killslop/issues/new/choose">Report a wrong call</a></li>
+                <li><a href="https://github.com/heyitsR1/killslop/issues/new/choose">Report a mistake</a></li>
                 <li><a href="https://github.com/heyitsR1/killslop/blob/main/RESEARCH.md">Read the detection research</a></li>
                 <li><a href="https://github.com/heyitsR1/killslop/security/policy">Report a security issue</a></li>
               </ul>
@@ -503,8 +548,11 @@
         <!-- ------------------------------------------------------------- cta -->
         <section class="section cta" aria-labelledby="cta-title">
           <div class="hero__bg" aria-hidden="true"></div>
-          <h2 class="cta__title" id="cta-title">Take your feed back.</h2>
-          <p class="lead">Free, with no account. It starts on the next YouTube page you load.</p>
+          <h2 class="cta__title" id="cta-title">Hide AI slop on YouTube today.</h2>
+          <p class="lead">
+            It is free and needs no account. When you mark a video as AI slop, you help build the list for
+            everyone.
+          </p>
           <div class="cta__actions">
             <a class="btn btn--primary btn--xl btn--pill" href="/get">Get KillSlop</a>
           </div>
@@ -516,20 +564,21 @@
               <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="6" fill="currentColor"/><circle class="mark__glyph" cx="12" cy="12" r="6"/><path class="mark__glyph" d="M7.76 7.76l8.48 8.48"/></svg>
               <span class="wordmark">KillSlop</span>
             </a>
-            <p class="footer__tag">Hides AI slop on YouTube, and builds an open list of it.</p>
+            <p class="footer__tag">Hides AI slop from your feed and keeps a public list of it.</p>
           </div>
           <nav class="footer__col" aria-label="Product">
             <p class="footer__head">Product</p>
-            <a href="#features">What it does</a>
+            <a href="#features">Features</a>
             <a href="#how">How it decides</a>
             <a href="#list">The list</a>
+            <a href="#roadmap">Roadmap</a>
             <a href="/privacy">Privacy</a>
           </nav>
           <nav class="footer__col" aria-label="Project">
             <p class="footer__head">Project</p>
             <a href="https://github.com/heyitsR1/killslop">GitHub</a>
             <a href="https://github.com/heyitsR1/killslop/issues/new/choose">Report a problem</a>
-            <a href="https://api.killslop.app/api/v1/export/youtube-channels.json">Export (JSON)</a>
+            <a href="https://api.killslop.app/api/v1/export/youtube-channels.json">Download the list (JSON)</a>
           </nav>
           <div class="footer__legal">
             <span>&copy; 2026 KillSlop</span>

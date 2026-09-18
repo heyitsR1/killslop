@@ -1,9 +1,9 @@
 # Contributing to KillSlop
 
 KillSlop is building the shared, evidence-backed list of AI slop that any filter
-can use: YouTube first, then LinkedIn, then X. Help of every size counts, from
-a wrong-call report to a selector fix when YouTube changes its markup to a
-whole new platform.
+can use, on YouTube, X and LinkedIn today. Help of every size counts, from a
+wrong-call report to a selector fix when a site changes its markup to a whole
+new platform.
 
 ## Without writing code
 
@@ -12,8 +12,8 @@ whole new platform.
 - **Report wrong calls.** A creator hidden who should not be, or slop that got
   through. Use the *Wrong call* issue form, or the extension's Send feedback
   page.
-- **Report breakage.** YouTube changes its markup often. The page link and a
-  screenshot are usually enough.
+- **Report breakage.** YouTube, X and LinkedIn all change their markup often.
+  The page link and a screenshot are usually enough.
 
 ## Read these first
 
@@ -116,7 +116,9 @@ client work.
 4. Switch its entry in `PLATFORMS` (`extension/src/core/settings.js`) from
    `planned` to `live`.
 
-Next up: LinkedIn, then X.
+X and LinkedIn followed these steps; `extension/src/content/feed.js` does
+most of the work for a feed of posts, and its adapters (`x.js`,
+`linkedin.js`) are short. Next up: Reddit, Pinterest, Google Images, Spotify.
 
 ## Pull requests
 

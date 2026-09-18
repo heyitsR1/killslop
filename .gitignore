@@ -1,5 +1,7 @@
 node_modules/
 .browsers/
+# scripts/measure-channels.mjs working state and logs
+.crawl/
 *.zip
 .DS_Store
 
@@ -8,3 +10,6 @@ node_modules/
 .wrangler/
 .dev.vars
 worker/wrangler.toml
+
+# Chrome Web Store API credentials (wizard-generated)
+.env
