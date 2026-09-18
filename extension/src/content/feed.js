@@ -122,6 +122,7 @@
       community: 'Reported by the community',
       'community-channel': `This ${noun} was reported by the community`,
       'community-measured': `This ${noun}'s own posts are labelled AI`,
+      'community-writing': `This ${noun}'s posts read as AI-written`,
       you: 'You marked this as slop',
       'you-channel': `You marked this ${noun} as slop`,
     };

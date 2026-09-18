@@ -55,7 +55,7 @@
           <header class="doc__head">
             <p class="eyebrow">Legal</p>
             <h1 class="doc__title">Privacy policy</h1>
-            <p class="doc__meta"><span>Effective 15 September 2026</span><span>Applies to the extension and api.killslop.app</span></p>
+            <p class="doc__meta"><span>Effective 18 September 2026</span><span>Applies to the extension and api.killslop.app</span></p>
           </header>
 
           <div class="doc__body">
@@ -65,14 +65,18 @@
                 <ul>
                   <li>KillSlop has no accounts, ads, analytics or tracking, and never sells data.</li>
                   <li>
-                    The server cannot learn what you watch or read. The extension looks things up by the first 4
-                    characters of a hash, never by the video or post itself.
+                    Looking things up cannot tell the server what you watch or read. The extension looks up by the
+                    first 4 characters of a hash, never by the video or post itself.
                   </li>
                   <li>
-                    Only three things send the ID of a video, post, channel or account: a mark you make, a channel
-                    measurement, and feedback you write. You can turn each of them off.
+                    Four things can leave your browser: a mark you make, a channel measurement, feedback you write,
+                    and, only if you switch the writing check on, the text of a post that nothing else could place.
+                    You can turn each of them off, and the writing check is off until you turn it on.
                   </li>
-                  <li>The only service provider is Cloudflare, which hosts the API and this site.</li>
+                  <li>
+                    Two service providers: Cloudflare, which hosts the API and this site, and TypeSafe, which runs the
+                    writing check's model. TypeSafe is used only while you have that check switched on.
+                  </li>
                 </ul>
               </div>
 
@@ -113,7 +117,9 @@
                 The extension reads the YouTube, X and LinkedIn pages you open, in your browser, to find the video,
                 post, channel and account ids on them. On X it also reads, inside the page, the post data X has
                 already sent to that page, to see which posts X itself labels as made with AI. That reading happens
-                locally. Nothing about the pages you view is sent to us.
+                locally. With the writing check off, which is how it ships, nothing about the pages you view is sent
+                to us. With it on, the single exception is set out under
+                <a href="#writing">the writing check</a> below.
               </p>
 
               <h2 id="sent">What leaves your device, and when</h2>
@@ -144,6 +150,34 @@
                 X's AI label), the extension sends that channel's or account's id and handle if known, the two
                 counts, and your install id. It does this once per channel or account. LinkedIn has no AI label, so
                 nothing is measured there.
+              </p>
+
+              <h3 id="writing">The writing check</h3>
+              <p>
+                Off unless you switch it on in the popup. X labels AI images and video but never text, and LinkedIn
+                labels nothing at all, so a post made only of words cannot be placed any other way. When the check is
+                on, three things happen in this order, and most posts never get past the first.
+              </p>
+              <ol>
+                <li>
+                  The extension reads the post's text in the page and compares it with a list of signs of AI writing.
+                  A post showing none of them is settled there, in the page, and its text is not sent anywhere.
+                </li>
+                <li>
+                  For a post that does show them, the extension sends the <strong>first 4 hexadecimal characters</strong>
+                  of the SHA-256 hash of its text, and gets back every answer in that bucket. A post that anyone has
+                  had checked before is answered here, with no text sent.
+                </li>
+                <li>
+                  Only a post that shows the signs <em>and</em> that nobody has ever had checked has its text sent to
+                  <code>api.killslop.app</code>, which passes it to TypeSafe's model and returns a score. No id, no
+                  install id, no account and nothing about you goes with it.
+                </li>
+              </ol>
+              <p>
+                The server stores the hash of the text and the score. It does not store the text. Nothing kept there
+                can be turned back into a post, or assembled into anyone's feed, and the next person who meets the
+                same post is answered from that hash without sending anything at all.
               </p>
 
               <h3>Feedback</h3>
@@ -205,6 +239,14 @@
                       <td>As long as the list exists</td>
                     </tr>
                     <tr>
+                      <td>Writing check answer</td>
+                      <td>
+                        <code>sha256(post text)</code>, the score, which sign matched most, the model's name and a
+                        time. Not the text, and nothing about who asked.
+                      </td>
+                      <td>As long as the list exists</td>
+                    </tr>
+                    <tr>
                       <td>Feedback</td>
                       <td>
                         Category, message, your email if given, extension version, time, and your network as a salted
@@ -223,13 +265,16 @@
 
               <h2 id="public">What is public</h2>
               <p>
-                Decided YouTube channels are published under
+                Decided channels, X accounts and LinkedIn authors are published under
                 <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a> at
-                <a href="https://api.killslop.app/api/v1/export/youtube-channels.json"><code>/api/v1/export/youtube-channels.json</code></a>:
-                the channel id, the kind of evidence, whether it was reviewed, the vote score, the measurement counts
-                and when it last changed. The lookup endpoint serves the same decisions, and those for X and
-                LinkedIn, by hash, and <code>/api/v1/stats</code> publishes totals. Videos and posts are never
-                exported, and nothing about who voted, measured or sent feedback is ever published. The votes and
+                <a href="https://api.killslop.app/api/v1/export/youtube-channels.json"><code>/api/v1/export/youtube-channels.json</code></a>,
+                <a href="https://api.killslop.app/api/v1/export/x-accounts.json"><code>/api/v1/export/x-accounts.json</code></a>
+                and
+                <a href="https://api.killslop.app/api/v1/export/linkedin-authors.json"><code>/api/v1/export/linkedin-authors.json</code></a>:
+                the id, the kind of evidence, whether it was reviewed, the vote score, the measurement counts and when
+                it last changed. The lookup endpoint serves the same decisions by hash, and
+                <code>/api/v1/stats</code> publishes totals. Videos and posts are never exported, no post text is ever
+                published, and nothing about who voted, measured or sent feedback is ever published. The votes and
                 measurements you contribute become part of that list under the same licence.
               </p>
 
@@ -251,8 +296,16 @@
                 Cloudflare, Inc. hosts the API and this website (Cloudflare Workers), stores the database (Cloudflare
                 D1), and enforces the rate limits. Cloudflare processes connection data such as IP addresses to
                 deliver requests, under
-                <a href="https://www.cloudflare.com/privacypolicy/">its own privacy policy</a>. We use no other
-                processor: no analytics, no advertising, no payment provider and no email service.
+                <a href="https://www.cloudflare.com/privacypolicy/">its own privacy policy</a>.
+              </p>
+              <p>
+                TypeSafe runs the model behind the writing check, and receives the text of a post only while you have
+                that check switched on and only for a post nobody has had checked before, under
+                <a href="https://docs.typesafe.ai/legal">its own terms</a>. It receives the text alone: no id, no
+                install id and nothing about you. With the check off it is never contacted.
+              </p>
+              <p>
+                We use no other processor: no analytics, no advertising, no payment provider and no email service.
               </p>
 
               <h2 id="never">What we never do</h2>
@@ -262,8 +315,9 @@
                 <li>Build a history of what anyone watches or reads, on the device or on the server.</li>
                 <li>
                   Let anyone read what you sent, apart from the maintainer reading feedback and reviewing list
-                  entries.
+                  entries, and TypeSafe receiving a post's text while the writing check is on.
                 </li>
+                <li>Store the text of a post. The writing check keeps its hash and its score, never its words.</li>
               </ul>
 
               <h2 id="chrome">Chrome Web Store user data</h2>
@@ -275,6 +329,7 @@
 
               <h2 id="choices">Your choices</h2>
               <ul>
+                <li><strong>Writing check off</strong>, which is how it ships: no post text is ever sent, and TypeSafe is never contacted.</li>
                 <li><strong>Community list off</strong>: no lookups and no channel measurements are sent.</li>
                 <li><strong>Contribute reports off</strong>: no marks and no measurements are sent; your marks stay on your device.</li>
                 <li><strong>Platforms</strong>, in the popup: turn KillSlop off on YouTube, X or LinkedIn separately.</li>

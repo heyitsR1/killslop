@@ -13,6 +13,8 @@ copied line keeps its licence and its author.
 | Vote-visibility threshold, reputation ranking, one-vote-per-IP, shadow-hide, request-validator | SponsorBlock server | AGPL-3.0-only | Ideas for the community tier; reimplemented. |
 | Geist Sans and Geist Mono typefaces | [Geist](https://github.com/vercel/geist-font) by Vercel in collaboration with basement.studio | OFL-1.1 | The variable fonts ship unmodified in `extension/src/fonts/` and `worker/public/fonts/`, each with the licence as `OFL.txt`. |
 | Visual language: black and white, hairline gray borders, tight type | Vercel's Geist design system | none (not code) | Style only. Our tokens and CSS are written from scratch; no Vercel code, logo, mark or name is used. |
+| The rubric the writing check asks about: AI vocabulary, negative parallelism, rule of three, listicle templates, significance puffery, vague attribution | [Wikipedia: Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing) by its editors | CC BY-SA 4.0 | Text, not code. The signs are adapted, and cut down to the ones that survive in a post of a few hundred characters, in `worker/src/jev.js` and `extension/src/content/slopsigns.js`. Share-alike is satisfied: the list those signs help decide is published under the same licence. |
+| The model the writing check asks | [Jev](https://docs.typesafe.ai) by TypeSafe | commercial API, not code | A service, called from `worker/src/jev.js` only. No code copied, and the key never ships in the extension. |
 
 Projects looked at and deliberately **not** copied because they carry no
 licence: SlopBlock (lydonator), youtube-ai-slop-dataset, Slop Evader,

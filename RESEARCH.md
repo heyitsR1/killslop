@@ -429,3 +429,91 @@ reaction button, `Comment` and `Repost`.
   LinkedIn users mean by slop, and no platform signal covers them. LinkedIn's
   own answer (2026-07-30) is the private "Seems like AI slop" report plus
   reduced reach, with no public label.
+
+---
+
+# The writing check
+
+Measured 2026-09-18 against Jev 1.13 (TypeSafe), one post per request, through
+the same code path the worker uses (`worker/src/jev.js`).
+
+## 23. Reading the words catches what no label does, and the bar is 3.0
+
+§13 and §15 leave X's text posts unlabelled, and §18 leaves LinkedIn with no
+signal at all, so a post made of words reached the end of the ladder and was
+called clean. §7's known limitation anticipated exactly this tier and set its
+condition: detection that reads the content rather than a label "should stay
+opt-in if it is ever added". It is, and this is the measurement it rests on.
+
+Twelve posts, four template slop and eight human. The human half was chosen to
+be hard rather than easy: two non-native-English posts (one taken off a live
+timeline), a polished essay-style tweet, a human marketing post and a formal
+outage note. Each was scored 0 to 4 on the rubric adapted from Wikipedia's
+*Signs of AI writing* (ATTRIBUTION.md).
+
+| Post | Truth | Score |
+|---|---|---|
+| X thread template ("It's not. It's about leverage.") | slop | 3.91 |
+| LinkedIn listicle ("3 crucial lessons") | slop | 3.98 |
+| X puffery ("marks a pivotal shift") | slop | 3.55 |
+| LinkedIn announcement ("thrilled to announce") | slop | 2.94 |
+| Formal outage note | human | 1.68 |
+| Polished open-source essay | human | 1.43 |
+| Prank video caption | human | 1.28 |
+| Non-native English, medical | human | 0.89 |
+| Non-native English, business register | human | 0.88 |
+| Creator announcement | human | 0.84 |
+| Human marketing post | human | 0.70 |
+| Debugging complaint | human | 0.07 |
+
+| Threshold | Caught | False positives |
+|---|---|---|
+| 2.0 | 4/4 | 1/8 |
+| 2.5 | 4/4 | 0/8 |
+| 3.0 | 3/4 | 0/8 |
+
+**Default: `HIDE_AT = 3.0`** (`extension/src/core/writing.js`). 2.5 scored
+better on this sample, but hiding is the harsher action and twelve posts are
+far too few to spend someone's visibility on the difference.
+
+### Known limitation
+
+Twelve posts is a sample, not a study. It fixes no precision or recall figure
+worth quoting, and the human half was written for the purpose rather than
+drawn from a feed. Re-measure on a larger labelled sample, drawn from real
+timelines, before moving the threshold or claiming a rate.
+
+## 24. Trap: the rubric flags non-native English unless told not to
+
+The most important sentence in the question is the last one:
+
+> Non-native English, awkward grammar, translation artefacts, typos, and
+> unusual phrasing are signs of a HUMAN writer, not of AI.
+
+Without it the model reads unusual English as machine English, and the check
+would hide people for writing in a second language. With it, both non-native
+samples scored below 0.9, and one scored 0.69 through the live worker route.
+`test/writing.test.mjs` asserts the sentence is still present, because it is
+the kind of line a tidy-up removes.
+
+The same trap sits in the local gate: `extension/src/content/slopsigns.js` is
+tested against the same posts, because a gate that held them back would deny
+them even the chance to be cleared.
+
+## 25. One post per request, not ten
+
+Batching ten posts into one `state` and asking a question per index cost 217
+input tokens a post against 451, and was measurably worse:
+
+| Post | Asked alone | In a batch of ten |
+|---|---|---|
+| Human debugging complaint | 0.02, confidence 0.99 | 2.57, confidence 0.15 |
+| X thread template | 3.92, confidence 0.93 | 3.53, confidence 0.61 |
+
+That matches TypeSafe's documented weaknesses at indirection and at state full
+of content irrelevant to the question. Halving the cost is not worth a wrong
+answer about a real person.
+
+Cost at one post per request, two questions: about 835 input tokens, roughly
+**$0.035 per thousand posts**, about 1 second each and parallelisable. The
+local gate holds back most of a feed before any of that is spent.

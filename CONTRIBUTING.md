@@ -66,9 +66,16 @@ database. `test/config.test.mjs` fails if it drifts from
 
 - The read path never sends a full id. Lookups go by 4-character hash prefix,
   and must stay that way.
+- One feature is allowed past that line, and only on these terms: the writing
+  check sends a post's text, because there is no way to judge writing without
+  it. It ships off, the page's own gate settles most posts without sending
+  anything, the text is asked for by `sha256(text)` prefix before it is ever
+  sent, and the server stores the hash and the score but never the text.
+  Anything else that wants to send content has to clear the same four bars,
+  and say so on the privacy page.
 - Nothing may build a browsing history, on the client or on the server. Only
-  deliberate clicks (votes), channel-level measurements (tallies) and
-  feedback send anything identifying content.
+  deliberate clicks (votes), channel-level measurements (tallies), feedback
+  and the opt-in writing check send anything identifying content.
 - Anything that identifies a person is stored only as a salted hash, scoped
   so that two of their actions cannot be linked.
 - New data collection gets a line in the README's Privacy section in the same
@@ -76,7 +83,10 @@ database. `test/config.test.mjs` fails if it drifts from
 
 **Fairness.** A wrong entry is a public accusation against a real creator.
 
-- Keep measurement (`disclosure`) and opinion (`vote`) apart end to end.
+- Keep measurement (`disclosure`), machine reading (`writing`) and opinion
+  (`vote`) apart end to end. They are three different claims with three
+  different strengths: never add their counters together, and never let one
+  be served under another's name.
 - One person must never be able to hide something for everyone. `decide()` in
   `worker/src/policy.js` is the one place that decides what gets served.
   Change it only with tests.

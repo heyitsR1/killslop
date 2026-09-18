@@ -102,8 +102,9 @@ export async function lookup(ids) {
             score: entry.score,
             kind: entry.kind,
             // 'disclosure' = other clients measured this channel's own AI labels;
+            // 'writing' = the writing check read this author's posts as AI-written;
             // 'vote' = human opinion. Older servers omit it: treat as opinion.
-            evidence: entry.evidence === 'disclosure' ? 'disclosure' : 'vote',
+            evidence: entry.evidence === 'disclosure' || entry.evidence === 'writing' ? entry.evidence : 'vote',
           });
         }
       }

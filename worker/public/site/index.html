@@ -375,7 +375,7 @@
           <div class="split split--list">
             <div>
               <p class="eyebrow">The list</p>
-              <h2 class="h2" id="list-title">A public list of AI slop channels.</h2>
+              <h2 class="h2" id="list-title">A public list of AI slop accounts.</h2>
               <p class="lead">
                 The list is open under CC BY-SA 4.0. Anyone can download it and use it, including blocklists,
                 researchers and other tools, as long as they credit KillSlop and share what they build from it
@@ -387,12 +387,16 @@
                   <dd>The channel's own videos carry YouTube's AI label. KillSlop users or our open crawler counted them.</dd>
                 </div>
                 <div class="evidence__item">
+                  <dt><span class="tag">writing</span></dt>
+                  <dd>The writing check read this account's posts as AI-written. A reading of the words, not a label anyone published, so it ranks below disclosure.</dd>
+                </div>
+                <div class="evidence__item">
                   <dt><span class="tag">vote</span></dt>
                   <dd>People pressed AI SLOP or Not slop. On this list, votes only decide what a maintainer checks next.</dd>
                 </div>
                 <div class="evidence__item">
                   <dt><span class="tag">review</span></dt>
-                  <dd>A maintainer checked the channel by hand. This decision overrides the other two.</dd>
+                  <dd>A maintainer checked the account by hand. This decision overrides the other three.</dd>
                 </div>
               </dl>
             </div>
@@ -425,7 +429,12 @@
     }
   ]
 }</code></pre>
-                <p class="code__caption">Only channels are published. Videos and voters are not.</p>
+                <p class="code__caption">
+                  X accounts and LinkedIn authors are published the same way, at
+                  <code>/api/v1/export/x-accounts.json</code> and
+                  <code>/api/v1/export/linkedin-authors.json</code>. Only accounts are published: videos, posts, post
+                  text and voters are not.
+                </p>
               </div>
 
               <div class="stats" id="stats" hidden>

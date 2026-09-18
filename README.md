@@ -46,16 +46,17 @@ and the community list.
 
 ## How it decides
 
-Five tiers, cheapest first. The first one that answers wins. Not every
+Six tiers, cheapest first. The first one that answers wins. Not every
 platform has every tier.
 
 | # | Tier | Cost | Notes |
 |---|---|---|---|
 | 0 | Your own override | free | Absolute. Your "not slop" click outranks the platform and the community. |
-| 1 | Local cache | free | Verdicts don't expire: a disclosure never changes. |
+| 1 | Local cache | free | Verdicts don't expire: a disclosure never changes. A cached writing verdict says so, rather than passing for a label. |
 | 2 | Channel inference | free | YouTube: at least 60% of at least 5 sampled uploads labelled hides the channel. X: at least 25% of at least 8 media posts. None on LinkedIn, which has no label to count. |
 | 3 | Community list | 1 request per hash bucket | Batched, privacy-preserving, evidence-tagged (below). |
-| 4 | InnerTube probe | ~1 KB per video | YouTube only. Throttled, background, once per video ever. X needs none: its label arrives with the feed. |
+| 4 | Writing check | opt-in, off by default | X and LinkedIn only. For a post nothing else can place, the words themselves. Gated in the page, then asked by hash, so most posts cost nothing and are never sent. |
+| 5 | InnerTube probe | ~1 KB per video | YouTube only. Throttled, background, once per video ever. X needs none: its label arrives with the feed. |
 
 ## Marking things yourself
 
@@ -86,20 +87,32 @@ Each entry says *why* it is on the list:
   numbers against the same platform's threshold and records one per reporter.
   The project's crawler (below) measures YouTube channels the same way, in
   bulk.
+- **`writing`**: the writing check read this account's or author's posts as
+  AI-written. A model's reading of the words, not a label anyone published, so
+  it ranks below `disclosure` and is counted in its own columns rather than
+  added to the measurement. It comes from the project's own measurement, never
+  from what happened to cross a user's feed.
 - **`vote`**: people clicked "slop" or "not slop".
 - **`review`**: a maintainer checked it by hand and nothing was measured.
 
 Turning off "Include opinion votes" in the popup restricts the list to
-measured entries, which cannot produce an opinion-based false positive.
+measured entries, which cannot produce an opinion-based false positive. That
+switch also drops `writing` entries, because a model can be wrong in the same
+way an opinion can.
 
-Decided YouTube channels are exported in the clear under
-[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) at
-<https://api.killslop.app/api/v1/export/youtube-channels.json>, so uBlock
-lists, ReVanced-style patches and researchers can consume them without
-running the extension. Anyone may use and share the list, commercially too,
-as long as they credit KillSlop and release what they build from it under
-the same licence. X and LinkedIn entries are served to the extension but not
-exported yet.
+Decided accounts are exported in the clear under
+[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/), one file per
+platform, so uBlock lists, ReVanced-style patches and researchers can consume
+them without running the extension:
+
+- <https://api.killslop.app/api/v1/export/youtube-channels.json>
+- <https://api.killslop.app/api/v1/export/x-accounts.json>
+- <https://api.killslop.app/api/v1/export/linkedin-authors.json>
+
+Anyone may use and share the list, commercially too, as long as they credit
+KillSlop and release what they build from it under the same licence. Only
+accounts are exported: videos and posts are not, no post text ever is, and a
+LinkedIn post's id is a one-way hash that would mean nothing anyway.
 
 ### The crawler
 
@@ -209,7 +222,7 @@ or account, and filters the returned bucket locally. The server never receives
 an id you are asking about, so it cannot reconstruct what you watched or read.
 4 characters = 65,536 buckets.
 
-Three things do send data, and none of them is a browsing trail:
+Four things do send data, and none of them is a browsing trail:
 
 - a **vote**, when you click "not slop" or mark something: the id you
   marked;
@@ -217,7 +230,12 @@ Three things do send data, and none of them is a browsing trail:
   disclosure threshold: its id and the sampled counts, once;
 - **feedback**, when you send it: your message, the optional email, and the
   extension version. It is stored for the maintainer to read and never
-  published.
+  published;
+- the **writing check**, only if you switch it on: the text of a post that
+  nothing else could place. It ships off. Even on, the page's own gate settles
+  most posts locally, and what is left is asked for by `sha256(text)` prefix
+  first, so text is sent only for a post nobody has ever had checked. The
+  server keeps the hash and the score and never the text.
 
 Each vote carries a random install id. The server stores that id, and your
 network (IPv4 address or IPv6 /64), only as `sha256(value + entry + salt)`.

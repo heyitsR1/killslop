@@ -179,7 +179,9 @@ export async function resolveBatch(items, platform = 'youtube') {
             ? 'community'
             : entry.evidence === 'disclosure'
               ? 'community-measured'
-              : 'community-channel',
+              : entry.evidence === 'writing'
+                ? 'community-writing'
+                : 'community-channel',
         };
         if (entry.slop && c && !v && rule) {
           // Remember community channel verdicts locally so the next feed is free.
