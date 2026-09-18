@@ -38,6 +38,50 @@ test('a session verifies until it expires or the password changes', async () => 
   assert.equal(await checkSession(e, null), false);
 });
 
+/* ------------------------------------------------------------- address gate */
+
+const from = (addr) => ({ headers: { 'cf-connecting-ip': addr } });
+
+test('with no allowlist set, the console is reachable from anywhere', async () => {
+  assert.equal((await call('/admin', from('203.0.113.9'))).status, 200);
+});
+
+test('an allowlist makes the console a 404 for everyone else', async () => {
+  const e = env({ ADMIN_ALLOW: '203.0.113.9' });
+  // Not 401 and not 403: a scanner must not learn that /admin is real here.
+  assert.equal((await call('/admin', from('198.51.100.7'), e)).status, 404);
+  assert.equal((await call('/admin', from('203.0.113.9'), e)).status, 200, 'the maintainer still gets in');
+});
+
+test('several addresses may be allowed at once', async () => {
+  const e = env({ ADMIN_ALLOW: ' 203.0.113.9 , 198.51.100.7 ' });
+  assert.equal((await call('/admin', from('203.0.113.9'), e)).status, 200);
+  assert.equal((await call('/admin', from('198.51.100.7'), e)).status, 200);
+  assert.equal((await call('/admin', from('192.0.2.1'), e)).status, 404);
+});
+
+test('an IPv6 client is matched on its /64, not on one rotating address', async () => {
+  const e = env({ ADMIN_ALLOW: '2400:1a00:3b8b:4a5d::1' });
+  assert.equal(
+    (await call('/admin', from('2400:1a00:3b8b:4a5d:aaaa:bbbb:cccc:dddd'), e)).status,
+    200,
+    'same /64, different address in it'
+  );
+  assert.equal((await call('/admin', from('2400:1a00:3b8b:4a5e::1'), e)).status, 404, 'a neighbouring /64');
+});
+
+test('a blocked address is turned away before the password is even considered', async () => {
+  // No ADMIN_PASSWORD at all. A blocked caller still gets 404, never the 503
+  // that would tell them a console exists here but is unconfigured.
+  const res = await call('/admin', from('198.51.100.7'), { ADMIN_ALLOW: '203.0.113.9' });
+  assert.equal(res.status, 404);
+});
+
+test('a nonsense allowlist entry blocks rather than opens', async () => {
+  const e = env({ ADMIN_ALLOW: 'not-an-address' });
+  assert.equal((await call('/admin', from('203.0.113.9'), e)).status, 404);
+});
+
 test('the password check accepts only the exact secret', async () => {
   const e = env();
   assert.equal(await passwordMatches(e, PASSWORD), true);

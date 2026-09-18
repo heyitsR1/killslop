@@ -22,6 +22,9 @@ host = "api.killslop.app"
 #   VOTER_SALT       salts every hashed voter and network key
 #   ADMIN_PASSWORD   opens the console at /admin; unset means the console is off
 #   TYPESAFE_API_KEY the writing check's model key; unset means the check is off
+#   ADMIN_ALLOW      optional: comma-separated addresses that may reach /admin
+#                    at all. Unset means password-only from anywhere. Delete it
+#                    to get back in if your address changes.
 
 [vars]
 # How much the maintainer must approve before the list serves it:
@@ -65,10 +68,17 @@ name = "RL_FEEDBACK"
 namespace_id = "7103"
 simple = { limit = 5, period = 60 }
 
+# Every password guess spends this, so it is deliberately small.
 [[ratelimits]]
 name = "RL_LOGIN"
 namespace_id = "7104"
-simple = { limit = 10, period = 60 }
+simple = { limit = 5, period = 60 }
+
+# Every request to the console, signed in or not.
+[[ratelimits]]
+name = "RL_ADMIN"
+namespace_id = "7106"
+simple = { limit = 120, period = 60 }
 
 # The writing check spends money, so its budget is tighter than a plain write.
 [[ratelimits]]

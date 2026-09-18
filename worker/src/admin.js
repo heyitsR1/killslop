@@ -12,8 +12,8 @@
  * ever served through the checks below.
  */
 
-import { PREFIX_LEN, decide, parseInput, platformOf, reviewMode, sha256Hex } from './policy.js';
-import { overLimit, readJson } from './http.js';
+import { PREFIX_LEN, decide, networkOf, parseInput, platformOf, reviewMode, sha256Hex } from './policy.js';
+import { clientNetwork, overLimit, readJson } from './http.js';
 import { VERDICT, probeWith } from '../../extension/src/core/innertube.js';
 
 const COOKIE = '__Host-killslop-admin';
@@ -136,12 +136,62 @@ async function file(env, request, path) {
   return out;
 }
 
+/**
+ * Who may reach the console at all, before any password is involved.
+ *
+ * ADMIN_ALLOW is a secret holding a comma-separated list of addresses. Unset,
+ * there is no restriction and the password is the only gate. Set, everyone
+ * else is answered exactly as an unused path is, because a scanner should not
+ * be able to learn that /admin is a real thing on this host.
+ *
+ * Entries are compared through networkOf(), the same normalisation the vote
+ * keys use, so an IPv6 client is matched on its /64 rather than on an address
+ * its ISP rotates inside that block, and a pasted address needs no special
+ * form.
+ *
+ * Break-glass, for the day a home address changes: `npx wrangler secret delete
+ * ADMIN_ALLOW` restores password-only access from anywhere.
+ */
+function ipAllowed(request, env) {
+  const allow = (env.ADMIN_ALLOW || '')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+  if (!allow.length) return true;
+  const network = clientNetwork(request);
+  return allow.some((entry) => {
+    try {
+      return networkOf(entry) === network;
+    } catch {
+      return false;
+    }
+  });
+}
+
+const notHere = () =>
+  new Response('Not found\n', {
+    status: 404,
+    headers: { ...HEADERS, 'content-type': 'text/plain; charset=utf-8' },
+  });
+
 export async function handleAdmin(request, env, url) {
+  // Address first, before the password check and before the limiter: an
+  // unwelcome caller should cost nothing and learn nothing, not even whether
+  // the console is configured here.
+  if (!ipAllowed(request, env)) return notHere();
+
   if (!env.ADMIN_PASSWORD) {
     return new Response('The console is not configured on this deployment.\n', {
       status: 503,
       headers: { ...HEADERS, 'content-type': 'text/plain; charset=utf-8' },
     });
+  }
+
+  // Every request to the console spends a budget, signed in or not. Until this
+  // existed only the sign-in POST and requests carrying an Authorization
+  // header were limited, so /admin itself could be hammered for free.
+  if (await overLimit(env, 'RL_ADMIN', request)) {
+    return json({ error: 'rate limited' }, 429);
   }
 
   const path = url.pathname.replace(/\/+$/, '');
