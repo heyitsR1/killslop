@@ -1,4 +1,4 @@
-import { PLATFORMS } from '../core/settings.js';
+import { DEFAULTS, PLATFORMS } from '../core/settings.js';
 
 const send = (type, payload = {}) =>
   new Promise((resolve) => {
@@ -101,9 +101,11 @@ function paint() {
   //
   // The writing check is named first when it is on, because it is the only
   // setting that can send the words of a post rather than a hash of them.
-  $('privacy').textContent = settings.useWritingCheck
-    ? 'The writing check asks by hash first, and sends the text itself only for a post nothing else could place and nobody has had checked before.'
-    : settings.useCommunity
+  $('privacy').textContent = settings.unreachable
+    ? "KillSlop's background page is not responding, so these are the default settings and changes will not save. Reload the extension at chrome://extensions."
+    : settings.useWritingCheck
+      ? 'The writing check asks by hash first, and sends the text itself only for a post nothing else could place and nobody has had checked before.'
+      : settings.useCommunity
       ? 'Lookups are sent as a 4-character hash prefix, so the list never learns what you watched or read.'
       : settings.shareReports
         ? 'Community list is off, so nothing is looked up in it. Your marks are still shared; turn off Contribute reports to keep them here.'
@@ -128,8 +130,15 @@ async function refreshStats() {
 /* ------------------------------------------------------------------- init */
 
 (async () => {
-  settings = await send('getSettings');
-  if (!settings) return;
+  /**
+   * A popup that cannot reach the background must still open and still work.
+   * This used to return early when the background did not answer, which left
+   * the markup on screen with nothing wired to it: the popup looked fine and
+   * every switch was dead, which is indistinguishable from the extension being
+   * broken. Fall back to the defaults, wire everything, and say so.
+   */
+  const live = await send('getSettings');
+  settings = live ?? { ...DEFAULTS, unreachable: true };
 
   renderPlatforms();
 
