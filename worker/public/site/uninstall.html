@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>KillSlop is uninstalled</title>
+    <meta
+      name="description"
+      content="KillSlop has been removed from your browser. If you have a moment, tell us why, so the next version is better."
+    />
+    <link rel="canonical" href="https://killslop.app/uninstall" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000000" />
+    <!-- Nothing to share here: this page is only ever reached by uninstalling. -->
+    <meta name="robots" content="noindex" />
+    <link rel="icon" href="/site/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href="/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="/ui/base.css" />
+    <link rel="stylesheet" href="/site/site.css" />
+    <script src="/site/uninstall.js" defer></script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <header class="nav">
+      <div class="nav__inner">
+        <a class="nav__brand" href="/" aria-label="KillSlop home">
+          <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="6" fill="currentColor"/><circle class="mark__glyph" cx="12" cy="12" r="6"/><path class="mark__glyph" d="M7.76 7.76l8.48 8.48"/></svg>
+          <span class="wordmark">KillSlop</span>
+        </a>
+        <nav class="nav__links" aria-label="Main">
+          <a href="/#how">How it works</a>
+          <a href="/#list">The list</a>
+          <a href="/#roadmap">Roadmap</a>
+          <a href="/privacy">Privacy</a>
+          <a href="https://github.com/heyitsR1/killslop">GitHub</a>
+        </nav>
+        <div class="nav__actions">
+          <a class="btn btn--sm nav__support" href="https://buymemomo.com/aarohan">Support</a>
+          <a class="btn btn--sm nav__source" href="https://github.com/heyitsR1/killslop">View source</a>
+          <a class="btn btn--sm btn--primary" href="/get">Reinstall KillSlop</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="page">
+      <main class="shell" id="main">
+        <!-- -------------------------------------------------------- the ask -->
+        <section class="section waitlist" aria-labelledby="uninstall-title">
+          <div class="hero__bg" aria-hidden="true"></div>
+          <p class="eyebrow">Uninstalled</p>
+          <h1 class="waitlist__title" id="uninstall-title">KillSlop is gone from your browser.</h1>
+          <p class="lead">
+            Everything it stored on your device went with it. If you have ten seconds, tell us what went wrong. It
+            is the only way we find out, and it is anonymous unless you choose otherwise.
+          </p>
+
+          <div class="reasons" id="reasons" role="group" aria-labelledby="reasons-label">
+            <p class="signup__label" id="reasons-label">What made you remove it?</p>
+            <button class="reason" type="button" data-reason="hid-too-much">It hid things I wanted to see</button>
+            <button class="reason" type="button" data-reason="missed-slop">It missed too much AI slop</button>
+            <button class="reason" type="button" data-reason="broke-site">It slowed down or broke the site</button>
+            <button class="reason" type="button" data-reason="confusing">I could not work out how to use it</button>
+            <button class="reason" type="button" data-reason="privacy">I was not comfortable with what it sends</button>
+            <button class="reason" type="button" data-reason="not-needed">I was only trying it out</button>
+            <button class="reason" type="button" data-reason="other">Something else</button>
+          </div>
+
+          <!-- Revealed once a reason is chosen, which has already been recorded
+               by then: this part is optional and nothing here is required. -->
+          <form class="uninstall__more" id="more" hidden novalidate>
+            <p class="uninstall__thanks" id="thanks"></p>
+
+            <label class="signup__label" for="detail">Anything more? <span class="optional">Optional</span></label>
+            <textarea
+              class="input"
+              id="detail"
+              rows="5"
+              maxlength="3000"
+              placeholder="What happened, and what did you expect instead?"
+            ></textarea>
+
+            <label class="signup__label uninstall__email-label" for="email">
+              Email <span class="optional">Optional, only if you want a reply</span>
+            </label>
+            <div class="signup__row">
+              <input
+                class="input"
+                id="email"
+                type="email"
+                maxlength="254"
+                placeholder="you@example.com"
+                autocomplete="email"
+                spellcheck="false"
+              />
+              <button class="btn btn--primary btn--xl" type="submit" id="send">Send it</button>
+            </div>
+            <p class="signup__msg" id="msg" role="status" aria-live="polite"></p>
+          </form>
+
+          <ul class="signup__terms">
+            <li>Read by a person, never published, never sold.</li>
+            <li>No account, no tracking, and no identifier is attached to this page.</li>
+            <li>The only thing the link carries is which version you had. See the <a class="link" href="/privacy#uninstall">privacy policy</a>.</li>
+          </ul>
+        </section>
+
+        <!-- ------------------------------------------------------ what next -->
+        <section class="section" aria-labelledby="next-title">
+          <span class="plus plus--l" aria-hidden="true"></span>
+          <span class="plus plus--r" aria-hidden="true"></span>
+          <div class="split split--even">
+            <div>
+              <p class="eyebrow">If it was fixable</p>
+              <h2 class="h2" id="next-title">Most of it is a setting.</h2>
+              <p class="lead">
+                If it hid too much, Dim it rather than Hide it, or turn off opinion votes and keep only the
+                channels measured from YouTube's own AI labels. If it missed too much, the writing check reads
+                posts that X and LinkedIn never label.
+              </p>
+              <div class="actions">
+                <a class="btn btn--lg btn--pill btn--primary" href="/get">Reinstall KillSlop</a>
+                <a class="btn btn--lg btn--pill" href="/#how">See how it decides</a>
+              </div>
+            </div>
+            <div class="links">
+              <p class="links__label">Either way, the work stays open</p>
+              <ul>
+                <li><a href="/#list">Download the public list (CC BY-SA 4.0)</a></li>
+                <li><a href="https://github.com/heyitsR1/killslop/issues/new/choose">Open an issue on GitHub</a></li>
+                <li><a href="https://buymemomo.com/aarohan">Support the project</a></li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <footer class="footer">
+          <div class="footer__brand">
+            <a class="nav__brand" href="/" aria-label="KillSlop home">
+              <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="6" fill="currentColor"/><circle class="mark__glyph" cx="12" cy="12" r="6"/><path class="mark__glyph" d="M7.76 7.76l8.48 8.48"/></svg>
+              <span class="wordmark">KillSlop</span>
+            </a>
+            <p class="footer__tag">Hides AI slop from your feed and keeps a public list of it.</p>
+          </div>
+          <nav class="footer__col" aria-label="Product">
+            <p class="footer__head">Product</p>
+            <a href="/#features">Features</a>
+            <a href="/#how">How it decides</a>
+            <a href="/#list">The list</a>
+            <a href="/#roadmap">Roadmap</a>
+            <a href="/privacy">Privacy</a>
+          </nav>
+          <nav class="footer__col" aria-label="Project">
+            <p class="footer__head">Project</p>
+            <a href="https://github.com/heyitsR1/killslop">GitHub</a>
+            <a href="https://github.com/heyitsR1/killslop/issues/new/choose">Report a problem</a>
+            <a href="https://api.killslop.app/api/v1/export/youtube-channels.json">Download the list (JSON)</a>
+            <a href="https://buymemomo.com/aarohan">Support the project</a>
+          </nav>
+          <div class="footer__legal">
+            <span>&copy; 2026 KillSlop</span>
+            <span>Not affiliated with YouTube, Google, X or LinkedIn.</span>
+          </div>
+        </footer>
+      </main>
+    </div>
+  </body>
+</html>

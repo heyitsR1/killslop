@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Get KillSlop at launch · Chrome Web Store waiting list</title>
+    <meta
+      name="description"
+      content="KillSlop is on its way to the Chrome Web Store. Leave your email and we will send one message the day the listing is live."
+    />
+    <link rel="canonical" href="https://killslop.app/waitlist" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000000" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="KillSlop" />
+    <meta property="og:url" content="https://killslop.app/waitlist" />
+    <meta property="og:title" content="Get KillSlop the day it lands in the Chrome Web Store" />
+    <meta
+      property="og:description"
+      content="One email, when the listing goes live. KillSlop hides AI slop on YouTube, X and LinkedIn."
+    />
+    <meta property="og:image" content="https://killslop.app/site/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="KillSlop. Hide AI slop from your feed." />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Get KillSlop the day it lands in the Chrome Web Store" />
+    <meta
+      name="twitter:description"
+      content="One email, when the listing goes live. KillSlop hides AI slop on YouTube, X and LinkedIn."
+    />
+    <meta name="twitter:image" content="https://killslop.app/site/og.png" />
+    <link rel="icon" href="/site/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href="/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="/ui/base.css" />
+    <link rel="stylesheet" href="/site/site.css" />
+    <script src="/site/waitlist.js" defer></script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <header class="nav">
+      <div class="nav__inner">
+        <a class="nav__brand" href="/" aria-label="KillSlop home">
+          <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="6" fill="currentColor"/><circle class="mark__glyph" cx="12" cy="12" r="6"/><path class="mark__glyph" d="M7.76 7.76l8.48 8.48"/></svg>
+          <span class="wordmark">KillSlop</span>
+        </a>
+        <nav class="nav__links" aria-label="Main">
+          <a href="/#how">How it works</a>
+          <a href="/#list">The list</a>
+          <a href="/#roadmap">Roadmap</a>
+          <a href="/privacy">Privacy</a>
+          <a href="https://github.com/heyitsR1/killslop">GitHub</a>
+        </nav>
+        <div class="nav__actions">
+          <a class="btn btn--sm nav__support" href="https://buymemomo.com/aarohan">Support</a>
+          <a class="btn btn--sm nav__source" href="https://github.com/heyitsR1/killslop">View source</a>
+          <!-- Install link. /get redirects to the current install page; change it there, not here. -->
+          <a class="btn btn--sm btn--primary" href="/get">Get KillSlop</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="page">
+      <main class="shell" id="main">
+        <!-- ----------------------------------------------------------- sign up -->
+        <section class="section waitlist" aria-labelledby="waitlist-title">
+          <div class="hero__bg" aria-hidden="true"></div>
+          <p class="eyebrow">Chrome Web Store</p>
+          <h1 class="waitlist__title" id="waitlist-title">KillSlop is on its way to the Chrome Web Store.</h1>
+          <p class="lead">
+            Leave your email and we will send you one message the day the listing is live, so installing it takes a
+            single click. That is the only thing this list is for.
+          </p>
+
+          <form class="signup" id="signup" novalidate>
+            <label class="signup__label" for="email">Email address</label>
+            <div class="signup__row">
+              <input
+                class="input"
+                id="email"
+                name="email"
+                type="email"
+                placeholder="you@example.com"
+                autocomplete="email"
+                spellcheck="false"
+                required
+              />
+              <button class="btn btn--primary btn--xl" type="submit" id="signup-submit">Email me at launch</button>
+            </div>
+            <p class="signup__msg" id="msg" role="status" aria-live="polite"></p>
+            <noscript>
+              <p class="signup__msg signup__msg--error">
+                This form needs JavaScript. You can
+                <a class="link" href="https://github.com/heyitsR1/killslop#install">install KillSlop from source</a>
+                instead, which works today.
+              </p>
+            </noscript>
+          </form>
+
+          <ul class="signup__terms">
+            <li>One email, at launch. No newsletter and no second message.</li>
+            <li>Your address is never sold, shared or published, and this page runs no analytics.</li>
+            <li>Ask us any time and we delete it. See the <a class="link" href="/privacy">privacy policy</a>.</li>
+          </ul>
+        </section>
+
+        <!-- ------------------------------------------------------- install now -->
+        <section class="section" aria-labelledby="now-title">
+          <span class="plus plus--l" aria-hidden="true"></span>
+          <span class="plus plus--r" aria-hidden="true"></span>
+          <div class="split split--even">
+            <div>
+              <p class="eyebrow">Do not want to wait</p>
+              <h2 class="h2" id="now-title">It already works today.</h2>
+              <p class="lead">
+                KillSlop hides AI slop on YouTube, X and LinkedIn right now. Until the store listing is live you load
+                it from source, which takes about a minute and needs no build step.
+              </p>
+              <div class="actions">
+                <a class="btn btn--lg btn--pill btn--primary" href="/get">Install from source</a>
+                <a class="btn btn--lg btn--pill" href="/">See what it does</a>
+              </div>
+            </div>
+            <div class="links">
+              <p class="links__label">While you are here</p>
+              <ul>
+                <li><a href="/#list">Download the public list (CC BY-SA 4.0)</a></li>
+                <li><a href="https://github.com/heyitsR1/killslop/blob/main/RESEARCH.md">Read the detection research</a></li>
+                <li><a href="https://github.com/heyitsR1/killslop/blob/main/CONTRIBUTING.md">Contribute code or research</a></li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <footer class="footer">
+          <div class="footer__brand">
+            <a class="nav__brand" href="/" aria-label="KillSlop home">
+              <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="6" fill="currentColor"/><circle class="mark__glyph" cx="12" cy="12" r="6"/><path class="mark__glyph" d="M7.76 7.76l8.48 8.48"/></svg>
+              <span class="wordmark">KillSlop</span>
+            </a>
+            <p class="footer__tag">Hides AI slop from your feed and keeps a public list of it.</p>
+          </div>
+          <nav class="footer__col" aria-label="Product">
+            <p class="footer__head">Product</p>
+            <a href="/#features">Features</a>
+            <a href="/#how">How it decides</a>
+            <a href="/#list">The list</a>
+            <a href="/#roadmap">Roadmap</a>
+            <a href="/privacy">Privacy</a>
+          </nav>
+          <nav class="footer__col" aria-label="Project">
+            <p class="footer__head">Project</p>
+            <a href="https://github.com/heyitsR1/killslop">GitHub</a>
+            <a href="https://github.com/heyitsR1/killslop/issues/new/choose">Report a problem</a>
+            <a href="https://api.killslop.app/api/v1/export/youtube-channels.json">Download the list (JSON)</a>
+            <a href="https://buymemomo.com/aarohan">Support the project</a>
+          </nav>
+          <div class="footer__legal">
+            <span>&copy; 2026 KillSlop</span>
+            <span>Not affiliated with YouTube, Google, X or LinkedIn.</span>
+          </div>
+        </footer>
+      </main>
+    </div>
+  </body>
+</html>

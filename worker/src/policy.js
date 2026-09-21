@@ -357,7 +357,12 @@ export async function parseInput(raw) {
 
 /* --------------------------------------------------------------- feedback */
 
-export const FEEDBACK_CATEGORIES = ['bug', 'wrong', 'idea', 'other'];
+/**
+ * 'uninstall' comes from killslop.app/uninstall rather than from the
+ * extension, which by then is gone. It shares this endpoint because it is the
+ * same shape of message and belongs in the same inbox.
+ */
+export const FEEDBACK_CATEGORIES = ['bug', 'wrong', 'idea', 'other', 'uninstall'];
 export const FEEDBACK_MAX_CHARS = 4000;
 /** Messages one network may send in 24 hours. */
 export const FEEDBACK_PER_DAY = 20;
@@ -388,4 +393,29 @@ export function cleanFeedback(body) {
     version:
       typeof body.version === 'string' && /^[\w.+-]{1,32}$/.test(body.version) ? body.version : null,
   };
+}
+
+/* --------------------------------------------------------------- waitlist */
+
+/** Sign-ups one network may make in 24 hours. */
+export const WAITLIST_PER_DAY = 10;
+/** The ?from=<slug> a launch link of ours may carry, and nothing else. */
+const WAITLIST_SOURCE = /^[a-z0-9-]{1,24}$/;
+
+/**
+ * A waiting-list sign-up, trimmed and checked, or {error}. Unlike feedback the
+ * address is required, since it is the whole row, and it is lowercased so that
+ * one person who signs up twice is one row rather than two.
+ *
+ * `source` is kept only when it matches a slug we could have written into our
+ * own launch links. Anything else is dropped rather than refused: a mangled
+ * campaign tag is not a reason to lose the sign-up.
+ */
+export function cleanWaitlist(body) {
+  if (!body || typeof body !== 'object') return { error: 'bad body' };
+  const email = typeof body.email === 'string' ? body.email.trim().toLowerCase() : '';
+  if (!isValidEmail(email)) return { error: 'bad email' };
+
+  const source = typeof body.source === 'string' ? body.source.trim().toLowerCase() : '';
+  return { email, source: WAITLIST_SOURCE.test(source) ? source : null };
 }

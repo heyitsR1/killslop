@@ -17,6 +17,13 @@ const PAGES = {
   '/privacy': '/site/privacy.html',
   // Opened once, on install, by the service worker.
   '/welcome': '/site/welcome.html',
+  // The Chrome Web Store launch list. Deliberately not linked from the home
+  // page: it is a page to share in launch posts, not a second call to action
+  // competing with "Get KillSlop", which works today.
+  '/waitlist': '/site/waitlist.html',
+  // Where Chrome sends people when they remove the extension, registered by
+  // the service worker with setUninstallURL. Reached only by uninstalling.
+  '/uninstall': '/site/uninstall.html',
 };
 /**
  * Where "Get KillSlop" goes. Every button on the site links to /get, so the

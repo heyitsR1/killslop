@@ -7,6 +7,10 @@ import worker from '../worker/src/index.js';
 const FILES = new Set([
   '/site/index.html',
   '/site/privacy.html',
+  '/site/waitlist.html',
+  '/site/waitlist.js',
+  '/site/uninstall.html',
+  '/site/uninstall.js',
   '/site/404.html',
   '/site/site.css',
   '/ui/base.css',
@@ -35,6 +39,12 @@ test('killslop.app serves the website', async () => {
   assert.equal(await body('https://killslop.app/privacy'), 'asset:/site/privacy.html');
   assert.equal(await body('https://killslop.app/privacy/'), 'asset:/site/privacy.html');
   assert.equal(await body('https://killslop.app/site/site.css'), 'asset:/site/site.css');
+});
+
+test('the waiting list is a page of its own, with its script', async () => {
+  assert.equal(await body('https://killslop.app/waitlist'), 'asset:/site/waitlist.html');
+  assert.equal(await body('https://killslop.app/waitlist/'), 'asset:/site/waitlist.html');
+  assert.equal(await body('https://killslop.app/site/waitlist.js'), 'asset:/site/waitlist.js');
 });
 
 test('/get sends people to wherever the extension is installed from', async () => {

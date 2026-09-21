@@ -42,6 +42,7 @@
           <a href="https://github.com/heyitsR1/killslop">GitHub</a>
         </nav>
         <div class="nav__actions">
+          <a class="btn btn--sm nav__support" href="https://buymemomo.com/aarohan">Support</a>
           <a class="btn btn--sm nav__source" href="https://github.com/heyitsR1/killslop">View source</a>
           <!-- Install link. /get redirects to the current install page; change it there, not here. -->
           <a class="btn btn--sm btn--primary" href="/get">Get KillSlop</a>
@@ -55,7 +56,7 @@
           <header class="doc__head">
             <p class="eyebrow">Legal</p>
             <h1 class="doc__title">Privacy policy</h1>
-            <p class="doc__meta"><span>Effective 18 September 2026</span><span>Applies to the extension and api.killslop.app</span></p>
+            <p class="doc__meta"><span>Effective 21 September 2026</span><span>Applies to the extension and api.killslop.app</span></p>
           </header>
 
           <div class="doc__body">
@@ -72,6 +73,10 @@
                     Four things can leave your browser: a mark you make, a channel measurement, feedback you write,
                     and, only if you switch the writing check on, the text of a post that nothing else could place.
                     You can turn each of them off, and the writing check is off until you turn it on.
+                  </li>
+                  <li>
+                    Removing KillSlop opens a page asking why. Answering is optional, and the link that opens it
+                    carries only which version you had, never an identifier.
                   </li>
                   <li>
                     Two service providers: Cloudflare, which hosts the API and this site, and TypeSafe, which runs the
@@ -188,6 +193,33 @@
                 message.
               </p>
 
+              <h3 id="uninstall">Removing KillSlop</h3>
+              <p>
+                When you remove the extension, Chrome opens <a href="/uninstall">killslop.app/uninstall</a>. The
+                link the extension registers carries one thing: which version you had. There is no install id on
+                it, and nothing on it could be joined to your votes. That page counts no visits, sets no cookies
+                and loads no analytics.
+              </p>
+              <p>
+                Opening it sends nothing. Pressing one of the reasons sends that reason and the version. If you
+                then write a note, or leave an email address for a reply, those are sent as well. It reaches the
+                same inbox as Send feedback and is kept as a feedback record, as set out in the table below.
+              </p>
+
+              <h3 id="waitlist">The waiting list</h3>
+              <p>
+                Only if you type your address into <a href="/waitlist">the waiting-list page</a> on this site and
+                press the button: that address, and the <code>?from=</code> tag on the link you arrived by if it had
+                one. That tag is a short word we write into our own launch posts, so we can tell which post an
+                address came from; it says nothing about you. The page loads no analytics and sets no cookies.
+              </p>
+              <p>
+                The address is kept to send you one email, on the day the Chrome Web Store listing goes live, and is
+                used for nothing else. It is never published, never added to the list of accounts, and cannot be
+                looked up through the API: the only endpoint that touches it accepts addresses and never returns
+                them.
+              </p>
+
               <h3>Requests to YouTube</h3>
               <p>
                 To read a video's AI label, the extension asks YouTube about that video from the YouTube page you are
@@ -254,6 +286,14 @@
                       </td>
                       <td>Until the maintainer deletes it</td>
                     </tr>
+                    <tr>
+                      <td>Waiting list</td>
+                      <td>
+                        Your email address, the time, which of our launch links you came from if any, and your
+                        network as a salted hash.
+                      </td>
+                      <td>Until the launch email has been sent, or you ask us to remove it</td>
+                    </tr>
                   </tbody>
                 </table>
               </div>
@@ -305,7 +345,16 @@
                 install id and nothing about you. With the check off it is never contacted.
               </p>
               <p>
+                "Support the project", in the popup and on this site, is an ordinary link to
+                <a href="https://buymemomo.com/aarohan">buymemomo.com</a>, where donations are handled under that
+                site's own terms. Following it takes you there; we send them nothing about you, nothing in KillSlop
+                is behind a payment, and the extension knows nothing about whether you gave.
+              </p>
+              <p>
                 We use no other processor: no analytics, no advertising, no payment provider and no email service.
+                The waiting list is stored at Cloudflare with everything else, and the launch email has not been
+                sent yet. If we use a mail provider to send it, this policy will name that provider here before a
+                single address is handed over.
               </p>
 
               <h2 id="never">What we never do</h2>
@@ -345,12 +394,18 @@
                 it. Votes and measurements cannot be found by person, because we cannot tell which ones are yours;
                 they hold nothing that identifies you.
               </p>
+              <p>
+                To come off the waiting list before the launch email goes out, open an issue saying so without
+                posting your address there, and we will reply with a private way to send it. The launch email itself
+                carries a removal line, and the whole list is deleted once it has been sent.
+              </p>
 
               <h2 id="children">Children</h2>
               <p>
                 KillSlop is not directed at children under 13, and we do not knowingly collect personal information
                 from them. The only personal information the service can receive is an email address someone chooses
-                to type into feedback. If a child has sent one, ask us and we will delete it.
+                to type into feedback or into the waiting-list page. If a child has sent one, ask us and we will
+                delete it.
               </p>
 
               <h2 id="changes">Changes</h2>
@@ -411,6 +466,7 @@
             <a href="https://github.com/heyitsR1/killslop">GitHub</a>
             <a href="https://github.com/heyitsR1/killslop/issues/new/choose">Report a problem</a>
             <a href="https://api.killslop.app/api/v1/export/youtube-channels.json">Download the list (JSON)</a>
+            <a href="https://buymemomo.com/aarohan">Support the project</a>
           </nav>
           <div class="footer__legal">
             <span>&copy; 2026 KillSlop</span>

@@ -27,11 +27,18 @@ verdict.onResolved((update) => {
 
 const handlers = {
   async resolve({ items, platform = 'youtube' }) {
-    const { verdicts, probe } = await verdict.resolveBatch(items, platform);
+    // `check` is as load-bearing as `probe`, and for the mirror-image reason:
+    // it is how tier 4 reaches the page, which is the only side that can read a
+    // post's text. content/feed.js acts on res.check. Dropping it here left the
+    // writing check dead on X and LinkedIn — every candidate stayed 'pending'
+    // for ever, nothing was ever sent, and no error was raised anywhere. On
+    // LinkedIn that is the only hiding tier there is, so the platform hid
+    // nothing at all. Keep the three fields together.
+    const { verdicts, probe, check } = await verdict.resolveBatch(items, platform);
     for (const [videoId, v] of Object.entries(verdicts)) {
       if (v.slop) hiddenThisSession.add(videoId);
     }
-    return { verdicts, probe };
+    return { verdicts, probe, check };
   },
 
   /**
@@ -122,3 +129,20 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
 chrome.runtime.onInstalled.addListener(({ reason }) => {
   if (reason === 'install') chrome.tabs.create({ url: 'https://killslop.app/welcome' });
 });
+
+/**
+ * Where Chrome sends people when they remove KillSlop.
+ *
+ * Set at top level rather than inside onInstalled: MV3 evicts this worker
+ * constantly, so top level runs on every wake and the version stays current
+ * across an update, which an install-only listener would miss.
+ *
+ * The version is the only thing it carries. There is a random install id in
+ * core/community.js, and it is deliberately not sent: the privacy policy
+ * promises that two votes from one install cannot be linked to each other, and
+ * putting that id on this URL would join an uninstall to the votes made from
+ * the same browser. Which build someone left on is enough to act on.
+ */
+chrome.runtime.setUninstallURL(
+  `https://killslop.app/uninstall?v=${encodeURIComponent(chrome.runtime.getManifest().version)}`
+);

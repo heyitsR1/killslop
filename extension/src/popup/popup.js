@@ -211,6 +211,13 @@ async function refreshStats() {
     chrome.tabs.create({ url: chrome.runtime.getURL('src/marks/marks.html') });
   });
 
+  // A donation page, and nothing more: no feature in KillSlop is behind it and
+  // none ever will be. Opened in a tab rather than linked in the footer so it
+  // is findable, since it is the only way the project is funded.
+  $('support').addEventListener('click', () => {
+    chrome.tabs.create({ url: 'https://buymemomo.com/aarohan' });
+  });
+
   $('reset').addEventListener('click', async () => {
     await send('clearData');
     await refreshStats();
