@@ -15,6 +15,10 @@ const SITE_HOSTS = new Set([SITE_HOST, WWW_HOST, 'site.localhost']);
 const PAGES = {
   '/': '/site/index.html',
   '/privacy': '/site/privacy.html',
+  // Where every "Support" link on the site goes. The popup's own button still
+  // opens the donation host directly, so this page is the site's story about
+  // funding, not a redirect: it has to stand on its own.
+  '/support': '/site/support.html',
   // Opened once, on install, by the service worker.
   '/welcome': '/site/welcome.html',
   // The Chrome Web Store launch list. Deliberately not linked from the home
