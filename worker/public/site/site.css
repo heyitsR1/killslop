@@ -276,23 +276,9 @@ body {
   position: relative;
 }
 
-.hero__eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  height: 28px;
-  padding: 0 12px 0 10px;
-  border-radius: 999px;
-  background: var(--panel);
-  box-shadow: 0 0 0 1px var(--border);
-  color: var(--fg-muted);
-  font-size: 13px;
-  line-height: 20px;
-}
-
 .hero__title {
   max-width: 11ch;
-  margin-top: 28px;
+  margin-top: 0;
   font-size: clamp(50px, 8.6vw, 88px);
   font-weight: 600;
   line-height: 0.96;
@@ -323,6 +309,77 @@ body {
   font-family: var(--font-mono);
   font-size: 12px;
   line-height: 18px;
+}
+
+/* --------------------------------------------------------------- hero art */
+
+/* The hero's top band is a single column of text: the title is capped at 11ch
+   and the lead at 600px, so on a wide screen everything to their right is
+   dead space. This fills it without competing with the headline.
+   Decoration only, hence aria-hidden, and the first thing dropped when the
+   column narrows. */
+.hero__art {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  width: 290px;
+  color: var(--fg);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.hero__art svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Three dot sizes stand in for three faces. Shading by density rather than by
+   colour means the block is one flat currentColor, so it inverts with the
+   theme on its own and never needs a dark-mode variant. */
+.hero__art .dither {
+  fill: currentColor;
+}
+
+.hero__art .face--top {
+  opacity: 0.8;
+}
+
+.hero__art .face--right {
+  opacity: 0.5;
+}
+
+.hero__art .face--left {
+  opacity: 0.26;
+}
+
+.hero__art .edge {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1;
+  opacity: 0.22;
+}
+
+.hero__art .float {
+  animation: hero-float 7s ease-in-out infinite;
+  transform-origin: 130px 120px;
+}
+
+@keyframes hero-float {
+  0%,
+  100% {
+    transform: translateY(-7px);
+  }
+
+  50% {
+    transform: translateY(7px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__art .float {
+    animation: none;
+  }
 }
 
 /* The watch page overlaps only the window's bottom edge, never a title. */
@@ -1403,6 +1460,186 @@ body {
   white-space: nowrap;
 }
 
+/* --------------------------------------------------------------- waitlist */
+
+.waitlist {
+  overflow: hidden;
+  text-align: center;
+}
+
+/* Over the grid, not under it. */
+.waitlist > *:not(.hero__bg) {
+  position: relative;
+}
+
+.waitlist .eyebrow {
+  margin-bottom: 16px;
+}
+
+.waitlist__title {
+  max-width: 20ch;
+  margin-inline: auto;
+  font-size: clamp(38px, 6vw, 64px);
+  font-weight: 600;
+  line-height: 1.02;
+  letter-spacing: -0.055em;
+  text-wrap: balance;
+}
+
+.waitlist .lead {
+  max-width: 560px;
+  margin-inline: auto;
+}
+
+.signup {
+  max-width: 520px;
+  margin: 40px auto 0;
+  text-align: left;
+}
+
+.signup__label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--fg-muted);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.signup__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+}
+
+.signup .input {
+  height: 48px;
+}
+
+.signup__msg {
+  margin-top: 12px;
+  color: var(--fg-muted);
+  font-size: 14px;
+  line-height: 22px;
+  overflow-wrap: anywhere;
+}
+
+.signup__msg:empty {
+  display: none;
+}
+
+.signup__msg--error {
+  color: var(--red-fg);
+}
+
+.signup__terms {
+  max-width: 520px;
+  margin: 28px auto 0;
+  list-style: none;
+  text-align: left;
+}
+
+.signup__terms li {
+  position: relative;
+  padding-left: 22px;
+  color: var(--fg-muted);
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.signup__terms li + li {
+  margin-top: 8px;
+}
+
+/* A tick drawn from two borders, so the list needs no icon file. */
+.signup__terms li::before {
+  content: '';
+  position: absolute;
+  top: 7px;
+  left: 2px;
+  width: 9px;
+  height: 5px;
+  border-bottom: 1.5px solid var(--fg-faint);
+  border-left: 1.5px solid var(--fg-faint);
+  transform: rotate(-45deg);
+}
+
+/* -------------------------------------------------------------- uninstall */
+
+/* One full-width answer per line rather than a grid of chips: the labels are
+   sentences of uneven length, and in a grid the long ones wrap against the
+   short ones and the column stops scanning as a list of choices. */
+.reasons {
+  max-width: 520px;
+  margin: 40px auto 0;
+  text-align: left;
+}
+
+.reason {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 13px 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 15px;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.reason:hover:not(:disabled) {
+  background: var(--hover);
+  border-color: var(--fg-faint);
+}
+
+.reason:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+}
+
+/* Answering settles the question, so the rest fade rather than disappear:
+   the page should still show what was asked and what was answered. */
+.reason:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+
+.reason--chosen:disabled {
+  opacity: 1;
+  border-color: var(--fg);
+  background: var(--hover);
+  font-weight: 500;
+}
+
+.uninstall__more {
+  max-width: 520px;
+  margin: 24px auto 0;
+  text-align: left;
+}
+
+.uninstall__more textarea.input {
+  width: 100%;
+}
+
+.uninstall__thanks {
+  margin-bottom: 20px;
+  color: var(--fg-muted);
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.uninstall__email-label {
+  margin-top: 20px;
+}
+
+.optional {
+  color: var(--fg-faint);
+  font-weight: 400;
+}
+
 /* ----------------------------------------------------------------- narrow */
 
 @media (max-width: 1100px) {
@@ -1439,6 +1676,12 @@ body {
 
   .hero__visual {
     padding-bottom: 0;
+  }
+
+  /* Below this the copy uses the full width, so there is no space left to
+     decorate and the block would sit behind the lead. */
+  .hero__art {
+    display: none;
   }
 
   .cells--3,
@@ -1478,6 +1721,12 @@ body {
 
   .nav__inner {
     padding: 0 16px;
+  }
+
+  /* Three buttons do not fit once the header loses its padding; Get KillSlop
+     and the source link are the two that have to survive. */
+  .nav__support {
+    display: none;
   }
 
   .hero {
@@ -1602,6 +1851,13 @@ body {
 
   .doc {
     padding-top: 64px;
+  }
+}
+
+@media (max-width: 560px) {
+  /* The button's label is longer than the field is wide down here. */
+  .signup__row {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 

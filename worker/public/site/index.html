@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>KillSlop: Hide AI slop from your feed, starting with YouTube</title>
+    <title>KillSlop: Hide AI slop on YouTube, X and LinkedIn</title>
     <meta
       name="description"
-      content="KillSlop is a free, open-source Chrome extension that hides AI-generated videos on YouTube: in your home feed, search, recommendations and Shorts. LinkedIn and X are next."
+      content="KillSlop is a free, open-source Chrome extension that hides AI slop on YouTube, X and LinkedIn: in your feed, in search, in recommendations and in Shorts. It also keeps a public list of the accounts behind it."
     />
     <link rel="canonical" href="https://killslop.app/" />
     <meta name="color-scheme" content="light dark" />
@@ -18,7 +18,7 @@
     <meta property="og:title" content="KillSlop: Hide AI slop from your feed" />
     <meta
       property="og:description"
-      content="A free Chrome extension that hides AI-generated videos on YouTube, with LinkedIn and X next. It also keeps a public list of AI slop channels."
+      content="A free Chrome extension that hides AI slop on YouTube, X and LinkedIn, using the platforms' own AI labels, account patterns and an open list."
     />
     <meta property="og:image" content="https://killslop.app/site/og.png" />
     <meta property="og:image:width" content="1200" />
@@ -28,7 +28,7 @@
     <meta name="twitter:title" content="KillSlop: Hide AI slop from your feed" />
     <meta
       name="twitter:description"
-      content="A free Chrome extension that hides AI-generated videos on YouTube, with LinkedIn and X next. It also keeps a public list of AI slop channels."
+      content="A free Chrome extension that hides AI slop on YouTube, X and LinkedIn, using the platforms' own AI labels, account patterns and an open list."
     />
     <meta name="twitter:image" content="https://killslop.app/site/og.png" />
     <link rel="icon" href="/site/favicon.svg" type="image/svg+xml" />
@@ -54,6 +54,7 @@
           <a href="https://github.com/heyitsR1/killslop">GitHub</a>
         </nav>
         <div class="nav__actions">
+          <a class="btn btn--sm nav__support" href="https://buymemomo.com/aarohan">Support</a>
           <a class="btn btn--sm nav__source" href="https://github.com/heyitsR1/killslop">View source</a>
           <!-- Install link. /get redirects to the current install page; change it there, not here. -->
           <a class="btn btn--sm btn--primary" href="/get">Get KillSlop</a>
@@ -67,18 +68,42 @@
         <section class="section hero" aria-labelledby="hero-title">
           <div class="hero__bg" aria-hidden="true"></div>
           <div class="hero__copy">
-            <p class="hero__eyebrow"><span class="dot" aria-hidden="true"></span>Works on YouTube now. LinkedIn and X are next.</p>
             <h1 class="hero__title" id="hero-title">Hide AI slop from your feed.</h1>
             <p class="hero__lead">
-              KillSlop is a free Chrome extension that hides AI-generated videos on YouTube. It works on your home
-              page, in search, in recommendations and in Shorts.
-              <span class="muted">Each hidden video says why it was hidden, and one click brings it back.</span>
+              KillSlop is a free Chrome extension that hides AI slop on YouTube, X and LinkedIn. It works in your
+              feed, in search, in recommendations and in Shorts.
+              <span class="muted">Each hidden post says why it was hidden, and one click brings it back.</span>
             </p>
             <div class="hero__actions">
               <a class="btn btn--primary btn--xl btn--pill" href="/get">Get KillSlop</a>
               <a class="btn btn--xl btn--pill" href="https://github.com/heyitsR1/killslop">View source</a>
             </div>
             <p class="hero__note">Free and open source &middot; GPL-3.0 &middot; No account</p>
+
+            <!-- Decoration. Every face is shaded with dots rather than a
+                 gradient, so the whole thing is one flat colour and needs no
+                 second version for dark mode. -->
+            <div class="hero__art" aria-hidden="true">
+              <svg viewBox="0 0 260 250" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <pattern id="ks-dither-a" width="5" height="5" patternUnits="userSpaceOnUse">
+                    <circle class="dither" cx="1.5" cy="1.5" r="1.3" />
+                  </pattern>
+                  <pattern id="ks-dither-b" width="5" height="5" patternUnits="userSpaceOnUse">
+                    <circle class="dither" cx="1.5" cy="1.5" r="0.9" />
+                  </pattern>
+                  <pattern id="ks-dither-c" width="5" height="5" patternUnits="userSpaceOnUse">
+                    <circle class="dither" cx="1.5" cy="1.5" r="0.5" />
+                  </pattern>
+                </defs>
+                <g class="float">
+                  <path class="face face--top" d="M130 40 200 80 130 120 60 80Z" fill="url(#ks-dither-a)" />
+                  <path class="face face--left" d="M60 80 130 120 130 200 60 160Z" fill="url(#ks-dither-c)" />
+                  <path class="face face--right" d="M200 80 130 120 130 200 200 160Z" fill="url(#ks-dither-b)" />
+                  <path class="edge" d="M130 40 200 80 130 120 60 80Z M60 80 130 120 130 200 60 160Z M200 80 130 120 130 200 200 160Z" />
+                </g>
+              </svg>
+            </div>
           </div>
 
           <div
@@ -588,6 +613,7 @@
             <a href="https://github.com/heyitsR1/killslop">GitHub</a>
             <a href="https://github.com/heyitsR1/killslop/issues/new/choose">Report a problem</a>
             <a href="https://api.killslop.app/api/v1/export/youtube-channels.json">Download the list (JSON)</a>
+            <a href="https://buymemomo.com/aarohan">Support the project</a>
           </nav>
           <div class="footer__legal">
             <span>&copy; 2026 KillSlop</span>
