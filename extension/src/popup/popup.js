@@ -211,11 +211,12 @@ async function refreshStats() {
     chrome.tabs.create({ url: chrome.runtime.getURL('src/marks/marks.html') });
   });
 
-  // A donation page, and nothing more: no feature in KillSlop is behind it and
-  // none ever will be. Opened in a tab rather than linked in the footer so it
-  // is findable, since it is the only way the project is funded.
+  // Our own page rather than the payment host directly: it says what the money
+  // covers and, more to the point, what it does not buy, which someone pressing
+  // this deserves to read before a checkout rather than after. The host is one
+  // click further on. No feature in KillSlop is behind it and none ever will be.
   $('support').addEventListener('click', () => {
-    chrome.tabs.create({ url: 'https://buymemomo.com/aarohan' });
+    chrome.tabs.create({ url: 'https://killslop.app/donate' });
   });
 
   $('reset').addEventListener('click', async () => {
