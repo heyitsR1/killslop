@@ -386,11 +386,23 @@ results did, all issued by OpenAI.
 
 ## 20. Posts are identified by a hash of their URN
 
-A post is `[role="listitem"]` whose `componentkey` is
+A post is an element whose `componentkey` is
 
 ```
 expanded + base64url(sha256("urn:li:activity:<id>")) + FeedType_MAIN_FEED_RELEVANCE
 ```
+
+**2026-09-20: the post wrapper no longer carries `role="listitem"`.** The
+`componentkey` format above is unchanged, and so are the ids derived from it,
+so nothing already on the list was invalidated. But the adapter's selector
+required that role, so it matched nothing and LinkedIn went dark in the way
+that is hardest to notice: no posts parsed, no posts hidden, no button, and no
+error anywhere. Re-measured live on the main feed: 8 of 8 posts are
+`div[componentkey^="expanded"]`, `role` is `null` on every one, none is nested
+inside another, and all 8 still satisfy the regex in `parse.js`. The action row
+(`Comment`, `Repost`) and the author menu button of section 21 are unchanged.
+Structural constraints on this wrapper are worth nothing: key on the
+`componentkey`, which is the part that identifies a post.
 
 (`FeedType_FLAGSHIP_SEARCH` on search results). Hashing every URN found in the
 payloads matched 6 of 8 feed posts; the two misses were both ads. The URN
@@ -489,6 +501,35 @@ still unknown, because X's feed virtualization defeated three attempts to
 harvest a usable sample; `scripts/eval-classifier.mjs feed` exists to measure
 it as soon as one can be collected. And nothing here measures LinkedIn prose
 specifically, which is where the check matters most.
+
+### 2026-09-20: the gate, not the bar, is what loses posts
+
+First measurement against live LinkedIn prose rather than the corpus. Three
+posts off one search, each scored through `/api/v1/writing` and each run
+through `prefilter()` (`content/slopsigns.js`) separately:
+
+| Post | Model | Gate | Outcome |
+|---|---|---|---|
+| "The future of work is agentic" | 3.53 | `significance_puffery` | sent, hidden correctly |
+| "Agentic AI is changing how tasks are performed... how do you think it will affect your work?" | **2.97** | **no hits** | never sent, stayed visible |
+| Excel/"Frankenstein" rant | 1.53 | no hits | never sent, correctly |
+
+The bar did its job: 3.53 hid, 1.53 did not. The loss happened a step earlier.
+The 2.97 post is engagement bait by the model's own reading, and 2.97 is
+exactly the "lowest slop" figure in the table above, so the gate is dropping
+posts at the bottom of the slop cluster, which is where LinkedIn's commonest
+shapes live.
+
+`ENGAGEMENT_BAIT` misses it because it lists phrasings ("thoughts?", "agree?",
+"comment below") rather than the act: this post asks an open question of the
+reader and names no other sign. One post is not a rate, but it is the second
+time the gate has been found holding back a true positive the model would have
+caught, after the 2026-09-18 loosening recorded in the file's own comment. Both
+misses were posts tripping zero signs, not one.
+
+Worth noting for whoever tightens this: the gate's bargain is explicitly that a
+post it holds back is never looked at again, so its errors are invisible. Only
+scoring held-back posts out of band, as here, surfaces them at all.
 
 ## 24. Trap: the rubric flags non-native English unless told not to
 

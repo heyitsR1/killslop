@@ -678,6 +678,35 @@ body {
   text-decoration-color: currentColor;
 }
 
+/* --------------------------------------------------------------- waitlist */
+
+.wl {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  padding: 14px 20px;
+}
+
+.wl__email {
+  font-size: 14px;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+  text-decoration: underline;
+  text-decoration-color: var(--border-strong);
+  text-underline-offset: 3px;
+}
+
+.wl__email:hover {
+  text-decoration-color: currentColor;
+}
+
+.wl__when {
+  color: var(--fg-muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
 /* ------------------------------------------------------------------ toast */
 
 .toast {

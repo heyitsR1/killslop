@@ -85,3 +85,10 @@ simple = { limit = 120, period = 60 }
 name = "RL_WRITING"
 namespace_id = "7105"
 simple = { limit = 30, period = 60 }
+
+# Waiting-list sign-ups. One person needs one, and a household a handful; a
+# daily cap per network sits behind this as well (WAITLIST_PER_DAY).
+[[ratelimits]]
+name = "RL_WAITLIST"
+namespace_id = "7107"
+simple = { limit = 5, period = 60 }

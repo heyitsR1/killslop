@@ -111,3 +111,20 @@ CREATE TABLE IF NOT EXISTS feedback (
 
 CREATE INDEX IF NOT EXISTS idx_feedback_status ON feedback (status, created);
 CREATE INDEX IF NOT EXISTS idx_feedback_netkey ON feedback (netkey, created);
+
+-- Addresses left at killslop.app/waitlist, waiting for one email: the day the
+-- Chrome Web Store listing goes live. The address is stored in the clear,
+-- because sending that email is the whole point of the row. It is the primary
+-- key, lowercased, so signing up twice is a no-op rather than a duplicate and
+-- the endpoint answers the same either way, which keeps it from being used to
+-- ask whether an address is on the list. `netkey` is
+-- sha256('waitlist:' + network + salt), as for feedback.
+CREATE TABLE IF NOT EXISTS waitlist (
+  email   TEXT PRIMARY KEY,     -- lowercased, trimmed
+  created INTEGER NOT NULL,
+  source  TEXT,                 -- the ?from=<slug> on our own launch links, or NULL
+  netkey  TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_waitlist_created ON waitlist (created);
+CREATE INDEX IF NOT EXISTS idx_waitlist_netkey ON waitlist (netkey, created);

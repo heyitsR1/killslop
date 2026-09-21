@@ -12,7 +12,16 @@
  * ever served through the checks below.
  */
 
-import { PREFIX_LEN, decide, networkOf, parseInput, platformOf, reviewMode, sha256Hex } from './policy.js';
+import {
+  PREFIX_LEN,
+  decide,
+  isValidEmail,
+  networkOf,
+  parseInput,
+  platformOf,
+  reviewMode,
+  sha256Hex,
+} from './policy.js';
 import { clientNetwork, overLimit, readJson } from './http.js';
 import { VERDICT, probeWith } from '../../extension/src/core/innertube.js';
 
@@ -251,17 +260,23 @@ function parseMeta(raw) {
 }
 
 async function overview(request, env) {
-  const [entries, feedback] = await env.DB.batch([
+  const [entries, feedback, waitlist] = await env.DB.batch([
     env.DB.prepare(
       `SELECT COALESCE(review, 'queue') AS status, kind, COUNT(*) AS n FROM entries GROUP BY 1, 2`
     ),
     env.DB.prepare(`SELECT status, COUNT(*) AS n FROM feedback GROUP BY status`),
+    env.DB.prepare(`SELECT COUNT(*) AS n FROM waitlist`),
   ]);
   const counts = { queue: {}, slop: {}, clean: {} };
   for (const r of entries.results || []) if (counts[r.status]) counts[r.status][r.kind] = r.n;
   const inbox = { new: 0, done: 0 };
   for (const r of feedback.results || []) inbox[r.status] = r.n;
-  return json({ mode: reviewMode(env), entries: counts, feedback: inbox });
+  return json({
+    mode: reviewMode(env),
+    entries: counts,
+    feedback: inbox,
+    waitlist: waitlist.results?.[0]?.n ?? 0,
+  });
 }
 
 async function listEntries(request, env, url) {
@@ -567,6 +582,45 @@ async function deleteFeedback(request, env) {
   return json({ ok: true });
 }
 
+/* --------------------------------------------------------------- waitlist */
+
+/** The Chrome Web Store launch list, newest first. */
+async function listWaitlist(request, env, url) {
+  const { results } = await env.DB.prepare(
+    `SELECT email, created, source FROM waitlist
+      ORDER BY created DESC LIMIT ${PAGE_SIZE + 1} OFFSET ${offsetOf(url)}`
+  ).all();
+  const rows = results || [];
+  return json({ waitlist: rows.slice(0, PAGE_SIZE), more: rows.length > PAGE_SIZE });
+}
+
+/**
+ * Every address at once, for the day the listing goes live: the console copies
+ * them straight into a mail client's Bcc field. Capped, and the answer says
+ * when the cap bit, so a partial list is never mistaken for the whole one.
+ */
+const WAITLIST_EXPORT_MAX = 20000;
+
+async function exportWaitlist(request, env) {
+  const { results } = await env.DB.prepare(
+    `SELECT email FROM waitlist ORDER BY created ASC LIMIT ${WAITLIST_EXPORT_MAX + 1}`
+  ).all();
+  const rows = results || [];
+  return json({
+    emails: rows.slice(0, WAITLIST_EXPORT_MAX).map((r) => r.email),
+    truncated: rows.length > WAITLIST_EXPORT_MAX,
+  });
+}
+
+/** Deleting an address is how a removal request is honoured (privacy policy). */
+async function deleteWaitlist(request, env) {
+  const body = await readJson(request);
+  const email = typeof body?.email === 'string' ? body.email.trim().toLowerCase() : '';
+  if (!isValidEmail(email)) return json({ error: 'bad request' }, 400);
+  await env.DB.prepare(`DELETE FROM waitlist WHERE email = ?1`).bind(email).run();
+  return json({ ok: true });
+}
+
 const ROUTES = {
   'GET /admin/api/overview': overview,
   'GET /admin/api/entries': listEntries,
@@ -576,6 +630,9 @@ const ROUTES = {
   'GET /admin/api/feedback': listFeedback,
   'POST /admin/api/feedback/status': setFeedbackStatus,
   'POST /admin/api/feedback/delete': deleteFeedback,
+  'GET /admin/api/waitlist': listWaitlist,
+  'GET /admin/api/waitlist/export': exportWaitlist,
+  'POST /admin/api/waitlist/delete': deleteWaitlist,
   'POST /admin/logout': logout,
 };
 

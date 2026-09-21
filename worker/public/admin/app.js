@@ -142,12 +142,26 @@ const ACTIONS = {
 
 const DONE = { slop: 'Approved', clean: 'Rejected', queue: 'Moved back to the queue' };
 const DEFAULT_SORT = { queue: 'signal', slop: 'reviewed', clean: 'reviewed' };
-const CATEGORY = { bug: 'Bug', wrong: 'Wrong call', idea: 'Idea', other: 'Other' };
+const CATEGORY = {
+  bug: 'Bug',
+  wrong: 'Wrong call',
+  idea: 'Idea',
+  other: 'Other',
+  uninstall: 'Uninstall',
+};
 
 /* ------------------------------------------------------------------ state */
 
-const TABS = ['queue', 'slop', 'clean', 'feedback'];
-const state = { tab: 'queue', kind: '', sort: 'signal', offset: 0, fbStatus: 'new', fbOffset: 0 };
+const TABS = ['queue', 'slop', 'clean', 'feedback', 'waitlist'];
+const state = {
+  tab: 'queue',
+  kind: '',
+  sort: 'signal',
+  offset: 0,
+  fbStatus: 'new',
+  fbOffset: 0,
+  wlOffset: 0,
+};
 /** The entry behind each rendered row. */
 const rowEntry = new WeakMap();
 /** Bumped by every list load, so a slow response cannot paint over a newer one. */
@@ -189,6 +203,7 @@ async function refreshCounts() {
     slop: total(o.entries.slop),
     clean: total(o.entries.clean),
     feedback: o.feedback.new || 0,
+    waitlist: o.waitlist || 0,
   };
   for (const [key, n] of Object.entries(counts)) {
     document.querySelector(`[data-count="${key}"]`).textContent = n ? n.toLocaleString() : '';
@@ -687,6 +702,99 @@ async function loadFeedback(reset) {
   $('fb-empty').hidden = $('fb-list').childElementCount > 0;
 }
 
+/* --------------------------------------------------------------- waitlist */
+
+function waitlistRow(w) {
+  const row = el('article', 'wl');
+
+  const mail = el('a', 'wl__email', w.email);
+  mail.href = `mailto:${w.email}`;
+
+  const when = el('time', 'wl__when', ago(w.created));
+  when.dateTime = new Date(w.created).toISOString();
+  when.title = fullDate(w.created);
+
+  // Two clicks rather than a confirm() dialog, as in the feedback inbox.
+  let armed = 0;
+  const del = button('Delete', 'btn--sm btn--quiet', async () => {
+    if (!armed) {
+      del.textContent = 'Click again to delete';
+      del.classList.add('btn--danger');
+      armed = setTimeout(() => {
+        armed = 0;
+        del.textContent = 'Delete';
+        del.classList.remove('btn--danger');
+      }, 4000);
+      return;
+    }
+    clearTimeout(armed);
+    try {
+      await api('/admin/api/waitlist/delete', { email: w.email });
+    } catch (err) {
+      toast(err.message);
+      return;
+    }
+    state.wlOffset -= 1;
+    dropRow(row, $('wl-list'), $('wl-empty'), 'Nobody on the list yet.');
+    refreshCounts();
+    toast('Address deleted.');
+  });
+
+  row.append(mail, el('span', 'spacer'));
+  // Which launch post it came from, when the link said so.
+  if (w.source) row.append(el('span', 'tag', w.source));
+  row.append(when, del);
+  return row;
+}
+
+async function loadWaitlist(reset) {
+  const mine = ++seq;
+  if (reset) {
+    state.wlOffset = 0;
+    $('wl-list').replaceChildren(el('p', 'loading', 'Loading...'));
+    $('wl-more').hidden = true;
+    $('wl-empty').hidden = true;
+  }
+
+  let data;
+  try {
+    data = await api(`/admin/api/waitlist?offset=${state.wlOffset}`);
+  } catch (err) {
+    if (mine === seq) $('wl-list').replaceChildren(el('p', 'error', err.message));
+    return;
+  }
+  if (mine !== seq) return;
+  if (reset) $('wl-list').replaceChildren();
+  for (const w of data.waitlist) $('wl-list').append(waitlistRow(w));
+  state.wlOffset += data.waitlist.length;
+  $('wl-more').hidden = !data.more;
+  $('wl-empty').textContent = 'Nobody on the list yet.';
+  $('wl-empty').hidden = $('wl-list').childElementCount > 0;
+}
+
+/** Every address on one line, ready to paste into a Bcc field. */
+async function copyAddresses() {
+  const copy = $('wl-copy');
+  copy.disabled = true;
+  try {
+    const data = await api('/admin/api/waitlist/export');
+    if (!data.emails.length) {
+      toast('Nothing to copy yet.');
+      return;
+    }
+    await navigator.clipboard.writeText(data.emails.join(', '));
+    toast(
+      data.truncated
+        ? `Copied ${plural(data.emails.length, 'address', 'addresses')}. The list is longer than that.`
+        : `Copied ${plural(data.emails.length, 'address', 'addresses')}.`
+    );
+  } catch (err) {
+    toast(err.message);
+  } finally {
+    copy.disabled = false;
+  }
+}
+
 /* -------------------------------------------------------------- navigation */
 
 function selectTab(tab) {
@@ -697,11 +805,15 @@ function selectTab(tab) {
   }
   history.replaceState(null, '', `#${tab}`);
 
-  const feedback = tab === 'feedback';
-  $('view-entries').hidden = feedback;
-  $('view-feedback').hidden = !feedback;
-  if (feedback) {
+  $('view-entries').hidden = !ACTIONS[tab];
+  $('view-feedback').hidden = tab !== 'feedback';
+  $('view-waitlist').hidden = tab !== 'waitlist';
+  if (tab === 'feedback') {
     loadFeedback(true);
+    return;
+  }
+  if (tab === 'waitlist') {
+    loadWaitlist(true);
     return;
   }
   $('lede').textContent = LEDE[tab];
@@ -723,7 +835,8 @@ function segmented(group, key, onPick) {
 
 /** J/K move between rows; A, R and Q review the focused one. */
 function onKey(ev) {
-  if (ev.metaKey || ev.ctrlKey || ev.altKey || state.tab === 'feedback') return;
+  // Only the three entry tabs have anything to review from the keyboard.
+  if (ev.metaKey || ev.ctrlKey || ev.altKey || !ACTIONS[state.tab]) return;
   if (/^(INPUT|TEXTAREA|SELECT)$/.test(ev.target.tagName)) return;
   const rows = [...$('list').querySelectorAll('.entry')];
   if (!rows.length) return;
@@ -762,6 +875,8 @@ $('sort').addEventListener('change', () => {
 });
 $('more').addEventListener('click', () => loadEntries(false));
 $('fb-more').addEventListener('click', () => loadFeedback(false));
+$('wl-more').addEventListener('click', () => loadWaitlist(false));
+$('wl-copy').addEventListener('click', copyAddresses);
 $('add').addEventListener('submit', addLink);
 document.addEventListener('keydown', onKey);
 document.addEventListener('visibilitychange', () => {

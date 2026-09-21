@@ -191,13 +191,14 @@ extension/
   src/ui/            design tokens and shared controls; page shell
   src/fonts/         Geist Sans and Geist Mono (OFL-1.1)
 worker/
-  src/index.js       public API: buckets, votes, tallies, export, feedback
+  src/index.js       public API: buckets, votes, tallies, export, feedback,
+                     the Chrome Web Store waiting list
   src/admin.js       maintainer console: sign-in, review queue, inbox
   src/site.js        the website at killslop.app, and the shared static files
   src/policy.js      what gets served, and id and input validation (pure, tested)
   src/http.js        rate limits and request parsing
   public/admin/      console pages, served only through the sign-in check
-  public/site/       the website: landing page and privacy policy
+  public/site/       the website: landing page, waiting list, privacy policy
   public/ui/         the same base.css as the extension (a test keeps them equal)
   migrations/        schema changes for an existing database, in order
 test/                unit tests, live probe check, browser e2e

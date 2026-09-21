@@ -31,7 +31,9 @@ import {
   MIN_VOTES,
   PLATFORMS,
   PREFIX_LEN,
+  WAITLIST_PER_DAY,
   cleanFeedback,
+  cleanWaitlist,
   countStats,
   decide,
   isValidId,
@@ -345,6 +347,38 @@ async function postFeedback(request, env) {
   return json({ ok: true });
 }
 
+/**
+ * An address for the Chrome Web Store launch list, from killslop.app/waitlist.
+ * It is kept to be mailed once and is never published, never served back out,
+ * and never joined to a vote or a lookup: nothing else here knows an address.
+ *
+ * Signing up twice answers exactly as signing up once does, so this endpoint
+ * cannot be asked whether a given address is already on the list.
+ */
+async function postWaitlist(request, env) {
+  const body = await readJson(request);
+  if (!body) return json({ error: 'bad json' }, 400);
+  const entry = cleanWaitlist(body);
+  if (entry.error) return json({ error: entry.error }, 400);
+
+  const netkey = await sha256Hex(`waitlist:${clientNetwork(request)}:${env.VOTER_SALT || 'dev-salt'}`);
+  const now = Date.now();
+  const recent = await env.DB.prepare(
+    `SELECT COUNT(*) AS n FROM waitlist WHERE netkey = ?1 AND created > ?2`
+  )
+    .bind(netkey, now - DAY_MS)
+    .first();
+  if ((recent?.n ?? 0) >= WAITLIST_PER_DAY) return tooMany(3600);
+
+  await env.DB.prepare(
+    `INSERT INTO waitlist (email, created, source, netkey) VALUES (?1, ?2, ?3, ?4)
+     ON CONFLICT(email) DO NOTHING`
+  )
+    .bind(entry.email, now, entry.source, netkey)
+    .run();
+  return json({ ok: true });
+}
+
 /* ------------------------------------------------------------------ stats */
 
 async function getStats(env) {
@@ -490,6 +524,10 @@ export default {
       if (path === '/api/v1/writing') {
         if (await overLimit(env, 'RL_WRITING', request)) return tooMany();
         return postWriting(request, env);
+      }
+      if (path === '/api/v1/waitlist') {
+        if (await overLimit(env, 'RL_WAITLIST', request)) return tooMany();
+        return postWaitlist(request, env);
       }
       const write = Object.hasOwn(WRITES, path) ? WRITES[path] : null;
       if (write) {

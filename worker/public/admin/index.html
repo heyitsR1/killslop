@@ -43,6 +43,9 @@
         <button type="button" role="tab" data-tab="feedback" aria-selected="false">
           Feedback <span class="count count--accent" data-count="feedback"></span>
         </button>
+        <button type="button" role="tab" data-tab="waitlist" aria-selected="false">
+          Waiting list <span class="count" data-count="waitlist"></span>
+        </button>
       </nav>
     </header>
 
@@ -106,6 +109,19 @@
         <div class="list" id="fb-list"></div>
         <p class="empty" id="fb-empty" hidden></p>
         <button type="button" class="btn btn--block" id="fb-more" hidden>Load more</button>
+      </section>
+
+      <section id="view-waitlist" hidden>
+        <p class="lede">
+          Left at killslop.app/waitlist. Each address is waiting for exactly one email: the day the Chrome Web
+          Store listing goes live. Copy them all into your mail client's Bcc field and send from there.
+        </p>
+        <div class="toolbar">
+          <button type="button" class="btn btn--sm" id="wl-copy">Copy all addresses</button>
+        </div>
+        <div class="list" id="wl-list"></div>
+        <p class="empty" id="wl-empty" hidden></p>
+        <button type="button" class="btn btn--block" id="wl-more" hidden>Load more</button>
       </section>
     </main>
 

@@ -41,7 +41,16 @@
   globalThis.KillSlopFeed.start({
     platform: 'linkedin',
     // Main feed and search results; the componentkey carries the post's hash.
-    selector: '[role="listitem"][componentkey^="expanded"]',
+    //
+    // Deliberately keyed on the componentkey alone. The wrapper used to also
+    // carry role="listitem", but LinkedIn dropped it (2026-09-20) and the whole
+    // platform went dark, silently: nothing matched, so nothing was parsed,
+    // hidden or given a button, and no error was raised. The key's own shape is
+    // the identifying part, and parse() returns null for anything whose key
+    // fails the regex in parse.js, so a stray match is rejected downstream
+    // rather than hidden. Do not re-add a structural constraint without
+    // measuring it against a live feed first (RESEARCH.md section 20).
+    selector: '[componentkey^="expanded"]',
     noun: 'author',
     disclosureLabel: 'Labelled AI',
 
