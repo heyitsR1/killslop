@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Fund KillSlop</title>
+    <meta
+      name="description"
+      content="KillSlop is free and stays free: no paid tier, no ads and nothing sold. If you want to fund the work, here is where the money goes, and the ways to help that cost nothing."
+    />
+    <link rel="canonical" href="https://killslop.app/donate" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000000" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="KillSlop" />
+    <meta property="og:url" content="https://killslop.app/donate" />
+    <meta property="og:title" content="Fund KillSlop" />
+    <meta
+      property="og:description"
+      content="No paid tier, no ads, nothing sold. Where a donation goes, and the ways to help that cost nothing."
+    />
+    <meta property="og:image" content="https://killslop.app/site/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="KillSlop. Hide AI slop from your feed." />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Fund KillSlop" />
+    <meta
+      name="twitter:description"
+      content="No paid tier, no ads, nothing sold. Where a donation goes, and the ways to help that cost nothing."
+    />
+    <meta name="twitter:image" content="https://killslop.app/site/og.png" />
+    <link rel="icon" href="/site/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href="/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="/ui/base.css" />
+    <link rel="stylesheet" href="/site/site.css" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <header class="nav">
+      <div class="nav__inner">
+        <a class="nav__brand" href="/" aria-label="KillSlop home">
+          <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="6" fill="currentColor"/><circle class="mark__glyph" cx="12" cy="12" r="6"/><path class="mark__glyph" d="M7.76 7.76l8.48 8.48"/></svg>
+          <span class="wordmark">KillSlop</span>
+        </a>
+        <nav class="nav__links" aria-label="Main">
+          <a href="/#how">How it works</a>
+          <a href="/#list">The list</a>
+          <a href="/#roadmap">Roadmap</a>
+          <a href="/privacy">Privacy</a>
+          <a href="/support">Help</a>
+        </nav>
+        <div class="nav__actions">
+          <a class="btn btn--sm nav__support" href="/donate" aria-current="page">Donate</a>
+          <a class="btn btn--sm nav__source" href="https://github.com/heyitsR1/killslop">View source</a>
+          <!-- Install link. /get redirects to the current install page; change it there, not here. -->
+          <a class="btn btn--sm btn--primary" href="/get">Get KillSlop</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="page">
+      <main class="shell" id="main">
+        <!-- ------------------------------------------------------------- ask -->
+        <section class="section waitlist" aria-labelledby="donate-title">
+          <div class="hero__bg" aria-hidden="true"></div>
+          <p class="eyebrow">Donate</p>
+          <h1 class="waitlist__title" id="donate-title">KillSlop is free. Running it is not.</h1>
+          <p class="lead">
+            There is no paid tier, nothing held back for one, no advertising and nothing sold, which also means
+            there is no company behind this paying for the work. If KillSlop earns its place in your browser, you
+            can chip in. If you would rather not, keep using it: the list gets better either way.
+          </p>
+
+          <div class="actions">
+            <a class="btn btn--primary btn--xl btn--pill" href="https://buymemomo.com/aarohan">Chip in</a>
+            <a class="btn btn--xl btn--pill" href="#free">Help without paying</a>
+          </div>
+
+          <ul class="signup__terms">
+            <li>Any amount, once or not at all. There is no subscription and no target to hit.</li>
+            <li>Donations are handled by buymemomo.com. This page runs no analytics and sends them nothing about you.</li>
+            <li>Nothing in KillSlop is behind a payment, and nothing ever will be.</li>
+          </ul>
+        </section>
+
+        <!-- ------------------------------------------------------- statement -->
+        <section class="section" aria-label="Why it is free">
+          <p class="statement">
+            A filter that decides what you do not see should be one you can audit.
+            <span class="muted">That is why the extension and the server are GPL-3.0 and the list is CC BY-SA 4.0,
+            and why the way to fund this is a donation rather than a price. A paywall would put the part that
+            decides what you see behind a checkout.</span>
+          </p>
+        </section>
+
+        <!-- ----------------------------------------------------------- costs -->
+        <section class="section" id="costs" aria-labelledby="costs-title">
+          <span class="plus plus--l" aria-hidden="true"></span>
+          <span class="plus plus--r" aria-hidden="true"></span>
+          <div class="head">
+            <p class="eyebrow">Where it goes</p>
+            <h2 class="h2" id="costs-title">The bills this covers.</h2>
+            <p class="lead">
+              Most of KillSlop costs nothing to run, because most of the work happens in your own browser. These are
+              the parts that do cost something.
+            </p>
+          </div>
+          <div class="cells cells--3">
+            <div class="cell">
+              <p class="chip">Cloudflare</p>
+              <h3 class="cell__title">The list and the lookups</h3>
+              <p class="cell__text">
+                The API, this website and the database that holds the public list run on Cloudflare Workers and D1.
+                Every lookup, every report and every export is served from there, and that grows with the number of
+                people using it.
+              </p>
+            </div>
+            <div class="cell">
+              <p class="chip">TypeSafe</p>
+              <h3 class="cell__title">The writing check</h3>
+              <p class="cell__text">
+                The optional check that reads a post's writing runs on a model we pay for per call. It is the one
+                part of KillSlop with a cost per use, which is part of why it ships switched off.
+              </p>
+            </div>
+            <div class="cell">
+              <p class="chip">One-off</p>
+              <h3 class="cell__title">The domain and the store</h3>
+              <p class="cell__text">
+                killslop.app is renewed every year, and publishing to the Chrome Web Store took a one-time developer
+                fee. Small, but they are real, and they came out of a pocket rather than a budget.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ------------------------------------------------------------ free -->
+        <section class="section" id="free" aria-labelledby="free-title">
+          <div class="split split--even">
+            <div>
+              <p class="eyebrow">Costs nothing</p>
+              <h2 class="h2" id="free-title">Most of the help we need is not money.</h2>
+              <p class="lead">
+                The list is the product, and it is built out of what people report. A few seconds of marking things
+                is worth more to it than a donation, and you can do both or neither.
+              </p>
+              <div class="actions">
+                <a class="btn btn--lg btn--pill btn--primary" href="/get">Get KillSlop</a>
+                <a class="btn btn--lg btn--pill" href="/#list">See the list</a>
+              </div>
+            </div>
+            <div class="links">
+              <p class="links__label">Ways to help</p>
+              <ul>
+                <li><a href="/welcome#help">Press AI SLOP on what it missed</a></li>
+                <li><a href="/support">Report a wrong call, or a bug</a></li>
+                <li><a href="https://github.com/heyitsR1/killslop/blob/main/CONTRIBUTING.md">Contribute code or research</a></li>
+                <li><a href="https://github.com/heyitsR1/killslop">Star the repository</a></li>
+                <li><a href="/#list">Use the list in your own tool</a></li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- --------------------------------------------------------- nothing -->
+        <section class="section" aria-labelledby="buys-title">
+          <span class="plus plus--l" aria-hidden="true"></span>
+          <span class="plus plus--r" aria-hidden="true"></span>
+          <div class="head">
+            <p class="eyebrow">In plain words</p>
+            <h2 class="h2" id="buys-title">What a donation does not buy.</h2>
+            <p class="lead">
+              Worth saying out loud, because on most sites a support button is a tier with a name.
+            </p>
+          </div>
+          <div class="cells cells--2">
+            <div class="cell">
+              <h3 class="cell__title">No features, and no supporter tier</h3>
+              <p class="cell__text">
+                Every setting is available to everyone. There is no locked switch, no trial, no seat count and no
+                badge. The extension is not told whether you gave, and has no way to find out.
+              </p>
+            </div>
+            <div class="cell">
+              <h3 class="cell__title">No say over the list</h3>
+              <p class="cell__text">
+                Money does not add an account to the list or take one off it. Entries are added on published AI
+                labels, measured channel patterns and a maintainer's review, and each one says which. Nobody can
+                pay their way onto or off it.
+              </p>
+            </div>
+            <div class="cell">
+              <h3 class="cell__title">No account, and no receipt from us</h3>
+              <p class="cell__text">
+                Giving does not create a login here. buymemomo.com handles the payment under its own terms and we
+                never see a card. We get a name only if their page shows us one.
+              </p>
+            </div>
+            <div class="cell">
+              <h3 class="cell__title">No promise it keeps running forever</h3>
+              <p class="cell__text">
+                It buys time to keep working on it, not a guarantee. If this ever stops, the code and the whole list
+                are already public under licences that let someone else carry on.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ------------------------------------------------------------- cta -->
+        <section class="section cta" aria-labelledby="cta-title">
+          <div class="hero__bg" aria-hidden="true"></div>
+          <h2 class="cta__title" id="cta-title">Thanks for reading this far.</h2>
+          <p class="lead">
+            Chipping in keeps the servers on and the list growing. Using KillSlop and marking what it missed does
+            the same thing for free.
+          </p>
+          <div class="cta__actions">
+            <a class="btn btn--primary btn--xl btn--pill" href="https://buymemomo.com/aarohan">Chip in</a>
+            <a class="btn btn--xl btn--pill" href="/get">Get KillSlop</a>
+          </div>
+        </section>
+
+        <footer class="footer">
+          <div class="footer__brand">
+            <a class="nav__brand" href="/" aria-label="KillSlop home">
+              <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="6" fill="currentColor"/><circle class="mark__glyph" cx="12" cy="12" r="6"/><path class="mark__glyph" d="M7.76 7.76l8.48 8.48"/></svg>
+              <span class="wordmark">KillSlop</span>
+            </a>
+            <p class="footer__tag">Hides AI slop from your feed and keeps a public list of it.</p>
+          </div>
+          <nav class="footer__col" aria-label="Product">
+            <p class="footer__head">Product</p>
+            <a href="/#features">Features</a>
+            <a href="/#how">How it decides</a>
+            <a href="/#list">The list</a>
+            <a href="/#roadmap">Roadmap</a>
+            <a href="/privacy">Privacy</a>
+          </nav>
+          <nav class="footer__col" aria-label="Project">
+            <p class="footer__head">Project</p>
+            <a href="/support">Get help</a>
+            <a href="https://github.com/heyitsR1/killslop">GitHub</a>
+            <a href="https://api.killslop.app/api/v1/export/youtube-channels.json">Download the list (JSON)</a>
+            <a href="/donate">Donate</a>
+          </nav>
+          <div class="footer__legal">
+            <span>&copy; 2026 KillSlop</span>
+            <span>Not affiliated with YouTube, Google, X or LinkedIn.</span>
+          </div>
+        </footer>
+      </main>
+    </div>
+  </body>
+</html>

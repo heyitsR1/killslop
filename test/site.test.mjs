@@ -8,6 +8,8 @@ const FILES = new Set([
   '/site/index.html',
   '/site/privacy.html',
   '/site/support.html',
+  '/site/support.js',
+  '/site/donate.html',
   '/site/waitlist.html',
   '/site/waitlist.js',
   '/site/uninstall.html',
@@ -48,11 +50,19 @@ test('the waiting list is a page of its own, with its script', async () => {
   assert.equal(await body('https://killslop.app/site/waitlist.js'), 'asset:/site/waitlist.js');
 });
 
-test('the support page is served on the site, not a redirect off it', async () => {
+test('the support page is served on the site, with its form script', async () => {
   const res = await get('https://killslop.app/support');
   assert.equal(res.status, 200);
   assert.equal(await res.text(), 'asset:/site/support.html');
   assert.equal(await body('https://killslop.app/support/'), 'asset:/site/support.html');
+  assert.equal(await body('https://killslop.app/site/support.js'), 'asset:/site/support.js');
+});
+
+// Kept apart from /support on purpose: the store's Support URL points at the
+// help page, and someone sent there by a broken page is not a donor prospect.
+test('donating is a page of its own, separate from support', async () => {
+  assert.equal(await body('https://killslop.app/donate'), 'asset:/site/donate.html');
+  assert.equal(await body('https://killslop.app/donate/'), 'asset:/site/donate.html');
 });
 
 test('/get sends people to wherever the extension is installed from', async () => {

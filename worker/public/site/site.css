@@ -1640,6 +1640,74 @@ body {
   font-weight: 400;
 }
 
+/* ---------------------------------------------------------------- support */
+
+/* A centred section sizes its own children with margin-inline:auto, but
+   .actions is a plain flex row: left to itself it spans the full width and
+   packs its buttons against the left edge, under centred text. Scoped here
+   rather than fixed on .actions, which is left-aligned everywhere else. */
+.waitlist .actions {
+  justify-content: center;
+}
+
+/* The same 520px column as .signup and .uninstall__more. A form reads as one
+   thing when every field shares an edge. */
+.support__form {
+  max-width: 520px;
+  margin: 40px auto 0;
+  text-align: left;
+}
+
+.support__field + .support__field {
+  margin-top: 20px;
+}
+
+.support__form textarea.input {
+  width: 100%;
+  min-height: 150px;
+  resize: vertical;
+}
+
+/* base.css draws the segmented track but leaves its display alone, because
+   each surface wants a different column count. */
+.support__cats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+/* Taller than the popup's 26px: this one is on a page, not in a 360px panel. */
+.support__cats button {
+  height: 34px;
+  font-size: 14px;
+}
+
+.support__row {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.support__hint {
+  color: var(--fg-muted);
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.support__count {
+  flex: none;
+  margin-left: auto;
+  color: var(--fg-faint);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 600px) {
+  .support__cats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 /* ----------------------------------------------------------------- narrow */
 
 @media (max-width: 1100px) {

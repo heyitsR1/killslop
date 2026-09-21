@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Support KillSlop</title>
+    <title>Help and support · KillSlop</title>
     <meta
       name="description"
-      content="KillSlop is free and stays free: no paid tier, no ads and nothing sold. If you want to fund the work, here is where the money goes, and the ways to help that cost nothing."
+      content="Something wrong with KillSlop? Fixes for the usual problems, and a form that sends a bug, a wrong call or an idea straight to the maintainer."
     />
     <link rel="canonical" href="https://killslop.app/support" />
     <meta name="color-scheme" content="light dark" />
@@ -15,26 +15,27 @@
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="KillSlop" />
     <meta property="og:url" content="https://killslop.app/support" />
-    <meta property="og:title" content="Support KillSlop" />
+    <meta property="og:title" content="Help and support · KillSlop" />
     <meta
       property="og:description"
-      content="No paid tier, no ads, nothing sold. Where a donation goes, and the ways to help that cost nothing."
+      content="Fixes for the usual problems, and a form that goes straight to the maintainer."
     />
     <meta property="og:image" content="https://killslop.app/site/og.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="KillSlop. Hide AI slop from your feed." />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Support KillSlop" />
+    <meta name="twitter:title" content="Help and support · KillSlop" />
     <meta
       name="twitter:description"
-      content="No paid tier, no ads, nothing sold. Where a donation goes, and the ways to help that cost nothing."
+      content="Fixes for the usual problems, and a form that goes straight to the maintainer."
     />
     <meta name="twitter:image" content="https://killslop.app/site/og.png" />
     <link rel="icon" href="/site/favicon.svg" type="image/svg+xml" />
     <link rel="preload" href="/fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="stylesheet" href="/ui/base.css" />
     <link rel="stylesheet" href="/site/site.css" />
+    <script src="/site/support.js" defer></script>
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
@@ -50,10 +51,10 @@
           <a href="/#list">The list</a>
           <a href="/#roadmap">Roadmap</a>
           <a href="/privacy">Privacy</a>
-          <a href="https://github.com/heyitsR1/killslop">GitHub</a>
+          <a href="/support" aria-current="page">Help</a>
         </nav>
         <div class="nav__actions">
-          <a class="btn btn--sm nav__support" href="/support" aria-current="page">Support</a>
+          <a class="btn btn--sm nav__support" href="/donate">Donate</a>
           <a class="btn btn--sm nav__source" href="https://github.com/heyitsR1/killslop">View source</a>
           <!-- Install link. /get redirects to the current install page; change it there, not here. -->
           <a class="btn btn--sm btn--primary" href="/get">Get KillSlop</a>
@@ -63,163 +64,168 @@
 
     <div class="page">
       <main class="shell" id="main">
-        <!-- ------------------------------------------------------------- ask -->
+        <!-- ------------------------------------------------------------ head -->
         <section class="section waitlist" aria-labelledby="support-title">
           <div class="hero__bg" aria-hidden="true"></div>
-          <p class="eyebrow">Support</p>
-          <h1 class="waitlist__title" id="support-title">KillSlop is free. Running it is not.</h1>
+          <p class="eyebrow">Help and support</p>
+          <h1 class="waitlist__title" id="support-title">Something not working?</h1>
           <p class="lead">
-            There is no paid tier, nothing held back for one, no advertising and nothing sold, which also means
-            there is no company behind this paying for the work. If KillSlop earns its place in your browser, you
-            can chip in. If you would rather not, keep using it: the list gets better either way.
+            Most problems are one setting in the popup, so the fixes are below. If none of them is it, write to us
+            and a person will read it. There is no ticket system and no bot.
           </p>
 
           <div class="actions">
-            <a class="btn btn--primary btn--xl btn--pill" href="https://buymemomo.com/aarohan">Chip in</a>
-            <a class="btn btn--xl btn--pill" href="#free">Help without paying</a>
+            <a class="btn btn--primary btn--xl btn--pill" href="#write">Write to us</a>
+            <a class="btn btn--xl btn--pill" href="#fixes">Try a fix first</a>
           </div>
-
-          <ul class="signup__terms">
-            <li>Any amount, once or not at all. There is no subscription and no target to hit.</li>
-            <li>Donations are handled by buymemomo.com. This page runs no analytics and sends them nothing about you.</li>
-            <li>Nothing in KillSlop is behind a payment, and nothing ever will be.</li>
-          </ul>
         </section>
 
-        <!-- ------------------------------------------------------- statement -->
-        <section class="section" aria-label="Why it is free">
-          <p class="statement">
-            A filter that decides what you do not see should be one you can audit.
-            <span class="muted">That is why the extension and the server are GPL-3.0 and the list is CC BY-SA 4.0,
-            and why the way to fund this is a donation rather than a price. A paywall would put the part that
-            decides what you see behind a checkout.</span>
-          </p>
-        </section>
-
-        <!-- ----------------------------------------------------------- costs -->
-        <section class="section" id="costs" aria-labelledby="costs-title">
+        <!-- ----------------------------------------------------------- fixes -->
+        <section class="section" id="fixes" aria-labelledby="fixes-title">
           <span class="plus plus--l" aria-hidden="true"></span>
           <span class="plus plus--r" aria-hidden="true"></span>
           <div class="head">
-            <p class="eyebrow">Where it goes</p>
-            <h2 class="h2" id="costs-title">The bills this covers.</h2>
+            <p class="eyebrow">Common problems</p>
+            <h2 class="h2" id="fixes-title">The four things that usually go wrong.</h2>
             <p class="lead">
-              Most of KillSlop costs nothing to run, because most of the work happens in your own browser. These are
-              the parts that do cost something.
-            </p>
-          </div>
-          <div class="cells cells--3">
-            <div class="cell">
-              <p class="chip">Cloudflare</p>
-              <h3 class="cell__title">The list and the lookups</h3>
-              <p class="cell__text">
-                The API, this website and the database that holds the public list run on Cloudflare Workers and D1.
-                Every lookup, every report and every export is served from there, and that grows with the number of
-                people using it.
-              </p>
-            </div>
-            <div class="cell">
-              <p class="chip">TypeSafe</p>
-              <h3 class="cell__title">The writing check</h3>
-              <p class="cell__text">
-                The optional check that reads a post's writing runs on a model we pay for per call. It is the one
-                part of KillSlop with a cost per use, which is part of why it ships switched off.
-              </p>
-            </div>
-            <div class="cell">
-              <p class="chip">One-off</p>
-              <h3 class="cell__title">The domain and the store</h3>
-              <p class="cell__text">
-                killslop.app is renewed every year, and publishing to the Chrome Web Store took a one-time developer
-                fee. Small, but they are real, and they came out of a pocket rather than a budget.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <!-- ------------------------------------------------------------ free -->
-        <section class="section" id="free" aria-labelledby="free-title">
-          <div class="split split--even">
-            <div>
-              <p class="eyebrow">Costs nothing</p>
-              <h2 class="h2" id="free-title">Most of the help we need is not money.</h2>
-              <p class="lead">
-                The list is the product, and it is built out of what people report. A few seconds of marking things
-                is worth more to it than a donation, and you can do both or neither.
-              </p>
-              <div class="actions">
-                <a class="btn btn--lg btn--pill btn--primary" href="/get">Get KillSlop</a>
-                <a class="btn btn--lg btn--pill" href="/#list">See the list</a>
-              </div>
-            </div>
-            <div class="links">
-              <p class="links__label">Ways to help</p>
-              <ul>
-                <li><a href="/welcome#help">Press AI SLOP on what it missed</a></li>
-                <li><a href="https://github.com/heyitsR1/killslop/issues/new/choose">Report a wrong call, or a bug</a></li>
-                <li><a href="https://github.com/heyitsR1/killslop/blob/main/CONTRIBUTING.md">Contribute code or research</a></li>
-                <li><a href="https://github.com/heyitsR1/killslop">Star the repository</a></li>
-                <li><a href="/#list">Use the list in your own tool</a></li>
-              </ul>
-            </div>
-          </div>
-        </section>
-
-        <!-- --------------------------------------------------------- nothing -->
-        <section class="section" aria-labelledby="buys-title">
-          <span class="plus plus--l" aria-hidden="true"></span>
-          <span class="plus plus--r" aria-hidden="true"></span>
-          <div class="head">
-            <p class="eyebrow">In plain words</p>
-            <h2 class="h2" id="buys-title">What a donation does not buy.</h2>
-            <p class="lead">
-              Worth saying out loud, because on most sites a support button is a tier with a name.
+              Every one of these is a switch in the KillSlop popup, which you open from the puzzle-piece icon in
+              Chrome's toolbar. Nothing here needs an account or a reinstall.
             </p>
           </div>
           <div class="cells cells--2">
             <div class="cell">
-              <h3 class="cell__title">No features, and no supporter tier</h3>
+              <p class="chip">It hid too much</p>
+              <h3 class="cell__title">It hid something I wanted to see</h3>
               <p class="cell__text">
-                Every setting is available to everyone. There is no locked switch, no trial, no seat count and no
-                badge. The extension is not told whether you gave, and has no way to find out.
+                Press <strong>Show</strong> on the note it left, then <strong>Not slop</strong>. Your call outranks
+                every other signal and sticks. If it happens often, switch <strong>Hide it</strong> to
+                <strong>Dim it</strong> so nothing is removed, only greyed out, and tell us below which account it
+                was: a wrong entry on the list is worth fixing for everyone.
               </p>
             </div>
             <div class="cell">
-              <h3 class="cell__title">No say over the list</h3>
+              <p class="chip">It missed things</p>
+              <h3 class="cell__title">Obvious slop got through</h3>
               <p class="cell__text">
-                Money does not add an account to the list or take one off it. Entries are added on published AI
-                labels, measured channel patterns and a maintainer's review, and each one says which. Nobody can
-                pay their way onto or off it.
+                Press <strong>AI SLOP</strong> on the post. It disappears for you at once and joins the review
+                queue. Most AI posts carry no label at all, so on X and LinkedIn the
+                <strong>writing check</strong> is what catches the rest. It ships switched off because it is the
+                only part that sends a post's text away; turn it on in the popup.
               </p>
             </div>
             <div class="cell">
-              <h3 class="cell__title">No account, and no receipt from us</h3>
+              <p class="chip">The site broke</p>
+              <h3 class="cell__title">A page is slow, blank or looks wrong</h3>
               <p class="cell__text">
-                Giving does not create a login here. buymemomo.com handles the payment under its own terms and we
-                never see a card. We get a name only if their page shows us one.
+                Turn KillSlop off for that one platform under <strong>Platforms</strong>, and reload. If that fixes
+                it, it is ours and we want to know: tell us below which site and what you saw. You can also press
+                <strong>Reset local data</strong>, which clears the saved verdicts and your marks without
+                reinstalling.
               </p>
             </div>
             <div class="cell">
-              <h3 class="cell__title">No promise it keeps running forever</h3>
+              <p class="chip">Privacy</p>
+              <h3 class="cell__title">I want it to stop sending things</h3>
               <p class="cell__text">
-                It buys time to keep working on it, not a guarantee. If this ever stops, the code and the whole list
-                are already public under licences that let someone else carry on.
+                Turn off <strong>Contribute reports</strong> and your marks stay on your device. Turn off the
+                <strong>community list</strong> and no lookups go out at all. The
+                <a class="link" href="/privacy">privacy policy</a> lists every single thing that is ever sent, and
+                uninstalling removes everything stored on your device.
               </p>
             </div>
           </div>
         </section>
 
-        <!-- ------------------------------------------------------------- cta -->
-        <section class="section cta" aria-labelledby="cta-title">
+        <!-- ----------------------------------------------------------- write -->
+        <section class="section waitlist" id="write" aria-labelledby="write-title">
           <div class="hero__bg" aria-hidden="true"></div>
-          <h2 class="cta__title" id="cta-title">Thanks for reading this far.</h2>
+          <p class="eyebrow">Send feedback</p>
+          <h2 class="waitlist__title" id="write-title">Write to the maintainer.</h2>
           <p class="lead">
-            Chipping in keeps the servers on and the list growing. Using KillSlop and marking what it missed does
-            the same thing for free.
+            The same form as the one in the extension, and it lands in the same inbox. Tell us what happened and
+            what you expected instead. An email address is optional and only used to reply.
           </p>
-          <div class="cta__actions">
-            <a class="btn btn--primary btn--xl btn--pill" href="https://buymemomo.com/aarohan">Chip in</a>
-            <a class="btn btn--xl btn--pill" href="/get">Get KillSlop</a>
+
+          <form class="support__form" id="form" novalidate>
+            <div class="support__field">
+              <p class="signup__label" id="cat-label">What is it about?</p>
+              <div class="segmented support__cats" role="radiogroup" aria-labelledby="cat-label" id="category">
+                <button type="button" role="radio" data-value="bug" aria-checked="true">Bug</button>
+                <button type="button" role="radio" data-value="wrong" aria-checked="false">Wrong call</button>
+                <button type="button" role="radio" data-value="idea" aria-checked="false">Idea</button>
+                <button type="button" role="radio" data-value="other" aria-checked="false">Other</button>
+              </div>
+            </div>
+
+            <div class="support__field">
+              <label class="signup__label" for="message">Message</label>
+              <textarea class="input" id="message" rows="7" maxlength="3500" required></textarea>
+              <div class="support__row">
+                <span class="support__hint" id="hint"></span>
+                <span class="support__count"><span id="count">0</span> / 3,500</span>
+              </div>
+            </div>
+
+            <div class="support__field">
+              <label class="signup__label" for="email">
+                Email <span class="optional">Optional, only if you want a reply</span>
+              </label>
+              <div class="signup__row">
+                <input
+                  class="input"
+                  id="email"
+                  type="email"
+                  maxlength="254"
+                  placeholder="you@example.com"
+                  autocomplete="email"
+                  spellcheck="false"
+                />
+                <button class="btn btn--primary btn--xl" type="submit" id="send">Send</button>
+              </div>
+            </div>
+
+            <p class="signup__msg" id="msg" role="status" aria-live="polite"></p>
+            <noscript>
+              <p class="signup__msg signup__msg--error">
+                This form needs JavaScript. You can
+                <a class="link" href="https://github.com/heyitsR1/killslop/issues/new/choose">open an issue on GitHub</a>
+                instead, or use Send feedback inside the extension.
+              </p>
+            </noscript>
+          </form>
+
+          <ul class="signup__terms">
+            <li>Read by a person, never published, never sold.</li>
+            <li>No account and no identifier is attached. We cannot tell which reports or votes are yours.</li>
+            <li>Include a link if you are reporting a wrong call. It is the fastest way for us to check it.</li>
+          </ul>
+        </section>
+
+        <!-- ----------------------------------------------------------- other -->
+        <section class="section" id="other" aria-labelledby="other-title">
+          <div class="split split--even">
+            <div>
+              <p class="eyebrow">Other ways</p>
+              <h2 class="h2" id="other-title">In the open, if you prefer.</h2>
+              <p class="lead">
+                Bugs filed on GitHub are public, which makes them easier for other people to find and to pile onto.
+                If your problem might be someone else's too, that is the better place for it.
+              </p>
+              <div class="actions">
+                <a class="btn btn--lg btn--pill btn--primary" href="https://github.com/heyitsR1/killslop/issues/new/choose">Open an issue</a>
+                <a class="btn btn--lg btn--pill" href="https://github.com/heyitsR1/killslop">View source</a>
+              </div>
+            </div>
+            <div class="links">
+              <p class="links__label">Also useful</p>
+              <ul>
+                <li><a href="/welcome">What KillSlop does, in one page</a></li>
+                <li><a href="/privacy">What it sends, and what it never sends</a></li>
+                <li><a href="/#how">How it decides what is slop</a></li>
+                <li><a href="https://github.com/heyitsR1/killslop/security/policy">Report a security problem privately</a></li>
+                <li><a href="/#list">Download the public list</a></li>
+              </ul>
+            </div>
           </div>
         </section>
 
@@ -241,10 +247,10 @@
           </nav>
           <nav class="footer__col" aria-label="Project">
             <p class="footer__head">Project</p>
+            <a href="/support">Get help</a>
             <a href="https://github.com/heyitsR1/killslop">GitHub</a>
-            <a href="https://github.com/heyitsR1/killslop/issues/new/choose">Report a problem</a>
             <a href="https://api.killslop.app/api/v1/export/youtube-channels.json">Download the list (JSON)</a>
-            <a href="/support">Support the project</a>
+            <a href="/donate">Donate</a>
           </nav>
           <div class="footer__legal">
             <span>&copy; 2026 KillSlop</span>
