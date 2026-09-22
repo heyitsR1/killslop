@@ -15,8 +15,12 @@ non-obvious constraints in there will silently break the product if you
 
 ## Install
 
-KillSlop is on its way to the Chrome Web Store. Until it is listed, load it
-from source in Chrome, Edge, Brave or any Chromium browser:
+**[Get it from the Chrome Web Store](https://chromewebstore.google.com/detail/killslop-hide-ai-slop-on/mcbeejjjenhkepadpcogblpiehmlidfl)**
+(also `killslop.app/get`). It works in Chrome, Edge, Brave or any Chromium
+browser.
+
+To run the source instead, for instance to try a change before it is
+released:
 
 1. Download this repository (Code, then Download ZIP) and unzip it, or
    `git clone https://github.com/heyitsR1/killslop`.
@@ -192,7 +196,7 @@ extension/
   src/fonts/         Geist Sans and Geist Mono (OFL-1.1)
 worker/
   src/index.js       public API: buckets, votes, tallies, export, feedback,
-                     the Chrome Web Store waiting list
+                     the (now closed) pre-launch waiting list
   src/admin.js       maintainer console: sign-in, review queue, inbox
   src/site.js        the website at killslop.app, and the shared static files
   src/policy.js      what gets served, and id and input validation (pure, tested)

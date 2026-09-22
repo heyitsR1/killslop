@@ -23,19 +23,20 @@ const PAGES = {
   '/donate': '/site/donate.html',
   // Opened once, on install, by the service worker.
   '/welcome': '/site/welcome.html',
-  // The Chrome Web Store launch list. Deliberately not linked from the home
-  // page: it is a page to share in launch posts, not a second call to action
-  // competing with "Get KillSlop", which works today.
-  '/waitlist': '/site/waitlist.html',
   // Where Chrome sends people when they remove the extension, registered by
   // the service worker with setUninstallURL. Reached only by uninstalling.
   '/uninstall': '/site/uninstall.html',
 };
 /**
- * Where "Get KillSlop" goes. Every button on the site links to /get, so the
- * day the Chrome Web Store listing is live this is the one line to change.
+ * Where "Get KillSlop" goes. Every button on the site links to /get, so if the
+ * listing ever moves this is the one line to change. Live since 2026-09-22.
  */
-export const INSTALL_URL = 'https://github.com/heyitsR1/killslop#install';
+export const INSTALL_URL = 'https://chromewebstore.google.com/detail/killslop-hide-ai-slop-on/mcbeejjjenhkepadpcogblpiehmlidfl';
+/**
+ * The pre-launch waiting list, shared in launch posts before the listing was
+ * live. Those links are still out there, so they go straight to the store.
+ */
+const RETIRED = new Set(['/waitlist']);
 const SITE_FILE = /^\/site\/[a-z0-9-]+\.(?:html|css|js|svg|png|txt)$/;
 const SHARED_FILE = /^\/(?:ui\/base\.css|fonts\/(?:Geist-Variable|GeistMono-Variable)\.woff2|fonts\/OFL\.txt)$/;
 
@@ -85,7 +86,7 @@ export async function handleSite(request, env, url) {
   if (shared) return shared;
 
   const path = url.pathname.length > 1 ? url.pathname.replace(/\/+$/, '') : '/';
-  if (path === '/get') return Response.redirect(INSTALL_URL, 302);
+  if (path === '/get' || RETIRED.has(path)) return Response.redirect(INSTALL_URL, 302);
   // no-transform stops Cloudflare injecting its Web Analytics beacon into the
   // pages, which a zone can have switched on without anyone asking. The site
   // promises no analytics, so that promise must not rest on a dashboard toggle.

@@ -10,8 +10,6 @@ const FILES = new Set([
   '/site/support.html',
   '/site/support.js',
   '/site/donate.html',
-  '/site/waitlist.html',
-  '/site/waitlist.js',
   '/site/uninstall.html',
   '/site/uninstall.js',
   '/site/404.html',
@@ -44,10 +42,12 @@ test('killslop.app serves the website', async () => {
   assert.equal(await body('https://killslop.app/site/site.css'), 'asset:/site/site.css');
 });
 
-test('the waiting list is a page of its own, with its script', async () => {
-  assert.equal(await body('https://killslop.app/waitlist'), 'asset:/site/waitlist.html');
-  assert.equal(await body('https://killslop.app/waitlist/'), 'asset:/site/waitlist.html');
-  assert.equal(await body('https://killslop.app/site/waitlist.js'), 'asset:/site/waitlist.js');
+test('the retired waiting list sends people to the store, like /get', async () => {
+  for (const path of ['/waitlist', '/waitlist/']) {
+    const res = await get(`https://killslop.app${path}`);
+    assert.equal(res.status, 302);
+    assert.match(res.headers.get('location'), /^https:\/\/chromewebstore\.google\.com\//);
+  }
 });
 
 test('the support page is served on the site, with its form script', async () => {
@@ -65,10 +65,13 @@ test('donating is a page of its own, separate from support', async () => {
   assert.equal(await body('https://killslop.app/donate/'), 'asset:/site/donate.html');
 });
 
-test('/get sends people to wherever the extension is installed from', async () => {
+test('/get sends people to the Chrome Web Store listing', async () => {
   const res = await get('https://killslop.app/get');
   assert.equal(res.status, 302);
-  assert.match(res.headers.get('location'), /^https:\/\//);
+  assert.equal(
+    res.headers.get('location'),
+    'https://chromewebstore.google.com/detail/killslop-hide-ai-slop-on/mcbeejjjenhkepadpcogblpiehmlidfl'
+  );
 });
 
 test('an unknown page on the site gets the 404 page', async () => {
