@@ -26,6 +26,7 @@ const PAGES = {
   // Where Chrome sends people when they remove the extension, registered by
   // the service worker with setUninstallURL. Reached only by uninstalling.
   '/uninstall': '/site/uninstall.html',
+  '/robots.txt': '/site/robots.txt',
 };
 /**
  * Where "Get KillSlop" goes. Every button on the site links to /get, so if the
