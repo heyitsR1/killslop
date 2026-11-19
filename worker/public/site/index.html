@@ -49,7 +49,7 @@
         <nav class="nav__links" aria-label="Main">
           <a href="#how">How it works</a>
           <a href="#list">The list</a>
-          <a href="#roadmap">Roadmap</a>
+          <a href="#features">On X</a>
           <a href="/privacy">Privacy</a>
           <a href="/support">Help</a>
         </nav>
@@ -118,67 +118,89 @@
           </div>
         </section>
 
-        <!-- ------------------------------------------------------- statement -->
-        <section class="section" aria-label="The problem">
-          <p class="statement">
-            AI slop is in every feed now.
-            <span class="muted">YouTube has AI-made documentaries and music. LinkedIn has posts written by chatbots.
-            X has bots that post AI replies. This content costs almost nothing to make, so there is a lot of it,
-            and the platforms keep recommending it.</span>
+        <!-- ------------------------------------------------------- credit -->
+        <section class="section credit" aria-labelledby="credit-title">
+          <p class="eyebrow">Built on levelsio's list</p>
+          <h2 class="h2" id="credit-title">Thank you, <a href="https://x.com/levelsio">@levelsio</a>.</h2>
+          <p class="lead">
+            Pieter Levels blocks AI reply accounts in public, keeps the evidence for every single one, and
+            publishes the result as
+            <a href="https://blockedforaireply.levels.io">Blocked for AI reply</a>. KillSlop turns his list into
+            a filter you can install.
+            <span class="muted">Clankwall flags by <a href="https://x.com/ryanvogel">@ryanvogel</a> ride along
+            inside it, and the original X list came from <a href="https://x.com/dillon_mulroy">@dillon_mulroy</a>.
+            KillSlop is not affiliated with any of them, or with X.</span>
           </p>
-        </section>
-
-        <!-- --------------------------------------------------------- roadmap -->
-        <section class="section" id="roadmap" aria-labelledby="roadmap-title">
-          <span class="plus plus--l" aria-hidden="true"></span>
-          <span class="plus plus--r" aria-hidden="true"></span>
-          <div class="head">
-            <p class="eyebrow">Roadmap</p>
-            <h2 class="h2" id="roadmap-title">YouTube first, then LinkedIn and X.</h2>
-            <p class="lead">
-              We are adding one site at a time. Every site will use the same public list, so a report on one helps
-              people on all of them.
-            </p>
-          </div>
-          <div class="cells cells--4">
-            <div class="cell">
-              <p class="chip">Live now</p>
-              <h3 class="cell__title">YouTube</h3>
-              <p class="cell__text">
-                Hides AI videos on your home page, in search, in recommendations and in Shorts. It reads YouTube's
-                AI label, checks whole channels and looks them up in the public list.
-              </p>
-            </div>
-            <div class="cell">
-              <p class="chip">Next</p>
-              <h3 class="cell__title">LinkedIn</h3>
-              <p class="cell__text">
-                Hides posts and comments written by AI. Each hidden post will show a short note with the reason
-                and a button to show it.
-              </p>
-            </div>
-            <div class="cell">
-              <p class="chip">After LinkedIn</p>
-              <h3 class="cell__title">X</h3>
-              <p class="cell__text">
-                Hides AI reply bots and AI-generated posts. You will be able to report the accounts behind them.
-              </p>
-            </div>
-            <div class="cell">
-              <p class="chip">Later</p>
-              <h3 class="cell__title">Other sites</h3>
-              <p class="cell__text">Reddit, Pinterest, Google Images and Spotify come after that.</p>
-            </div>
-          </div>
         </section>
 
         <!-- -------------------------------------------------------- features -->
         <section class="section" id="features" aria-labelledby="features-title">
           <div class="head">
-            <p class="eyebrow">Features</p>
-            <h2 class="h2" id="features-title">What it does on YouTube.</h2>
+            <p class="eyebrow">On X</p>
+            <h2 class="h2" id="features-title">Your replies, made by people again.</h2>
             <p class="lead">
-              KillSlop uses three signals to find AI videos. If you disagree with any of them, your choice wins.
+              AI reply bots answer big posts within seconds to farm engagement. KillSlop folds them away before
+              you read them.
+            </p>
+          </div>
+          <div class="cells cells--3">
+            <div class="cell">
+              <svg class="cell__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h12M9 12h12M9 18h12"/><path d="M3.5 6h.01M3.5 12h.01M3.5 18h.01" stroke-width="2.5"/></svg>
+              <h3 class="cell__title">Nearly 2,000 bots, day one</h3>
+              <p class="cell__text">
+                levelsio's list, Clankwall and our own reviewed list, merged into one switch. It works the moment
+                you install it.
+              </p>
+            </div>
+            <div class="cell">
+              <svg class="cell__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v4h-4"/></svg>
+              <h3 class="cell__title">Always up to date</h3>
+              <p class="cell__text">
+                The list refreshes itself every few hours. A bot blocked today is hidden for you tomorrow, with no
+                update to install.
+              </p>
+            </div>
+            <div class="cell">
+              <svg class="cell__icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5h.01"/></svg>
+              <h3 class="cell__title">Every hide says why</h3>
+              <p class="cell__text">
+                A hidden reply shrinks to a thin card. Why? opens the evidence, Show reads it anyway, Not slop
+                keeps that account visible for you.
+              </p>
+            </div>
+            <div class="cell">
+              <svg class="cell__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 8-7 9-4-1-7-4.5-7-9V6z"/></svg>
+              <h3 class="cell__title">Your account is untouched</h3>
+              <p class="cell__text">
+                KillSlop hides; it never blocks or mutes anyone on your X account, and never asks for your login.
+                There is nothing for X to flag.
+              </p>
+            </div>
+            <div class="cell">
+              <svg class="cell__icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M6 6l12 12"/></svg>
+              <h3 class="cell__title">Spot one? One click</h3>
+              <p class="cell__text">
+                Press AI SLOP on any post. It is gone for you at once, and a person checks it before it is hidden
+                for anyone else.
+              </p>
+            </div>
+            <div class="cell">
+              <svg class="cell__icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+              <h3 class="cell__title">Checked on your computer</h3>
+              <p class="cell__text">
+                The whole list is downloaded and matched in your browser, so nobody learns which accounts you see.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- -------------------------------------------------------- features -->
+        <section class="section" id="youtube" aria-labelledby="youtube-title">
+          <div class="head">
+            <p class="eyebrow">Beyond X</p>
+            <h2 class="h2" id="youtube-title">And AI slop on YouTube.</h2>
+            <p class="lead">
+              KillSlop started on YouTube, and it still hides AI videos there, plus AI posts on LinkedIn. If you disagree with any call, your choice wins.
             </p>
           </div>
           <div class="cells cells--3">
@@ -480,10 +502,9 @@
         <!-- ------------------------------------------------------------- cta -->
         <section class="section cta" aria-labelledby="cta-title">
           <div class="hero__bg" aria-hidden="true"></div>
-          <h2 class="cta__title" id="cta-title">Hide AI slop on YouTube today.</h2>
+          <h2 class="cta__title" id="cta-title">Clean up your replies today.</h2>
           <p class="lead">
-            It is free and needs no account. When you mark a video as AI slop, you help build the list for
-            everyone.
+            It is free and needs no account. Every bot you mark helps clean up X for everyone else.
           </p>
           <div class="cta__actions">
             <a class="btn btn--primary btn--xl btn--pill" href="/get">Get KillSlop</a>
@@ -496,14 +517,14 @@
               <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="6" fill="currentColor"/><circle class="mark__glyph" cx="12" cy="12" r="6"/><path class="mark__glyph" d="M7.76 7.76l8.48 8.48"/></svg>
               <span class="wordmark">KillSlop</span>
             </a>
-            <p class="footer__tag">Hides AI slop from your feed and keeps a public list of it.</p>
+            <p class="footer__tag">Hides AI reply bots on X, and AI slop everywhere else.</p>
           </div>
           <nav class="footer__col" aria-label="Product">
             <p class="footer__head">Product</p>
             <a href="#features">Features</a>
             <a href="#how">How it decides</a>
             <a href="#list">The list</a>
-            <a href="#roadmap">Roadmap</a>
+            <a href="#features">On X</a>
             <a href="/privacy">Privacy</a>
           </nav>
           <nav class="footer__col" aria-label="Project">

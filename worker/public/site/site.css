@@ -1952,3 +1952,18 @@ body {
   border-radius: var(--radius-lg);
   box-shadow: var(--window-shadow);
 }
+
+/* Credit to the list KillSlop is built on, right under the hero. */
+.credit {
+  max-width: 760px;
+}
+.credit .h2 a,
+.credit .lead a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--border-strong);
+  text-underline-offset: 4px;
+}
+.credit .lead {
+  margin-top: 16px;
+}

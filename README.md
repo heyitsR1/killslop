@@ -1,64 +1,77 @@
-# KillSlop
+# KillSlop: never see AI reply guys again
 
-**Never see AI reply guys again.** A free, open-source browser extension that
-hides nearly 2,000 known AI reply bots on X, merged from
-[levelsio's "Blocked for AI reply" list](https://blockedforaireply.levels.io),
-[Clankwall](https://clankwall.vogel.dev) and KillSlop's own reviewed list. It
-also hides AI slop on YouTube and LinkedIn, and keeps an open, evidence-backed
-list of it that anyone can use. The code is GPL-3.0; KillSlop's own list is
-CC BY-SA 4.0.
+A free, open-source Chrome extension that hides **nearly 2,000 known AI reply
+bots on X**. A reply that lands seconds after a big post, says nothing, and was
+written by a bot farming engagement: KillSlop folds it away before you read it.
 
-Website: **[killslop.app](https://killslop.app)**. Privacy policy:
-[killslop.app/privacy](https://killslop.app/privacy).
+> **Built on [@levelsio](https://x.com/levelsio)'s
+> [Blocked for AI reply](https://blockedforaireply.levels.io) list.** He blocks
+> AI reply accounts in public, keeps the evidence for every one, and publishes
+> the result as a live API. KillSlop turns that list into a filter anyone can
+> install. Thank you, Pieter. Clankwall flags by
+> [@ryanvogel](https://x.com/ryanvogel) ([clankwall.vogel.dev](https://clankwall.vogel.dev))
+> ride along inside his file, and the original X list came from
+> [@dillon_mulroy](https://x.com/dillon_mulroy). KillSlop is not affiliated
+> with any of them, or with X.
 
-Read **[RESEARCH.md](RESEARCH.md)** before changing detection. Several
-non-obvious constraints in there will silently break the product if you
-"clean them up". To help, start with **[CONTRIBUTING.md](CONTRIBUTING.md)**.
+Website: **[killslop.app](https://killslop.app)** ·
+Privacy: [killslop.app/privacy](https://killslop.app/privacy) ·
+Latest release: [v1.1.0](https://github.com/heyitsR1/killslop/releases/latest)
 
 ---
 
 ## Install
 
-**[Get it from the Chrome Web Store](https://chromewebstore.google.com/detail/killslop-hide-ai-slop-on/mcbeejjjenhkepadpcogblpiehmlidfl)**
-(also `killslop.app/get`). It works in Chrome, Edge, Brave or any Chromium
-browser.
+**Today, from GitHub** (the Chrome Web Store update is in review):
 
-To run the source instead, for instance to try a change before it is
-released:
-
-1. Download this repository (Code, then Download ZIP) and unzip it, or
-   `git clone https://github.com/heyitsR1/killslop`.
+1. Download `killslop-1.1.0.zip` from the
+   [latest release](https://github.com/heyitsR1/killslop/releases/latest) and
+   unzip it.
 2. Open `chrome://extensions` and turn on **Developer mode**.
-3. Choose **Load unpacked** and pick the `extension/` folder.
+3. Choose **Load unpacked** and pick the unzipped folder.
 
-There is no build step and nothing to install first.
+**From the [Chrome Web Store](https://chromewebstore.google.com/detail/killslop-hide-ai-slop-on/mcbeejjjenhkepadpcogblpiehmlidfl)**
+(also `killslop.app/get`). The X block list arrives with version 1.1.0; the
+store still serves 1.0.1 until review finishes. Works in Chrome, Edge, Brave
+or any Chromium browser.
 
-## The X AI reply spammer list
+There is no account, no sign-in and nothing to set up.
 
-AI reply bots farm engagement by replying to big accounts within seconds.
-People who get hit hardest have started publishing who they blocked; KillSlop
-turns those lists into a filter, so you don't have to block thousands of
-accounts one by one or hand your X login to anything.
+## How it works on X
 
-- **Sources.** levelsio's list (`confirmed`, with the reply as evidence, and
-  `likely`), the accounts it marks as flagged on Clankwall, and the X accounts
-  on KillSlop's own list after a maintainer approved them. The worker merges
-  them into one file, `GET https://api.killslop.app/api/v1/x-spam.json`
-  (`worker/src/spamlist.js`), rebuilt every 30 minutes.
+- **One list, several sources.** levelsio's list (`confirmed`, with the reply
+  as evidence, and `likely`), the accounts it marks as flagged on Clankwall,
+  and the X accounts on KillSlop's own list after a maintainer approved them.
+  The worker merges them into one file,
+  `GET https://api.killslop.app/api/v1/x-spam.json` (`worker/src/spamlist.js`),
+  rebuilt every 30 minutes.
+- **Always current.** The extension downloads the list every few hours, so a
+  bot levelsio blocks today is hidden for you without an extension update.
 - **Careful by default.** levelsio also lists ~1,700 accounts he blocked
-  silently and never reviewed. Some of them may be real people, so they are
-  off unless you switch on *Include unreviewed blocks* in the popup.
-- **Private.** The extension downloads the whole list every few hours and
-  matches it in your browser (`extension/src/core/spamlist.js`), so nobody
-  learns which accounts you see.
+  silently and never reviewed. Some may be real people, so they stay visible
+  unless you switch on *Include unreviewed blocks* in the popup.
+- **Private.** The whole list is matched in your browser
+  (`extension/src/core/spamlist.js`). Nobody learns which accounts you see.
 - **Hide, don't block.** A listed account's posts collapse into a thin card
-  with **Why?** (the evidence), **Show** and **Not slop**. Nothing is blocked
-  on your X account, so nothing can get your account flagged.
-- **Add to it.** Press **AI SLOP** on any post or account. It is hidden for you
-  at once and sent to KillSlop's review queue; a person approves it before it
-  is hidden for anyone else.
+  with **Why?** (opens levelsio's evidence), **Show** and **Not slop**. Your X
+  account is never touched, so there is nothing for X to flag.
+- **Add to it.** Press **AI SLOP** on any post. It is hidden for you at once
+  and joins KillSlop's review queue; a person approves it before it is hidden
+  for anyone else.
 
-KillSlop is not affiliated with levelsio, Clankwall or X.
+## Also: AI slop on YouTube and LinkedIn
+
+KillSlop started as a filter for AI-generated videos on YouTube, and that all
+still works: the platforms' own AI labels, channels that label nearly every
+upload, and the community list. The rest of this file is about that engine.
+
+Read **[RESEARCH.md](RESEARCH.md)** before changing detection. Several
+non-obvious constraints in there will silently break the product if you
+"clean them up". To help, start with **[CONTRIBUTING.md](CONTRIBUTING.md)**.
+
+To run the source unpacked: clone the repo, open `chrome://extensions`, turn
+on Developer mode, **Load unpacked**, and pick the `extension/` folder. There
+is no build step.
 
 ## The idea
 
