@@ -9,6 +9,11 @@ const send = (type, payload = {}) =>
   });
 
 const $ = (id) => document.getElementById(id);
+/** Pages share this script but not every element: skip what is absent. */
+const setText = (id, text) => {
+  const el = $(id);
+  if (el) el.textContent = text;
+};
 let settings = null;
 
 /* --------------------------------------------------------------- switches */
@@ -25,10 +30,12 @@ const TOGGLES = [
 ];
 
 function paintSwitch(el, on) {
+  if (!el) return;
   el.setAttribute('aria-checked', String(Boolean(on)));
 }
 
 function wireSwitch(el, read, write) {
+  if (!el) return;
   el.addEventListener('click', async () => {
     const next = el.getAttribute('aria-checked') !== 'true';
     paintSwitch(el, next);
@@ -43,6 +50,7 @@ function wireSwitch(el, read, write) {
 /** Live platforms get a switch each; planned ones share one line underneath. */
 function renderPlatforms() {
   const host = $('platforms');
+  if (!host) return;
   host.replaceChildren();
   const all = Object.values(PLATFORMS);
 
@@ -86,12 +94,12 @@ function renderPlatforms() {
 
 function paint() {
   paintSwitch($('master'), settings.enabled);
-  $('status').textContent = settings.enabled ? 'Filtering' : 'Paused';
-  $('status-dot').classList.toggle('dot--off', !settings.enabled);
+  setText('status', settings.enabled ? 'Filtering' : 'Paused');
+  $('status-dot')?.classList.toggle('dot--off', !settings.enabled);
 
   for (const key of TOGGLES) paintSwitch($(key), settings[key]);
 
-  for (const btn of $('action').querySelectorAll('button')) {
+  for (const btn of $('action')?.querySelectorAll('button') ?? []) {
     btn.setAttribute('aria-selected', String(btn.dataset.value === settings.action));
   }
 
@@ -101,7 +109,7 @@ function paint() {
   //
   // The writing check is named first when it is on, because it is the only
   // setting that can send the words of a post rather than a hash of them.
-  $('privacy').textContent = settings.unreachable
+  setText('privacy', settings.unreachable
     ? "KillSlop's background page is not responding, so these are the default settings and changes will not save. Reload the extension at chrome://extensions."
     : settings.useWritingCheck
       ? 'The writing check asks by hash first, and sends the text itself only for a post nothing else could place and nobody has had checked before.'
@@ -109,17 +117,17 @@ function paint() {
       ? 'Lookups are sent as a 4-character hash prefix, so the list never learns what you watched or read.'
       : settings.shareReports
         ? 'Community list is off, so nothing is looked up in it. Your marks are still shared; turn off Contribute reports to keep them here.'
-        : "Community list and sharing are off. Only YouTube's label check sends a request, to YouTube, without your cookies.";
+        : "Community list and sharing are off. Only YouTube's label check sends a request, to YouTube, without your cookies.");
 }
 
 /** Last counts seen, so the tiles have something true to show immediately. */
 const STATS_CACHE = 'statsCache';
 
 function paintStats({ session, videos, channels, marks }) {
-  $('stat-session').textContent = session ?? 0;
-  $('stat-videos').textContent = videos ?? 0;
-  $('stat-channels').textContent = channels ?? 0;
-  $('marks-desc').textContent = marks || 'Nothing marked yet';
+  setText('stat-session', session ?? 0);
+  setText('stat-videos', videos ?? 0);
+  setText('stat-channels', channels ?? 0);
+  setText('marks-desc', marks || 'Nothing marked yet');
 }
 
 /**
@@ -166,13 +174,13 @@ async function refreshSpam() {
   const s = await send('spamSummary');
   if (!s) return;
   const n = s.count.toLocaleString('en-US');
-  $('spam-desc').textContent = !settings.useSpamList
+  setText('spam-desc', !settings.useSpamList
     ? 'Off. Turn on to hide known AI reply bots'
     : s.fetched
       ? `Hiding ${n} accounts · updated ${ago(s.fetched)}`
-      : 'Downloading the list…';
+      : 'Downloading the list…');
   if (s.unreviewed) {
-    $('spam-unreviewed-desc').textContent = `${s.unreviewed.toLocaleString('en-US')} more accounts levelsio blocked silently. Some may be real people`;
+    setText('spam-unreviewed-desc', `${s.unreviewed.toLocaleString('en-US')} more accounts levelsio blocked silently. Some may be real people`);
   }
 }
 
@@ -197,8 +205,8 @@ async function refreshSpam() {
 
   renderPlatforms();
 
-  $('master').addEventListener('click', async () => {
-    const next = $('master').getAttribute('aria-checked') !== 'true';
+  $('master')?.addEventListener('click', async () => {
+    const next = $('master')?.getAttribute('aria-checked') !== 'true';
     paintSwitch($('master'), next); // flip now; the write is fast but not free
     settings = await setSettings({ enabled: next });
     paint();
@@ -211,7 +219,7 @@ async function refreshSpam() {
       (next) => ({ [key]: next })
     );
     if (key.startsWith('useSpam') || key.startsWith('spamList')) {
-      $(key).addEventListener('click', () => setTimeout(refreshSpam, 50));
+      $(key)?.addEventListener('click', () => setTimeout(refreshSpam, 50));
     }
   }
 
@@ -219,7 +227,7 @@ async function refreshSpam() {
   // attach that page, which is what a "wrong call" report needs. The URL is
   // readable because those sites are in host_permissions; no other tab's
   // address is ever read.
-  $('feedback').addEventListener('click', async () => {
+  $('feedback')?.addEventListener('click', async () => {
     const url = new URL(chrome.runtime.getURL('src/feedback/feedback.html'));
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     if (tab?.url && /^https:\/\/((www\.|m\.)?youtube\.com|x\.com|www\.linkedin\.com)\//.test(tab.url)) {
@@ -228,14 +236,23 @@ async function refreshSpam() {
     chrome.tabs.create({ url: url.href });
   });
 
-  $('action').addEventListener('click', async (ev) => {
+  $('action')?.addEventListener('click', async (ev) => {
     const value = ev.target?.dataset?.value;
     if (!value) return;
     settings = await setSettings({ action: value });
     paint();
   });
 
-  $('marks').addEventListener('click', () => {
+  // The popup is for the quick switches; everything else lives in a full
+  // page, where a toggle does not shift a 360px panel under the cursor.
+  for (const id of ['open-dashboard', 'dashboard']) {
+    $(id)?.addEventListener('click', () => {
+      chrome.tabs.create({ url: chrome.runtime.getURL('src/dashboard/dashboard.html') });
+      if (document.body.dataset.view === 'popup') window.close();
+    });
+  }
+
+  $('marks')?.addEventListener('click', () => {
     chrome.tabs.create({ url: chrome.runtime.getURL('src/marks/marks.html') });
   });
 
@@ -243,13 +260,22 @@ async function refreshSpam() {
   // covers and, more to the point, what it does not buy, which someone pressing
   // this deserves to read before a checkout rather than after. The host is one
   // click further on. No feature in KillSlop is behind it and none ever will be.
-  $('support').addEventListener('click', () => {
+  $('support')?.addEventListener('click', () => {
     chrome.tabs.create({ url: 'https://killslop.app/donate' });
   });
 
-  $('reset').addEventListener('click', async () => {
+  $('reset')?.addEventListener('click', async () => {
     await send('clearData');
     await refreshStats();
+  });
+
+  // The popup and the dashboard can be open at once; keep them in step.
+  chrome.storage.onChanged.addListener(async (_changes, area) => {
+    if (area !== 'sync') return;
+    settings = await getSettings().catch(() => settings);
+    renderPlatforms();
+    paint();
+    refreshSpam();
   });
 
   paint();

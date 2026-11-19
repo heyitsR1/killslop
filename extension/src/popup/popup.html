@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="popup.css" />
     <title>KillSlop</title>
   </head>
-  <body>
+  <body data-view="popup">
     <header class="header">
       <svg class="mark" viewBox="0 0 24 24" aria-hidden="true">
         <rect width="24" height="24" rx="6" fill="currentColor" />
@@ -16,6 +16,9 @@
       <span class="wordmark header__title">KillSlop</span>
       <span class="status"><span class="dot" id="status-dot"></span><span id="status">Filtering</span></span>
       <div class="spacer"></div>
+      <button class="icon-btn" id="open-dashboard" type="button" title="Open the dashboard" aria-label="Open the dashboard">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8" /><circle cx="16" cy="7" r="2" /><circle cx="10" cy="17" r="2" /></svg>
+      </button>
       <button
         class="switch"
         id="master"
@@ -60,6 +63,14 @@
       </div>
     </section>
 
+    <button class="nav-row nav-row--accent" id="dashboard" type="button">
+      <span class="row__body">
+        <span class="row__title">Dashboard</span>
+        <span class="row__desc">Platforms, sources and every other setting</span>
+      </span>
+      <svg class="chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5" /></svg>
+    </button>
+
     <button class="nav-row" id="marks" type="button">
       <span class="row__body">
         <span class="row__title">Your marks</span>
@@ -83,76 +94,6 @@
       </span>
       <svg class="chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5" /></svg>
     </button>
-
-    <section class="section">
-      <h2 class="eyebrow section__label">Platforms</h2>
-      <div id="platforms"></div>
-    </section>
-
-    <section class="section">
-      <h2 class="eyebrow section__label">When something is slop</h2>
-      <div class="segmented segmented--2" role="tablist" id="action">
-        <button role="tab" data-value="hide" aria-selected="true">Hide it</button>
-        <button role="tab" data-value="dim" aria-selected="false">Dim it</button>
-      </div>
-    </section>
-
-    <section class="section">
-      <h2 class="eyebrow section__label">Sources</h2>
-
-      <div class="row">
-        <div class="row__body">
-          <div class="row__title">Platform AI labels</div>
-          <div class="row__desc">YouTube's and X's own AI label</div>
-        </div>
-        <button class="switch" id="useDisclosure" role="switch" aria-checked="true" aria-label="Platform AI labels"></button>
-      </div>
-
-      <div class="row">
-        <div class="row__body">
-          <div class="row__title">Channel inference</div>
-          <div class="row__desc">Hide channels and accounts that often post AI</div>
-        </div>
-        <button class="switch" id="useChannelInference" role="switch" aria-checked="true" aria-label="Channel inference"></button>
-      </div>
-
-      <div class="row">
-        <div class="row__body">
-          <div class="row__title">Community list</div>
-          <div class="row__desc">Slop reported by other people</div>
-        </div>
-        <button class="switch" id="useCommunity" role="switch" aria-checked="true" aria-label="Community list"></button>
-      </div>
-
-      <div class="row">
-        <div class="row__body">
-          <div class="row__title">Include opinion votes</div>
-          <div class="row__desc">Off = only channels measured by their own AI labels</div>
-        </div>
-        <button class="switch" id="trustVotes" role="switch" aria-checked="true" aria-label="Include opinion votes"></button>
-      </div>
-
-      <div class="row">
-        <div class="row__body">
-          <div class="row__title">Contribute reports</div>
-          <div class="row__desc">Send your own calls back to the list</div>
-        </div>
-        <button class="switch" id="shareReports" role="switch" aria-checked="true" aria-label="Contribute reports"></button>
-      </div>
-
-      <div class="row">
-        <div class="row__body">
-          <div class="row__title">Writing check</div>
-          <div class="row__desc">Off by default. Reads posts X and LinkedIn do not label</div>
-        </div>
-        <button class="switch" id="useWritingCheck" role="switch" aria-checked="false" aria-label="Writing check"></button>
-      </div>
-    </section>
-
-    <p class="note" id="privacy">
-      Lookups are sent as a 4-character hash prefix, so the list never learns what
-      you watched or read.
-    </p>
 
     <footer class="footer">
       <button class="footer__link" id="reset" type="button">Reset local data</button>
