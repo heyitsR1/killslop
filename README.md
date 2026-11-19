@@ -22,16 +22,16 @@ Latest release: [v1.1.0](https://github.com/heyitsR1/killslop/releases/latest)
 
 ## Install
 
-**Today, from GitHub** (the Chrome Web Store update is in review):
+**Today, from GitHub** (the Chrome Web Store update is in review). Step by step with pictures: **[killslop.app/install](https://killslop.app/install)**.
 
-1. Download `killslop-1.1.0.zip` from the
+1. Download the `killslop-<version>.zip` from the
    [latest release](https://github.com/heyitsR1/killslop/releases/latest) and
    unzip it.
 2. Open `chrome://extensions` and turn on **Developer mode**.
 3. Choose **Load unpacked** and pick the unzipped folder.
 
 **From the [Chrome Web Store](https://chromewebstore.google.com/detail/killslop-hide-ai-slop-on/mcbeejjjenhkepadpcogblpiehmlidfl)**
-(also `killslop.app/get`). The X block list arrives with version 1.1.0; the
+(also `killslop.app/get`). The X block list arrives with version 1.1.0 and the dashboard with 1.2.0; the
 store still serves 1.0.1 until review finishes. Works in Chrome, Edge, Brave
 or any Chromium browser.
 

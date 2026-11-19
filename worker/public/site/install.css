@@ -1,0 +1,104 @@
+/* killslop.app/install: a step-by-step guide with annotated captures. */
+
+.guide {
+  display: grid;
+  gap: 64px;
+  max-width: 800px;
+}
+
+.guide-lead {
+  color: var(--fg);
+  font-size: 18px;
+  line-height: 30px;
+}
+
+.guide-step h2 {
+  margin-top: 6px;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 34px;
+  letter-spacing: -0.03em;
+}
+
+.guide-step p {
+  margin-top: 12px;
+  color: var(--fg-muted);
+  font-size: 16px;
+  line-height: 27px;
+}
+
+.guide-step a,
+.guide-lead a {
+  color: var(--fg);
+}
+
+.guide-step strong {
+  color: var(--fg);
+  font-weight: 600;
+}
+
+.guide-step code {
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: var(--fill);
+  color: var(--fg);
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+.guide-step__n {
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  margin: 0 !important;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: var(--verdict);
+  color: #fff !important;
+  font-family: var(--font-mono);
+  font-size: 12px !important;
+  line-height: 1 !important;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.guide-step--extra .guide-step__n {
+  background: var(--fill);
+  color: var(--fg-muted) !important;
+}
+
+.guide-shot {
+  margin-top: 24px;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--window-shadow);
+}
+
+.guide-shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.guide-note {
+  font-size: 14px !important;
+}
+
+.guide-fold {
+  border-top: 1px solid var(--border);
+}
+
+.guide-fold:last-of-type {
+  border-bottom: 1px solid var(--border);
+}
+
+.guide-fold summary {
+  padding: 16px 0;
+  color: var(--fg);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.guide-fold p {
+  margin: 0 0 16px;
+}

@@ -21,6 +21,8 @@ const PAGES = {
   // broken page should not be asked for money.
   '/support': '/site/support.html',
   '/donate': '/site/donate.html',
+  // Installing from GitHub, step by step, while the store review runs.
+  '/install': '/site/install.html',
   // Opened once, on install, by the service worker.
   '/welcome': '/site/welcome.html',
   // Where Chrome sends people when they remove the extension, registered by
@@ -38,7 +40,7 @@ export const INSTALL_URL = 'https://chromewebstore.google.com/detail/killslop-hi
  * live. Those links are still out there, so they go straight to the store.
  */
 const RETIRED = new Set(['/waitlist']);
-const SITE_FILE = /^\/site\/[a-z0-9-]+\.(?:html|css|js|svg|png|txt)$/;
+const SITE_FILE = /^\/site\/[a-z0-9-]+\.(?:html|css|js|svg|png|gif|txt)$/;
 const SHARED_FILE = /^\/(?:ui\/base\.css|fonts\/(?:Geist-Variable|GeistMono-Variable)\.woff2|fonts\/OFL\.txt)$/;
 
 const SITE_HEADERS = {
