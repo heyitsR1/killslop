@@ -1,0 +1,233 @@
+/* The dashboard: every setting the popup is too small for. The popup's
+   script drives it (same ids), so the two can never disagree. */
+
+.spacer {
+  flex: 1;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 999px;
+  box-shadow: 0 0 0 1px var(--border);
+  color: var(--fg-muted);
+  font-size: 12px;
+  line-height: 1;
+}
+
+.status .dot {
+  width: 6px;
+  height: 6px;
+}
+
+.sheet {
+  display: grid;
+  gap: 16px;
+}
+
+.page-head {
+  margin-bottom: 8px;
+}
+
+/* ------------------------------------------------------------------ stats */
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 0 0 1px var(--border);
+}
+
+.stat {
+  padding: 18px 20px;
+  border-right: 1px solid var(--border);
+}
+
+.stat:last-child {
+  border-right: 0;
+}
+
+.stat__label {
+  color: var(--fg-muted);
+  font-size: 13px;
+}
+
+.stat__value {
+  margin-top: 4px;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 36px;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------------ cards */
+
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.card__title {
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: -0.02em;
+}
+
+.card__sub {
+  margin: 4px 0 10px;
+  color: var(--fg-muted);
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.card__sub a {
+  color: var(--fg);
+}
+
+.card__foot {
+  padding: 14px 24px;
+  border-top: 1px solid var(--border);
+  background: var(--bg-subtle);
+  color: var(--fg-muted);
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 0;
+  border-top: 1px solid var(--border);
+}
+
+.row:first-of-type {
+  border-top: 0;
+}
+
+.row__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.row__title {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+}
+
+.row__desc {
+  display: block;
+  color: var(--fg-muted);
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.platforms__next {
+  padding-top: 8px;
+}
+
+.segmented--2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 8px;
+}
+
+/* ------------------------------------------------------------------ links */
+
+.links {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.link-card {
+  display: grid;
+  gap: 2px;
+  padding: 16px 20px;
+  border: 0;
+  border-radius: var(--radius-lg);
+  background: var(--bg);
+  box-shadow: 0 0 0 1px var(--border);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: box-shadow 150ms ease, transform 150ms ease;
+}
+
+.link-card:hover {
+  box-shadow: 0 0 0 1px var(--border-strong);
+  transform: translateY(-1px);
+}
+
+.link-card:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+}
+
+.dash-foot {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-top: 8px;
+}
+
+.footer__link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--fg-muted);
+  font: inherit;
+  font-size: 13px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.footer__link:hover {
+  color: var(--fg);
+}
+
+/* ------------------------------------------------------------------ motion */
+
+@keyframes dash-rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+.dash-rise {
+  animation: dash-rise 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.dash-rise[data-d='1'] { animation-delay: 40ms; }
+.dash-rise[data-d='2'] { animation-delay: 80ms; }
+.dash-rise[data-d='3'] { animation-delay: 120ms; }
+.dash-rise[data-d='4'] { animation-delay: 160ms; }
+.dash-rise[data-d='5'] { animation-delay: 200ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .dash-rise,
+  .link-card {
+    animation: none;
+    transition: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .grid2,
+  .links,
+  .stats {
+    grid-template-columns: 1fr;
+  }
+  .stat {
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+}

@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../ui/base.css" />
+    <link rel="stylesheet" href="popup.css" />
+    <title>KillSlop</title>
+  </head>
+  <body data-view="popup">
+    <header class="header">
+      <svg class="mark" viewBox="0 0 24 24" aria-hidden="true">
+        <rect width="24" height="24" rx="6" fill="currentColor" />
+        <circle class="mark__glyph" cx="12" cy="12" r="6" />
+        <path class="mark__glyph" d="M7.76 7.76l8.48 8.48" />
+      </svg>
+      <span class="wordmark header__title">KillSlop</span>
+      <span class="status"><span class="dot" id="status-dot"></span><span id="status">Filtering</span></span>
+      <div class="spacer"></div>
+      <button class="icon-btn" id="open-dashboard" type="button" title="Open the dashboard" aria-label="Open the dashboard">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8" /><circle cx="16" cy="7" r="2" /><circle cx="10" cy="17" r="2" /></svg>
+      </button>
+      <button
+        class="switch"
+        id="master"
+        role="switch"
+        aria-checked="true"
+        aria-label="Enable KillSlop"
+      ></button>
+    </header>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat__label">Hidden now</div>
+        <div class="stat__value" id="stat-session">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat__label">Videos known</div>
+        <div class="stat__value" id="stat-videos">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat__label">Channels</div>
+        <div class="stat__value" id="stat-channels">0</div>
+      </div>
+    </div>
+
+    <section class="section">
+      <h2 class="eyebrow section__label">AI reply spammers on X</h2>
+
+      <div class="row">
+        <div class="row__body">
+          <div class="row__title">Spammer block list</div>
+          <div class="row__desc" id="spam-desc">levelsio's list, Clankwall and ours, merged</div>
+        </div>
+        <button class="switch" id="useSpamList" role="switch" aria-checked="true" aria-label="Spammer block list"></button>
+      </div>
+
+      <div class="row">
+        <div class="row__body">
+          <div class="row__title">Include unreviewed blocks</div>
+          <div class="row__desc" id="spam-unreviewed-desc">Accounts levelsio blocked silently. Some may be real people</div>
+        </div>
+        <button class="switch" id="spamListUnreviewed" role="switch" aria-checked="false" aria-label="Include unreviewed blocks"></button>
+      </div>
+    </section>
+
+    <button class="nav-row nav-row--accent" id="dashboard" type="button">
+      <span class="row__body">
+        <span class="row__title">Dashboard</span>
+        <span class="row__desc">Platforms, sources and every other setting</span>
+      </span>
+      <svg class="chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5" /></svg>
+    </button>
+
+    <button class="nav-row" id="marks" type="button">
+      <span class="row__body">
+        <span class="row__title">Your marks</span>
+        <span class="row__desc" id="marks-desc">Nothing marked yet</span>
+      </span>
+      <svg class="chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5" /></svg>
+    </button>
+
+    <button class="nav-row" id="feedback" type="button">
+      <span class="row__body">
+        <span class="row__title">Send feedback</span>
+        <span class="row__desc">Bugs, wrong calls, ideas</span>
+      </span>
+      <svg class="chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5" /></svg>
+    </button>
+
+    <button class="nav-row" id="support" type="button">
+      <span class="row__body">
+        <span class="row__title">Support the project</span>
+        <span class="row__desc">KillSlop is free and open source. Nothing is gated.</span>
+      </span>
+      <svg class="chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5" /></svg>
+    </button>
+
+    <footer class="footer">
+      <button class="footer__link" id="reset" type="button">Reset local data</button>
+      <div class="spacer"></div>
+      <a class="footer__link" href="https://killslop.app/privacy" target="_blank" rel="noopener">Privacy</a>
+      <a class="footer__link" href="https://killslop.app" target="_blank" rel="noopener">killslop.app</a>
+    </footer>
+
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>

@@ -132,7 +132,11 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
  * on every install would have been a gift to whoever registered it.
  */
 chrome.runtime.onInstalled.addListener(({ reason }) => {
-  if (reason === 'install') chrome.tabs.create({ url: 'https://killslop.app/welcome' });
+  if (reason !== 'install') return;
+  // The id lets the page link straight to this install's dashboard. An
+  // unpacked copy and the store copy have different ids, so it cannot be
+  // written into the page.
+  chrome.tabs.create({ url: `https://killslop.app/welcome?ext=${chrome.runtime.id}` });
 });
 
 /**

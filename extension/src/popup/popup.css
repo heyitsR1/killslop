@@ -258,3 +258,14 @@ body {
   font-weight: 500;
   vertical-align: 1px;
 }
+
+a.nav-row {
+  text-decoration: none;
+}
+
+.gh {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}

@@ -1,11 +1,14 @@
 {
   "manifest_version": 3,
   "name": "KillSlop: Block AI Reply Bots on X, and AI Slop Everywhere",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "minimum_chrome_version": "116",
   "description": "Never see AI reply guys again. Hides ~2,000 known AI reply bots on X, plus AI slop on YouTube and LinkedIn. Free, open source.",
   "homepage_url": "https://killslop.app",
-  "permissions": ["storage", "unlimitedStorage"],
+  "permissions": [
+    "storage",
+    "unlimitedStorage"
+  ],
   "host_permissions": [
     "*://*.youtube.com/*",
     "https://x.com/*",
@@ -18,40 +21,60 @@
   },
   "content_scripts": [
     {
-      "matches": ["*://*.youtube.com/*"],
-      "js": ["src/content/parse.js", "src/content/probe.js", "src/content/youtube.js"],
-      "css": ["src/content/youtube.css"],
+      "matches": [
+        "*://*.youtube.com/*"
+      ],
+      "js": [
+        "src/content/parse.js",
+        "src/content/probe.js",
+        "src/content/youtube.js"
+      ],
+      "css": [
+        "src/content/youtube.css"
+      ],
       "run_at": "document_start",
       "all_frames": false
     },
     {
-      "matches": ["https://x.com/*"],
-      "js": ["src/content/x-page.js"],
+      "matches": [
+        "https://x.com/*"
+      ],
+      "js": [
+        "src/content/x-page.js"
+      ],
       "run_at": "document_start",
       "world": "MAIN",
       "all_frames": false
     },
     {
-      "matches": ["https://x.com/*"],
+      "matches": [
+        "https://x.com/*"
+      ],
       "js": [
         "src/content/parse.js",
         "src/content/slopsigns.js",
         "src/content/feed.js",
         "src/content/x.js"
       ],
-      "css": ["src/content/feed.css"],
+      "css": [
+        "src/content/feed.css"
+      ],
       "run_at": "document_start",
       "all_frames": false
     },
     {
-      "matches": ["https://www.linkedin.com/*"],
+      "matches": [
+        "https://www.linkedin.com/*"
+      ],
       "js": [
         "src/content/parse.js",
         "src/content/slopsigns.js",
         "src/content/feed.js",
         "src/content/linkedin.js"
       ],
-      "css": ["src/content/feed.css"],
+      "css": [
+        "src/content/feed.css"
+      ],
       "run_at": "document_idle",
       "all_frames": false
     }
@@ -68,5 +91,15 @@
   },
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self';"
-  }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "src/dashboard/dashboard.html"
+      ],
+      "matches": [
+        "https://killslop.app/*"
+      ]
+    }
+  ]
 }

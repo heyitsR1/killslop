@@ -212,7 +212,29 @@
     });
   }
 
+  /* ------------------------------------------------------------ dashboard */
+
+  // The extension opens this page with ?ext=<its id>. With it, the second
+  // button opens that install's dashboard (a web-accessible page, reachable
+  // from killslop.app only). Without it, the button stays a jump to the demo.
+  function wireDashboard() {
+    const btn = $('wl-dash');
+    if (!btn) return;
+    const fromUrl = new URLSearchParams(location.search).get('ext');
+    let id = /^[a-p]{32}$/.test(fromUrl || '') ? fromUrl : null;
+    try {
+      if (id) localStorage.setItem('killslop-ext', id);
+      else id = localStorage.getItem('killslop-ext');
+    } catch {
+      /* storage blocked: fine, just this visit */
+    }
+    if (!/^[a-p]{32}$/.test(id || '')) return;
+    btn.href = `chrome-extension://${id}/src/dashboard/dashboard.html`;
+    btn.textContent = 'Open your dashboard';
+  }
+
   function start() {
+    wireDashboard();
     wireReveal();
     wireTry();
     wirePin();
