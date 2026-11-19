@@ -3,6 +3,7 @@
 import * as verdict from '../core/verdict.js';
 import * as store from '../core/store.js';
 import * as community from '../core/community.js';
+import * as spamlist from '../core/spamlist.js';
 import { getSettings, setSettings } from '../core/settings.js';
 
 /** Every page a content script runs on; the hosts in the manifest. */
@@ -91,6 +92,10 @@ const handlers = {
 
   async setSettings({ patch }) {
     return setSettings(patch);
+  },
+
+  async spamSummary() {
+    return spamlist.summary(await getSettings());
   },
 
   async getStats() {

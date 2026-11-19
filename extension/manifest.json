@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "KillSlop: Hide AI Slop on YouTube, X and LinkedIn",
-  "version": "1.0.1",
+  "name": "KillSlop: Block AI Reply Bots on X, and AI Slop Everywhere",
+  "version": "1.1.0",
   "minimum_chrome_version": "116",
-  "description": "Hides AI slop on YouTube, X and LinkedIn, using the platforms' own AI labels, account patterns and an open list.",
+  "description": "Never see AI reply guys again. Hides ~2,000 known AI reply bots on X, plus AI slop on YouTube and LinkedIn. Free, open source.",
   "homepage_url": "https://killslop.app",
   "permissions": ["storage", "unlimitedStorage"],
   "host_permissions": [

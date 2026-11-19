@@ -79,6 +79,13 @@ html[data-killslop-theme='light'] .killslop-card {
   background: #cccccc;
 }
 
+/* "Why?" is a link, dressed as the buttons beside it. */
+a.killslop-card__btn {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
 html[data-killslop-theme='light'] .killslop-card__btn {
   background: #171717;
   color: #ffffff;

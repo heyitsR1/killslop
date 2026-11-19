@@ -6,6 +6,8 @@
  *
  *   0. User override      — free, instant, absolute. Your "not slop" click
  *                           outranks the platform and the community both.
+ *   0.5 Spammer list      — X only, free. The AI-reply spammer list
+ *                           (core/spamlist.js), downloaded whole, matched here.
  *   1. Local cache        — free. Verdicts don't expire; disclosures don't change.
  *   2. Channel inference  — free once a channel is tallied. On YouTube this is
  *                           where the coverage comes from (see RESEARCH.md):
@@ -29,6 +31,7 @@
 import { VERDICT } from './innertube.js';
 import * as store from './store.js';
 import * as community from './community.js';
+import * as spamlist from './spamlist.js';
 import { HIDE_AT, classifyText, lookupTexts } from './writing.js';
 import { getSettings } from './settings.js';
 import { channelRule, isValidId, platformOf } from './ids.js';
@@ -99,6 +102,13 @@ export async function resolveBatch(items, platform = 'youtube') {
   const channelRecord = (id) => channels.get(canon(id)) || channels.get(id);
   const channelOverride = (id) => channelOverrides.get(id) || channelOverrides.get(canon(id));
 
+  // Tier 0.5 — the X AI-reply spammer list, matched locally.
+  const spam =
+    platform === 'x' && settings.useSpamList
+      ? await spamlist.match(channelKeys, settings).catch(() => new Map())
+      : new Map();
+  const spamFlags = (id) => spam.get(id) || spam.get(canon(id)) || null;
+
   const unresolved = [];
 
   for (const item of items) {
@@ -114,6 +124,12 @@ export async function resolveBatch(items, platform = 'youtube') {
     const co = channelId && channelOverride(channelId);
     if (co) {
       verdicts[videoId] = { slop: co.slop, reason: 'you-channel' };
+      continue;
+    }
+
+    const sf = channelId && spamFlags(channelId);
+    if (sf) {
+      verdicts[videoId] = { slop: true, reason: 'spamlist', flags: sf };
       continue;
     }
 

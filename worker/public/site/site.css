@@ -1487,7 +1487,7 @@ body {
 }
 
 .waitlist .lead {
-  max-width: 560px;
+  max-width: 460px;
   margin-inline: auto;
 }
 
@@ -1937,4 +1937,18 @@ body {
   .hero__actions .btn {
     flex: 1 1 auto;
   }
+}
+
+/* The hero's real capture: a live X thread with KillSlop installed. */
+.hero__visual:has(.hero__shot) {
+  padding-bottom: 0;
+}
+.hero__shot {
+  display: block;
+  width: 100%;
+  max-width: 460px;
+  height: auto;
+  margin: 0 auto;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--window-shadow);
 }

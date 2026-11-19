@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>KillSlop: Hide AI slop on YouTube, X and LinkedIn</title>
+    <title>KillSlop: Block AI reply bots on X, and AI slop everywhere</title>
     <meta
       name="description"
-      content="KillSlop is a free, open-source Chrome extension that hides AI slop on YouTube, X and LinkedIn: in your feed, in search, in recommendations and in Shorts. It also keeps a public list of the accounts behind it."
+      content="KillSlop is a free, open-source Chrome extension that hides nearly 2,000 known AI reply bots on X, merged from levelsio's AI reply list, Clankwall and our own reviewed list. It also hides AI slop on YouTube and LinkedIn."
     />
     <link rel="canonical" href="https://killslop.app/" />
     <meta name="color-scheme" content="light dark" />
@@ -15,20 +15,20 @@
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="KillSlop" />
     <meta property="og:url" content="https://killslop.app/" />
-    <meta property="og:title" content="KillSlop: Hide AI slop from your feed" />
+    <meta property="og:title" content="KillSlop: Never see AI reply guys again" />
     <meta
       property="og:description"
-      content="A free Chrome extension that hides AI slop on YouTube, X and LinkedIn, using the platforms' own AI labels, account patterns and an open list."
+      content="A free Chrome extension that hides nearly 2,000 known AI reply bots on X, plus AI slop on YouTube and LinkedIn."
     />
     <meta property="og:image" content="https://killslop.app/site/og.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="KillSlop. Hide AI slop from your feed." />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="KillSlop: Hide AI slop from your feed" />
+    <meta name="twitter:title" content="KillSlop: Never see AI reply guys again" />
     <meta
       name="twitter:description"
-      content="A free Chrome extension that hides AI slop on YouTube, X and LinkedIn, using the platforms' own AI labels, account patterns and an open list."
+      content="A free Chrome extension that hides nearly 2,000 known AI reply bots on X, plus AI slop on YouTube and LinkedIn."
     />
     <meta name="twitter:image" content="https://killslop.app/site/og.png" />
     <link rel="icon" href="/site/favicon.svg" type="image/svg+xml" />
@@ -68,11 +68,12 @@
         <section class="section hero" aria-labelledby="hero-title">
           <div class="hero__bg" aria-hidden="true"></div>
           <div class="hero__copy">
-            <h1 class="hero__title" id="hero-title">Hide AI slop from your feed.</h1>
+            <h1 class="hero__title" id="hero-title">Never see AI reply guys again.</h1>
             <p class="hero__lead">
-              KillSlop is a free Chrome extension that hides AI slop on YouTube, X and LinkedIn. It works in your
-              feed, in search, in recommendations and in Shorts.
-              <span class="muted">Each hidden post says why it was hidden, and one click brings it back.</span>
+              KillSlop is a free Chrome extension that hides nearly 2,000 known AI reply bots on X. It uses
+              <a href="https://blockedforaireply.levels.io">levelsio's AI reply list</a>,
+              <a href="https://clankwall.vogel.dev">Clankwall</a> and our own reviewed list, all in one.
+              <span class="muted">It hides AI slop on YouTube and LinkedIn too. Every hidden post says why, and one click brings it back.</span>
             </p>
             <div class="hero__actions">
               <a class="btn btn--primary btn--xl btn--pill" href="/get">Get KillSlop</a>
@@ -106,117 +107,14 @@
             </div>
           </div>
 
-          <div
-            class="hero__visual"
-            role="img"
-            aria-label="A video feed in which three AI-generated videos are replaced by KillSlop notes saying why each was hidden, and a watch page with the AI SLOP button pressed."
-          >
-            <div class="window" aria-hidden="true">
-              <div class="window__bar">
-                <span class="window__dots"><i></i><i></i><i></i></span>
-                <span class="window__url">youtube.com</span>
-                <span class="window__spacer"></span>
-              </div>
-              <div class="feed">
-                <div class="tile">
-                  <div class="thumb thumb--a"><span class="thumb__time">18:42</span></div>
-                  <div class="tile__meta">
-                    <span class="avatar"></span>
-                    <div class="tile__text">
-                      <p class="tile__title">Restoring a 1970s synthesizer, part 3</p>
-                      <p class="tile__sub">Bench Notes &middot; 84K views</p>
-                    </div>
-                  </div>
-                </div>
-                <div class="tile tile--hidden">
-                  <div class="ks-card">
-                    <span class="ks-card__dot"></span>
-                    <span class="ks-card__text">Labelled AI by the creator</span>
-                    <span class="ks-card__btn">Show</span>
-                    <span class="ks-card__btn ks-card__btn--ghost">Not slop</span>
-                  </div>
-                </div>
-                <div class="tile">
-                  <div class="thumb thumb--b"><span class="thumb__time">9:15</span></div>
-                  <div class="tile__meta">
-                    <span class="avatar"></span>
-                    <div class="tile__text">
-                      <p class="tile__title">Sourdough at altitude: what actually changes</p>
-                      <p class="tile__sub">Crumb Club &middot; 31K views</p>
-                    </div>
-                  </div>
-                </div>
-                <div class="tile tile--hidden">
-                  <div class="ks-card">
-                    <span class="ks-card__dot"></span>
-                    <span class="ks-card__text">Reported by the community</span>
-                    <span class="ks-card__btn">Show</span>
-                    <span class="ks-card__btn ks-card__btn--ghost">Not slop</span>
-                  </div>
-                </div>
-                <div class="tile tile--hidden">
-                  <div class="ks-card">
-                    <span class="ks-card__dot"></span>
-                    <span class="ks-card__text">Channel publishes AI content</span>
-                    <span class="ks-card__btn">Show</span>
-                    <span class="ks-card__btn ks-card__btn--ghost">Not slop</span>
-                  </div>
-                </div>
-                <div class="tile">
-                  <div class="thumb thumb--c"><span class="thumb__time">24:03</span></div>
-                  <div class="tile__meta">
-                    <span class="avatar"></span>
-                    <div class="tile__text">
-                      <p class="tile__title">Walking a forgotten rail line, 40 km in a day</p>
-                      <p class="tile__sub">Slow Miles &middot; 12K views</p>
-                    </div>
-                  </div>
-                </div>
-                <div class="tile">
-                  <div class="thumb thumb--d"><span class="thumb__time">11:37</span></div>
-                  <div class="tile__meta">
-                    <span class="avatar"></span>
-                    <div class="tile__text">
-                      <p class="tile__title">Why suspension bridges hum in the wind</p>
-                      <p class="tile__sub">Field Physics &middot; 220K views</p>
-                    </div>
-                  </div>
-                </div>
-                <div class="tile">
-                  <div class="thumb thumb--e"><span class="thumb__time">16:20</span></div>
-                  <div class="tile__meta">
-                    <span class="avatar"></span>
-                    <div class="tile__text">
-                      <p class="tile__title">Fixing a 20-year-old espresso machine</p>
-                      <p class="tile__sub">Workbench Weekly &middot; 57K views</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="watch" aria-hidden="true">
-              <p class="watch__title">Lost city found under the ocean (4K documentary)</p>
-              <div class="watch__row">
-                <span class="avatar"></span>
-                <span class="watch__channel"><span class="skel"></span><span class="skel skel--short"></span></span>
-                <span class="yt-pill yt-pill--split">
-                  <span class="yt-pill__half"
-                    ><svg viewBox="0 0 24 24"><path d="M4 10h3v10H4zM7 10l4-7c1.2 0 2.2 1 2 2.2L12.5 10H19a1.8 1.8 0 0 1 1.8 2.1l-1.3 6.4A2 2 0 0 1 17.5 20H7"/></svg>1.4K</span
-                  ><span class="yt-pill__half"
-                    ><svg class="yt-pill__down" viewBox="0 0 24 24"><path d="M4 10h3v10H4zM7 10l4-7c1.2 0 2.2 1 2 2.2L12.5 10H19a1.8 1.8 0 0 1 1.8 2.1l-1.3 6.4A2 2 0 0 1 17.5 20H7"/></svg
-                  ></span>
-                </span>
-                <span class="yt-pill yt-pill--slop"
-                  ><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M6 6l12 12"/></svg>AI SLOP</span
-                >
-              </div>
-              <div class="toast">
-                <span class="toast__text">Marked as AI slop. Hidden for you.</span>
-                <span class="toast__btn">Hide whole channel</span>
-                <span class="toast__btn">Undo</span>
-              </div>
-            </div>
+          <div class="hero__visual">
+            <img
+              class="hero__shot"
+              src="/site/x-thread.png"
+              width="744"
+              height="1000"
+              alt="A real X reply thread with KillSlop installed. A reply from a listed AI bot is replaced by a thin card: On the AI reply spammer list, with Why, Show and Not slop buttons. Other people's replies are blurred for privacy."
+            />
           </div>
         </section>
 

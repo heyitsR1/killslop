@@ -14,6 +14,8 @@ let settings = null;
 /* --------------------------------------------------------------- switches */
 
 const TOGGLES = [
+  'useSpamList',
+  'spamListUnreviewed',
   'useDisclosure',
   'useChannelInference',
   'useCommunity',
@@ -151,6 +153,29 @@ async function refreshStats() {
   chrome.storage.local.set({ [STATS_CACHE]: fresh }).catch(() => {});
 }
 
+/* ------------------------------------------------------------ spam list */
+
+const ago = (ms) => {
+  const m = Math.round((Date.now() - ms) / 60000);
+  if (m < 60) return `${Math.max(m, 1)} min ago`;
+  const h = Math.round(m / 60);
+  return h < 48 ? `${h} h ago` : `${Math.round(h / 24)} days ago`;
+};
+
+async function refreshSpam() {
+  const s = await send('spamSummary');
+  if (!s) return;
+  const n = s.count.toLocaleString('en-US');
+  $('spam-desc').textContent = !settings.useSpamList
+    ? 'Off. Turn on to hide known AI reply bots'
+    : s.fetched
+      ? `Hiding ${n} accounts · updated ${ago(s.fetched)}`
+      : 'Downloading the list…';
+  if (s.unreviewed) {
+    $('spam-unreviewed-desc').textContent = `${s.unreviewed.toLocaleString('en-US')} more accounts levelsio blocked silently. Some may be real people`;
+  }
+}
+
 /* ------------------------------------------------------------------- init */
 
 (async () => {
@@ -185,6 +210,9 @@ async function refreshStats() {
       () => settings[key],
       (next) => ({ [key]: next })
     );
+    if (key.startsWith('useSpam') || key.startsWith('spamList')) {
+      $(key).addEventListener('click', () => setTimeout(refreshSpam, 50));
+    }
   }
 
   // Opened from a YouTube, X or LinkedIn tab, the feedback page offers to
@@ -226,4 +254,5 @@ async function refreshStats() {
 
   paint();
   refreshStats();
+  refreshSpam();
 })();

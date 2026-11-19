@@ -48,6 +48,7 @@ import { MAX_TEXT_CHARS, askJev } from './jev.js';
 import { clientNetwork, overLimit, readJson } from './http.js';
 import { handleAdmin } from './admin.js';
 import { SITE_HOST, handleShared, handleSite, isSiteHost } from './site.js';
+import { getXSpam } from './spamlist.js';
 
 const DAY_MS = 24 * 3600 * 1000;
 
@@ -492,7 +493,7 @@ const WRITES = {
 };
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const path = url.pathname;
 
@@ -514,6 +515,7 @@ export default {
       if (text) return getTextBucket(env, text[1]);
       if (Object.hasOwn(EXPORTS, path)) return getExport(env, EXPORTS[path]);
       if (path === '/api/v1/stats') return getStats(env);
+      if (path === '/api/v1/x-spam.json') return getXSpam(env, ctx);
     }
 
     if (request.method === 'POST') {

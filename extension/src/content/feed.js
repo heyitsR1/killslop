@@ -127,6 +127,7 @@
       'community-writing': `This ${noun}'s posts read as AI-written`,
       you: 'You marked this as slop',
       'you-channel': `You marked this ${noun} as slop`,
+      spamlist: 'On the AI reply spammer list',
     };
     const reasonText = (reason) => REASON_LABEL[reason] || 'Hidden as AI slop';
 
@@ -177,7 +178,15 @@
 
     /* --------------------------------------------------------------- render */
 
-    function apply(el, state, reason) {
+    /** Where a spammer-list entry's evidence lives, or null. */
+    function evidenceUrl(el, flags) {
+      if (!/[clb]/.test(flags || '')) return 'https://killslop.app/#list';
+      const ch = el.getAttribute(CH_ATTR) || '';
+      const m = /^x:u:(\d+)$/.exec(ch);
+      return `https://blockedforaireply.levels.io/${m ? `#u-${m[1]}` : ''}`;
+    }
+
+    function apply(el, state, reason, flags = null) {
       if (state === 'clear') {
         if (el.hasAttribute(MARK)) el.removeAttribute(MARK);
         el.querySelector('.killslop-card')?.remove();
@@ -212,15 +221,42 @@
       notSlop.className = 'killslop-card__btn killslop-card__btn--ghost';
       notSlop.dataset.act = 'notslop';
       notSlop.textContent = 'Not slop';
-      card.append(dot, text, show, notSlop);
+      card.append(dot, text);
+      if (reason === 'spamlist') {
+        const why = document.createElement('a');
+        why.className = 'killslop-card__btn killslop-card__btn--ghost';
+        why.dataset.act = 'why';
+        why.href = evidenceUrl(el, flags);
+        why.target = '_blank';
+        why.rel = 'noopener';
+        why.textContent = 'Why?';
+        card.append(why);
+      }
+      card.append(show, notSlop);
       card.addEventListener('click', (ev) => {
         const act = ev.target?.dataset?.act;
         // Both sites open the post on any click inside it; the card is ours.
+        if (act === 'why') {
+          ev.stopPropagation();
+          return; // a real link: let the browser open it
+        }
         ev.preventDefault();
         ev.stopPropagation();
         if (act === 'show') {
           apply(el, 'revealed');
           paint();
+        } else if (act === 'notslop' && known.get(el.getAttribute(ID_ATTR))?.reason === 'spamlist') {
+          // The list names the account, so "not slop" is about the account.
+          const ch = el.getAttribute(CH_ATTR);
+          if (ch) {
+            send('override', { id: ch, kind: 'channel', slop: false, meta: { title: adapter.meta(el)?.channel || ch, channel: null } });
+            channelKnown.set(ch, { slop: false, reason: 'you-channel' });
+            forgetChannels([ch]);
+          }
+          apply(el, 'clear');
+          paint();
+          scheduleScan();
+          toast(`Got it. This ${noun} won't be hidden for you.`);
         } else if (act === 'notslop') {
           const id = el.getAttribute(ID_ATTR);
           send('override', { id, kind: 'video', slop: false, meta: adapter.meta(el) });
@@ -281,7 +317,7 @@
         const reason = v?.reason || (ch?.slop ? ch.reason : null);
 
         if (t.el.getAttribute(MARK) !== 'revealed') {
-          if (on() && slop) apply(t.el, settings.action === 'dim' ? 'dimmed' : 'hidden', reason);
+          if (on() && slop) apply(t.el, settings.action === 'dim' ? 'dimmed' : 'hidden', reason, v?.flags);
           else apply(t.el, 'clear');
         }
         paintVote(t);
@@ -468,12 +504,18 @@
       send('getSettings').then((s) => {
         if (!s) return;
         settings = s;
+        // What a post resolved to can depend on any setting (a source turned
+        // off, the spammer list widened), so start again rather than repaint
+        // stale verdicts.
+        known.clear();
+        channelKnown.clear();
         if (!on()) {
           document.querySelectorAll(`[${ID_ATTR}]`).forEach(reset);
           dismissToast();
         } else {
-          paint();
-          scheduleScan();
+          // Resolve first, paint after: painting now would flash every hidden
+          // post back into view for the moment the answers take.
+          scan();
         }
       });
     });

@@ -1,8 +1,12 @@
 # KillSlop
 
-A browser extension that hides AI-generated slop on YouTube, X and LinkedIn,
-and an open, evidence-backed list of it that anyone can use. The code is
-GPL-3.0; the list is CC BY-SA 4.0.
+**Never see AI reply guys again.** A free, open-source browser extension that
+hides nearly 2,000 known AI reply bots on X, merged from
+[levelsio's "Blocked for AI reply" list](https://blockedforaireply.levels.io),
+[Clankwall](https://clankwall.vogel.dev) and KillSlop's own reviewed list. It
+also hides AI slop on YouTube and LinkedIn, and keeps an open, evidence-backed
+list of it that anyone can use. The code is GPL-3.0; KillSlop's own list is
+CC BY-SA 4.0.
 
 Website: **[killslop.app](https://killslop.app)**. Privacy policy:
 [killslop.app/privacy](https://killslop.app/privacy).
@@ -28,6 +32,33 @@ released:
 3. Choose **Load unpacked** and pick the `extension/` folder.
 
 There is no build step and nothing to install first.
+
+## The X AI reply spammer list
+
+AI reply bots farm engagement by replying to big accounts within seconds.
+People who get hit hardest have started publishing who they blocked; KillSlop
+turns those lists into a filter, so you don't have to block thousands of
+accounts one by one or hand your X login to anything.
+
+- **Sources.** levelsio's list (`confirmed`, with the reply as evidence, and
+  `likely`), the accounts it marks as flagged on Clankwall, and the X accounts
+  on KillSlop's own list after a maintainer approved them. The worker merges
+  them into one file, `GET https://api.killslop.app/api/v1/x-spam.json`
+  (`worker/src/spamlist.js`), rebuilt every 30 minutes.
+- **Careful by default.** levelsio also lists ~1,700 accounts he blocked
+  silently and never reviewed. Some of them may be real people, so they are
+  off unless you switch on *Include unreviewed blocks* in the popup.
+- **Private.** The extension downloads the whole list every few hours and
+  matches it in your browser (`extension/src/core/spamlist.js`), so nobody
+  learns which accounts you see.
+- **Hide, don't block.** A listed account's posts collapse into a thin card
+  with **Why?** (the evidence), **Show** and **Not slop**. Nothing is blocked
+  on your X account, so nothing can get your account flagged.
+- **Add to it.** Press **AI SLOP** on any post or account. It is hidden for you
+  at once and sent to KillSlop's review queue; a person approves it before it
+  is hidden for anyone else.
+
+KillSlop is not affiliated with levelsio, Clankwall or X.
 
 ## The idea
 

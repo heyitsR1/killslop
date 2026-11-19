@@ -28,6 +28,17 @@ export const DEFAULTS = {
   channelMinSamples: 5,
   channelThreshold: 0.6,
 
+  /**
+   * X: hide accounts on the AI-reply spammer list (levelsio's, Clankwall's and
+   * our own reviewed accounts, merged; see core/spamlist.js).
+   */
+  useSpamList: true,
+  /**
+   * Also hide the accounts levelsio blocked silently and never reviewed. Off:
+   * those can be real people he blocked for some other reason.
+   */
+  spamListUnreviewed: false,
+
   /** Community-reported list. */
   useCommunity: true,
   /**
