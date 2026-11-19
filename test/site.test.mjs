@@ -3,6 +3,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import worker from '../worker/src/index.js';
+import { GET_URL, INSTALL_URL, STORE_IS_CURRENT } from '../worker/src/site.js';
 
 const FILES = new Set([
   '/site/index.html',
@@ -46,7 +47,7 @@ test('the retired waiting list sends people to the store, like /get', async () =
   for (const path of ['/waitlist', '/waitlist/']) {
     const res = await get(`https://killslop.app${path}`);
     assert.equal(res.status, 302);
-    assert.match(res.headers.get('location'), /^https:\/\/chromewebstore\.google\.com\//);
+    assert.equal(res.headers.get('location'), GET_URL);
   }
 });
 
@@ -65,13 +66,11 @@ test('donating is a page of its own, separate from support', async () => {
   assert.equal(await body('https://killslop.app/donate/'), 'asset:/site/donate.html');
 });
 
-test('/get sends people to the Chrome Web Store listing', async () => {
+test('/get sends people to the store once it is current, and to the install guide until then', async () => {
   const res = await get('https://killslop.app/get');
   assert.equal(res.status, 302);
-  assert.equal(
-    res.headers.get('location'),
-    'https://chromewebstore.google.com/detail/killslop-hide-ai-slop-on/mcbeejjjenhkepadpcogblpiehmlidfl'
-  );
+  assert.equal(res.headers.get('location'), STORE_IS_CURRENT ? INSTALL_URL : 'https://killslop.app/install');
+  assert.match(INSTALL_URL, /^https:\/\/chromewebstore\.google\.com\/detail\/[^/]+\/mcbeejjjenhkepadpcogblpiehmlidfl$/);
 });
 
 test('an unknown page on the site gets the 404 page', async () => {

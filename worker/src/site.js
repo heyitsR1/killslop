@@ -36,6 +36,14 @@ const PAGES = {
  */
 export const INSTALL_URL = 'https://chromewebstore.google.com/detail/killslop-hide-ai-slop-on/mcbeejjjenhkepadpcogblpiehmlidfl';
 /**
+ * Whether the store copy is the current version. The X reply-bot list shipped
+ * in 1.1.0 and the store still served 1.0.1 on 2026-11-19, so until review
+ * passes, /get sends people to the GitHub install guide instead. Flip to true
+ * once the store shows 2.0.0 or later.
+ */
+export const STORE_IS_CURRENT = false;
+export const GET_URL = STORE_IS_CURRENT ? INSTALL_URL : 'https://killslop.app/install';
+/**
  * The pre-launch waiting list, shared in launch posts before the listing was
  * live. Those links are still out there, so they go straight to the store.
  */
@@ -89,7 +97,7 @@ export async function handleSite(request, env, url) {
   if (shared) return shared;
 
   const path = url.pathname.length > 1 ? url.pathname.replace(/\/+$/, '') : '/';
-  if (path === '/get' || RETIRED.has(path)) return Response.redirect(INSTALL_URL, 302);
+  if (path === '/get' || RETIRED.has(path)) return Response.redirect(GET_URL, 302);
   // no-transform stops Cloudflare injecting its Web Analytics beacon into the
   // pages, which a zone can have switched on without anyone asking. The site
   // promises no analytics, so that promise must not rest on a dashboard toggle.

@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="../ui/base.css" />
+    <link rel="stylesheet" href="../ui/page.css" />
+    <link rel="stylesheet" href="dashboard.css" />
+    <title>Dashboard · KillSlop</title>
+  </head>
+  <body data-view="dashboard">
+    <header class="topbar">
+      <div class="topbar__inner">
+        <svg class="mark" viewBox="0 0 24 24" aria-hidden="true">
+          <rect width="24" height="24" rx="6" fill="currentColor" />
+          <circle class="mark__glyph" cx="12" cy="12" r="6" />
+          <path class="mark__glyph" d="M7.76 7.76l8.48 8.48" />
+        </svg>
+        <span class="wordmark">KillSlop</span>
+        <svg class="topbar__sep" viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 2 5.5 14" /></svg>
+        <span class="topbar__page">Dashboard</span>
+        <div class="spacer"></div>
+        <span class="status"><span class="dot" id="status-dot"></span><span id="status">Filtering</span></span>
+        <button class="switch" id="master" role="switch" aria-checked="true" aria-label="Enable KillSlop"></button>
+      </div>
+    </header>
+
+    <main class="sheet">
+      <div class="page-head dash-rise">
+        <h1 class="page-title">Your filter</h1>
+        <p class="page-sub">Everything KillSlop does, in one place. Changes save as you make them.</p>
+      </div>
+
+      <div class="stats dash-rise" data-d="1">
+        <div class="stat"><div class="stat__label">Hidden now</div><div class="stat__value" id="stat-session">0</div></div>
+        <div class="stat"><div class="stat__label">Videos known</div><div class="stat__value" id="stat-videos">0</div></div>
+        <div class="stat"><div class="stat__label">Channels and accounts</div><div class="stat__value" id="stat-channels">0</div></div>
+      </div>
+
+      <section class="card dash-rise" data-d="2" aria-labelledby="t-spam">
+        <div class="card__body">
+          <h2 class="card__title" id="t-spam">AI reply spammers on X</h2>
+          <p class="card__sub">
+            Built on <a href="https://blockedforaireply.levels.io" target="_blank" rel="noopener">levelsio's Blocked for AI reply list</a>,
+            with <a href="https://clankwall.vogel.dev" target="_blank" rel="noopener">Clankwall</a> and KillSlop's own reviewed list. Downloaded whole and matched on this computer.
+          </p>
+          <div class="row">
+            <div class="row__body">
+              <div class="row__title">Spammer block list</div>
+              <div class="row__desc" id="spam-desc">levelsio's list, Clankwall and ours, merged</div>
+            </div>
+            <button class="switch" id="useSpamList" role="switch" aria-checked="true" aria-label="Spammer block list"></button>
+          </div>
+          <div class="row">
+            <div class="row__body">
+              <div class="row__title">Include unreviewed blocks</div>
+              <div class="row__desc" id="spam-unreviewed-desc">Accounts levelsio blocked silently. Some may be real people</div>
+            </div>
+            <button class="switch" id="spamListUnreviewed" role="switch" aria-checked="false" aria-label="Include unreviewed blocks"></button>
+          </div>
+        </div>
+      </section>
+
+      <div class="grid2">
+        <section class="card dash-rise" data-d="3" aria-labelledby="t-platforms">
+          <div class="card__body">
+            <h2 class="card__title" id="t-platforms">Platforms</h2>
+            <p class="card__sub">Turn KillSlop off on one site and keep it on the others.</p>
+            <div id="platforms"></div>
+          </div>
+        </section>
+
+        <section class="card dash-rise" data-d="3" aria-labelledby="t-action">
+          <div class="card__body">
+            <h2 class="card__title" id="t-action">When something is slop</h2>
+            <p class="card__sub">Hide it behind a thin card, or grey it out so you still see what was caught.</p>
+            <div class="segmented segmented--2" role="tablist" id="action">
+              <button role="tab" data-value="hide" aria-selected="true">Hide it</button>
+              <button role="tab" data-value="dim" aria-selected="false">Dim it</button>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <section class="card dash-rise" data-d="4" aria-labelledby="t-sources">
+        <div class="card__body">
+          <h2 class="card__title" id="t-sources">Sources</h2>
+          <p class="card__sub">What KillSlop listens to. Your own marks always win over all of these.</p>
+          <div class="row">
+            <div class="row__body">
+              <div class="row__title">Platform AI labels</div>
+              <div class="row__desc">YouTube's and X's own AI label</div>
+            </div>
+            <button class="switch" id="useDisclosure" role="switch" aria-checked="true" aria-label="Platform AI labels"></button>
+          </div>
+          <div class="row">
+            <div class="row__body">
+              <div class="row__title">Channel inference</div>
+              <div class="row__desc">Hide channels and accounts that often post AI</div>
+            </div>
+            <button class="switch" id="useChannelInference" role="switch" aria-checked="true" aria-label="Channel inference"></button>
+          </div>
+          <div class="row">
+            <div class="row__body">
+              <div class="row__title">Community list</div>
+              <div class="row__desc">Slop reported by other people and checked by a person</div>
+            </div>
+            <button class="switch" id="useCommunity" role="switch" aria-checked="true" aria-label="Community list"></button>
+          </div>
+          <div class="row">
+            <div class="row__body">
+              <div class="row__title">Include opinion votes</div>
+              <div class="row__desc">Off = only channels measured by their own AI labels</div>
+            </div>
+            <button class="switch" id="trustVotes" role="switch" aria-checked="true" aria-label="Include opinion votes"></button>
+          </div>
+          <div class="row">
+            <div class="row__body">
+              <div class="row__title">Contribute reports</div>
+              <div class="row__desc">Send your own calls back to the list</div>
+            </div>
+            <button class="switch" id="shareReports" role="switch" aria-checked="true" aria-label="Contribute reports"></button>
+          </div>
+          <div class="row">
+            <div class="row__body">
+              <div class="row__title">Writing check</div>
+              <div class="row__desc">Off by default. Reads posts X and LinkedIn do not label</div>
+            </div>
+            <button class="switch" id="useWritingCheck" role="switch" aria-checked="false" aria-label="Writing check"></button>
+          </div>
+        </div>
+        <p class="card__foot" id="privacy">Lookups are sent as a 4-character hash prefix, so the list never learns what you watched or read.</p>
+      </section>
+
+      <div class="links dash-rise" data-d="5">
+        <button class="link-card" id="marks" type="button">
+          <span class="row__title">Your marks</span>
+          <span class="row__desc" id="marks-desc">Nothing marked yet</span>
+        </button>
+        <button class="link-card" id="feedback" type="button">
+          <span class="row__title">Send feedback</span>
+          <span class="row__desc">Bugs, wrong calls, ideas</span>
+        </button>
+        <a class="link-card" href="https://github.com/heyitsR1/killslop" target="_blank" rel="noopener">
+          <span class="row__title"><svg class="gh" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> See the source</span>
+          <span class="row__desc">Open source on GitHub. Read every line.</span>
+        </a>
+        <button class="link-card" id="support" type="button">
+          <span class="row__title">Support the project</span>
+          <span class="row__desc">Free and open source. Nothing is gated.</span>
+        </button>
+      </div>
+
+      <footer class="dash-foot">
+        <button class="footer__link" id="reset" type="button">Reset local data</button>
+        <div class="spacer"></div>
+        <a class="footer__link" href="https://killslop.app/install" target="_blank" rel="noopener">Install guide</a>
+        <a class="footer__link" href="https://killslop.app/privacy" target="_blank" rel="noopener">Privacy</a>
+        <a class="footer__link" href="https://github.com/heyitsR1/killslop" target="_blank" rel="noopener">Source</a>
+      </footer>
+    </main>
+
+    <script type="module" src="../popup/popup.js"></script>
+  </body>
+</html>
