@@ -36,12 +36,11 @@ const PAGES = {
  */
 export const INSTALL_URL = 'https://chromewebstore.google.com/detail/killslop-hide-ai-slop-on/mcbeejjjenhkepadpcogblpiehmlidfl';
 /**
- * Whether the store copy is the current version. The X reply-bot list shipped
- * in 1.1.0 and the store still served 1.0.1 on 2026-11-19, so until review
- * passes, /get sends people to the GitHub install guide instead. Flip to true
- * once the store shows 2.0.0 or later.
+ * Whether the store copy is the current version. While a store review is
+ * pending, set this to false and /get sends people to the GitHub install guide
+ * instead. The store has served 2.0.0 since 2026-11-20.
  */
-export const STORE_IS_CURRENT = false;
+export const STORE_IS_CURRENT = true;
 export const GET_URL = STORE_IS_CURRENT ? INSTALL_URL : 'https://killslop.app/install';
 /**
  * The pre-launch waiting list, shared in launch posts before the listing was
