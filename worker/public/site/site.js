@@ -60,3 +60,83 @@ if (stats) {
     })
     .catch(() => {});
 }
+
+/* ----------------------------------------------------------------- crawl */
+
+// The hero decoration. Made-up handles roll up toward the red line; bots are
+// struck as they cross it and about one account in five is kept. The handles
+// are invented on purpose: naming real accounts as bots on the home page would
+// be an accusation. Stands still for reduced motion and pauses off screen.
+const crawl = document.getElementById('crawl');
+if (crawl) {
+  const BOTS = ['growthguru_ai', 'reply_boost_9', 'thought_leadr', 'crypto_insight_x', 'ai_wisdom_daily',
+    'great_point_bot', 'vibe_founder_42', 'insightful_take', 'engage_more_ai', 'alpha_drops_now',
+    'saas_whisperer', 'deep_thoughts_ai', 'so_true_bestie', 'valuable_add_ai', 'big_if_true_ai', 'web3_mentor_x'];
+  const PEOPLE = ['maria_builds', 'sam_on_rails', 'jdoe', 'tinyshop_kim', 'nate_codes', 'priya_designs',
+    'lena_draws', 'tomsfieldnotes'];
+  const PATTERN = [1, 1, 1, 0, 1, 1, 1, 1, 0]; // 0 = kept
+  const HEIGHT = 300;
+  const ROW = 28;
+  const LINE = 170;
+  const SPEED = 0.035; // px per ms
+  const rows = [];
+  let k = 0;
+  let bot = 0;
+  let person = 0;
+
+  const add = (y) => {
+    const isBot = PATTERN[k++ % PATTERN.length] === 1;
+    const el = document.createElement('div');
+    el.className = 'crawl__row';
+    const name = document.createElement('span');
+    name.className = 'crawl__name';
+    name.textContent = `@${isBot ? BOTS[bot++ % BOTS.length] : PEOPLE[person++ % PEOPLE.length]}`;
+    const tag = document.createElement('span');
+    tag.className = 'crawl__tag';
+    tag.textContent = isBot ? 'HIDDEN' : 'KEPT';
+    el.append(name, tag);
+    crawl.append(el);
+    rows.push({ el, y, isBot, done: false });
+  };
+
+  const place = (row) => {
+    row.el.style.transform = `translateY(${row.y}px)`;
+    if (!row.done && row.y + ROW / 2 < LINE) {
+      row.done = true;
+      row.el.classList.add(row.isBot ? 'is-hidden' : 'is-kept');
+    }
+  };
+
+  for (let y = -ROW; y < HEIGHT; y += ROW) add(y);
+  rows.forEach(place);
+
+  const still = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let raf = 0;
+  let last = 0;
+  const step = (t) => {
+    const dt = last ? Math.min(t - last, 50) : 16;
+    last = t;
+    while (rows[rows.length - 1].y < HEIGHT) add(rows[rows.length - 1].y + ROW);
+    for (const row of rows) {
+      row.y -= dt * SPEED;
+      place(row);
+    }
+    while (rows[0].y < -ROW * 2) rows.shift().el.remove();
+    raf = requestAnimationFrame(step);
+  };
+  const start = () => {
+    if (raf || still.matches) return;
+    last = 0;
+    raf = requestAnimationFrame(step);
+  };
+  const stop = () => {
+    cancelAnimationFrame(raf);
+    raf = 0;
+  };
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(([entry]) => (entry.isIntersecting ? start() : stop())).observe(crawl);
+  } else {
+    start();
+  }
+  still.addEventListener('change', () => (still.matches ? stop() : start()));
+}
