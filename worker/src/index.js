@@ -50,6 +50,7 @@ import { handleAdmin } from './admin.js';
 import { SITE_HOST, handleShared, handleSite, isSiteHost } from './site.js';
 import { getXSpam } from './spamlist.js';
 import { forwardReports } from './forward.js';
+import { getAppeal, postAppeal } from './appeal.js';
 
 const DAY_MS = 24 * 3600 * 1000;
 
@@ -522,6 +523,7 @@ export default {
       if (Object.hasOwn(EXPORTS, path)) return getExport(env, EXPORTS[path]);
       if (path === '/api/v1/stats') return getStats(env);
       if (path === '/api/v1/x-spam.json') return getXSpam(env, ctx);
+      if (path === '/api/v1/appeal') return getAppeal(request, env, ctx, url);
     }
 
     if (request.method === 'POST') {
@@ -532,6 +534,10 @@ export default {
       if (path === '/api/v1/writing') {
         if (await overLimit(env, 'RL_WRITING', request)) return tooMany();
         return postWriting(request, env);
+      }
+      if (path === '/api/v1/appeal') {
+        if (await overLimit(env, 'RL_FEEDBACK', request)) return tooMany();
+        return postAppeal(request, env, ctx);
       }
       if (path === '/api/v1/waitlist') {
         if (await overLimit(env, 'RL_WAITLIST', request)) return tooMany();

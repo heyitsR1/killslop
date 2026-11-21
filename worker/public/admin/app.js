@@ -148,6 +148,7 @@ const CATEGORY = {
   idea: 'Idea',
   other: 'Other',
   uninstall: 'Uninstall',
+  appeal: 'Appeal',
 };
 
 /* ------------------------------------------------------------------ state */

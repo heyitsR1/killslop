@@ -519,7 +519,8 @@ body {
   color: var(--red-fg);
 }
 
-.tag--wrong {
+.tag--wrong,
+.tag--appeal {
   background: var(--amber-bg);
   box-shadow: none;
   color: var(--amber-fg);

@@ -53,8 +53,11 @@ const USER_ID = /^\d{1,20}$/;
  *
  * @param {object|null} levels   levelsio's accounts.json, or null if unreachable
  * @param {string[]} ours        our own reviewed X ids: 'x:u:<id>' or 'x:@handle'
+ * @param {string[]} cleared     X ids the maintainer marked Clean (an appeal
+ *                               upheld, see appeal.js): left out whatever any
+ *                               source says
  */
-export function buildList(levels, ours = []) {
+export function buildList(levels, ours = [], cleared = []) {
   const byKey = new Map(); // 'u:<id>' or 'h:<handle>' -> row
   const rows = [];
 
@@ -102,6 +105,14 @@ export function buildList(levels, ours = []) {
     mine++;
   }
 
+  const gone = new Set();
+  for (const id of cleared) {
+    const m = /^x:(?:u:(\d{1,20})|@([a-z0-9_]{1,15}))$/.exec(String(id).toLowerCase());
+    if (m?.[1]) gone.add(`u:${m[1]}`);
+    if (m?.[2]) gone.add(`h:${m[2]}`);
+  }
+  const kept = gone.size ? rows.filter((r) => !gone.has(`u:${r[0]}`) && !gone.has(`h:${r[1]}`)) : rows;
+
   return {
     version: 1,
     generated: Date.now(),
@@ -111,11 +122,11 @@ export function buildList(levels, ours = []) {
       killslop: { page: 'https://killslop.app', count: mine },
     },
     note: 'Flags are judgment calls by each source, not proof. Evidence for levelsio entries: ' + LEVELS_PAGE,
-    accounts: rows,
+    accounts: kept,
   };
 }
 
-async function fetchLevels() {
+export async function fetchLevels() {
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), UPSTREAM_TIMEOUT_MS);
   try {
@@ -143,7 +154,11 @@ async function fetchOurs(env) {
       LIMIT 50000`
   ).all();
   const mode = reviewMode(env);
-  return (results || []).filter((r) => decide(r, mode)?.slop).map((r) => r.id);
+  const rows = results || [];
+  return {
+    ours: rows.filter((r) => decide(r, mode)?.slop).map((r) => r.id),
+    cleared: rows.filter((r) => r.review === 'clean').map((r) => r.id),
+  };
 }
 
 const respond = (body, extra = {}) =>
@@ -163,7 +178,10 @@ export async function getXSpam(env, ctx) {
   const fresh = cache && (await cache.match(CACHE_FRESH));
   if (fresh) return respond(await fresh.text(), { 'x-killslop-cache': 'hit' });
 
-  const [levels, ours] = await Promise.all([fetchLevels(), fetchOurs(env).catch(() => [])]);
+  const [levels, { ours, cleared }] = await Promise.all([
+    fetchLevels(),
+    fetchOurs(env).catch(() => ({ ours: [], cleared: [] })),
+  ]);
 
   // A source being down must not shrink everyone's list: serve the last good
   // build until it is back, rather than one without levelsio in it.
@@ -172,7 +190,7 @@ export async function getXSpam(env, ctx) {
     if (stale) return respond(await stale.text(), { 'x-killslop-cache': 'stale' });
   }
 
-  const body = JSON.stringify(buildList(levels, ours));
+  const body = JSON.stringify(buildList(levels, ours, cleared));
   if (cache && levels) {
     const put = Promise.all([
       cache.put(CACHE_FRESH, respond(body, { 'cache-control': `public, max-age=${FRESH_SECONDS}` })),

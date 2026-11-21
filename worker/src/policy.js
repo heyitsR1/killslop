@@ -362,6 +362,7 @@ export async function parseInput(raw) {
  * extension, which by then is gone. It shares this endpoint because it is the
  * same shape of message and belongs in the same inbox.
  */
+// 'appeal' is written only by appeal.js, never accepted from the feedback form.
 export const FEEDBACK_CATEGORIES = ['bug', 'wrong', 'idea', 'other', 'uninstall'];
 export const FEEDBACK_MAX_CHARS = 4000;
 /** Messages one network may send in 24 hours. */

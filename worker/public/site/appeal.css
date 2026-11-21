@@ -1,0 +1,89 @@
+/* killslop.app/appeal: look an X account up, then appeal. Builds on
+   install.css (the guide column) and site.css (the form pieces). */
+
+.appeal__lookup {
+  margin: 0;
+}
+
+.appeal__result {
+  display: grid;
+  gap: 20px;
+}
+
+.appeal__result[hidden],
+.guide-step[hidden] {
+  display: none;
+}
+
+.appeal__who {
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 34px;
+  letter-spacing: -0.03em;
+}
+
+.appeal__verdict {
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--bg-subtle);
+  box-shadow: inset 0 0 0 1px var(--border);
+  color: var(--fg);
+  font-size: 16px;
+  line-height: 26px;
+}
+
+.appeal__verdict--hidden {
+  background: var(--red-bg);
+  box-shadow: none;
+  color: var(--red-fg);
+}
+
+.appeal__verdict--opt {
+  background: var(--amber-bg);
+  box-shadow: none;
+  color: var(--amber-fg);
+}
+
+.appeal__verdict--ok {
+  box-shadow: inset 0 0 0 1px var(--green);
+}
+
+.appeal__sources {
+  display: grid;
+  gap: 10px;
+  padding: 0;
+  list-style: none;
+}
+
+.appeal__sources li {
+  padding: 14px 16px;
+  border-radius: 12px;
+  box-shadow: inset 0 0 0 1px var(--border);
+  color: var(--fg-muted);
+  font-size: 15px;
+  line-height: 24px;
+}
+
+.appeal__sources b {
+  color: var(--fg);
+  font-weight: 600;
+}
+
+.appeal__sources blockquote {
+  margin: 10px 0 0;
+  padding-left: 12px;
+  border-left: 2px solid var(--border);
+  color: var(--fg);
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.appeal__steps {
+  display: grid;
+  gap: 48px;
+  margin-top: 16px;
+}
+
+.appeal__form {
+  margin: 20px 0 0;
+}

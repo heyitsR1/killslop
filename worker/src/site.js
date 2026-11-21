@@ -23,6 +23,7 @@ const PAGES = {
   '/donate': '/site/donate.html',
   // Installing from GitHub, step by step, while the store review runs.
   '/install': '/site/install.html',
+  '/appeal': '/site/appeal.html',
   // Opened once, on install, by the service worker.
   '/welcome': '/site/welcome.html',
   // Where Chrome sends people when they remove the extension, registered by

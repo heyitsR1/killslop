@@ -70,3 +70,11 @@ test('unreviewed silent blocks hide only when asked for', () => {
   assert.equal(hides('bn', { spamListUnreviewed: true }), true);
   assert.equal(hides(null, { spamListUnreviewed: true }), false);
 });
+
+test('an upheld appeal leaves the account out, by id or by handle', () => {
+  const list = buildList(LEVELS, ['x:@fresh_bot'], ['x:u:781293', 'x:@Fresh_Bot']);
+  const handles = list.accounts.map((r) => r[1]);
+  assert.ok(!handles.includes('martinvars'), 'cleared by user id');
+  assert.ok(!handles.includes('fresh_bot'), 'cleared by handle, whatever its case');
+  assert.ok(handles.includes('shashib'));
+});
