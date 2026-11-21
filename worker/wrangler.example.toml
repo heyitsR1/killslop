@@ -36,8 +36,14 @@ REVIEW_MODE = "all"
 # it the check answers from its cache only. See src/index.js.
 WRITING_BUDGET_PER_DAY = "20000"
 
+# Pass X marks on to blockedforaireply.levels.io (src/forward.js). "off" stops it.
+FORWARD_LEVELS = "on"
+
 # The console's pages. Every request runs the worker first, so these files are
 # only ever served through the auth check in src/admin.js.
+[triggers]
+crons = ["*/15 * * * *"]
+
 [assets]
 directory = "./public"
 binding = "ASSETS"

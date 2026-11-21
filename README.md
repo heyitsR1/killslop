@@ -119,7 +119,15 @@ why, and pressing it offers **Not slop**.
 Your mark hides things **for you**, instantly. It hides nothing for anyone
 else. The server keeps each vote in mind, and while the list is young a
 maintainer checks every voted entry before it is served to anyone (see the
-review queue below). One person cannot bury a channel. What counts as a "person" is
+review queue below). One person cannot bury a channel.
+
+On X, a marked reply is also passed on to levelsio's own report queue at
+[blockedforaireply.levels.io](https://blockedforaireply.levels.io), where his
+AI and then he review it before it joins his list (which KillSlop then serves
+to everyone). The server does this, at least 15 minutes after your mark so an
+Undo stops it, once per post, and only for replies whose author is not on his
+list yet. It sends the public link to the reply and nothing about you
+(`worker/src/forward.js`). What counts as a "person" is
 under Privacy.
 
 Everything you have marked is listed on the **Your marks** page (popup, then
@@ -274,7 +282,8 @@ an id you are asking about, so it cannot reconstruct what you watched or read.
 Four things do send data, and none of them is a browsing trail:
 
 - a **vote**, when you click "not slop" or mark something: the id you
-  marked;
+  marked. For a marked X reply, the server later passes the reply's public
+  link, and only that, to levelsio's report queue;
 - a **tally**, when a channel or X account you encountered crosses the
   disclosure threshold: its id and the sampled counts, once;
 - **feedback**, when you send it: your message, the optional email, and the

@@ -128,3 +128,15 @@ CREATE TABLE IF NOT EXISTS waitlist (
 
 CREATE INDEX IF NOT EXISTS idx_waitlist_created ON waitlist (created);
 CREATE INDEX IF NOT EXISTS idx_waitlist_netkey ON waitlist (netkey, created);
+CREATE TABLE IF NOT EXISTS forwards (
+  hash    TEXT PRIMARY KEY,     -- entries.hash of the post
+  id      TEXT NOT NULL,        -- 'x:<post id>'
+  url     TEXT,                 -- the link sent, or NULL when the post was gone
+  -- 'sent' | 'listed' (author already on his list) | 'account-sent' (another
+  -- of its replies went already) | 'not-reply' | 'gone'
+  -- | 'bad-id' | 'refused:<his error>'
+  status  TEXT NOT NULL,
+  at      INTEGER NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_forwards_at ON forwards (at);

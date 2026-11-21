@@ -49,6 +49,7 @@ import { clientNetwork, overLimit, readJson } from './http.js';
 import { handleAdmin } from './admin.js';
 import { SITE_HOST, handleShared, handleSite, isSiteHost } from './site.js';
 import { getXSpam } from './spamlist.js';
+import { forwardReports } from './forward.js';
 
 const DAY_MS = 24 * 3600 * 1000;
 
@@ -493,6 +494,11 @@ const WRITES = {
 };
 
 export default {
+  // Every 15 minutes: pass settled X marks on to levelsio (src/forward.js).
+  async scheduled(_event, env, ctx) {
+    ctx.waitUntil(forwardReports(env, ctx).then((r) => console.log('forward', JSON.stringify(r))));
+  },
+
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const path = url.pathname;

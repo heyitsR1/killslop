@@ -88,6 +88,10 @@
                     Two service providers: Cloudflare, which hosts the API and this site, and TypeSafe, which runs the
                     writing check's model. TypeSafe is used only while you have that check switched on.
                   </li>
+                  <li>
+                    When you mark an X reply as AI slop, our server later passes the public link to that reply to
+                    levelsio's report queue at blockedforaireply.levels.io. Only the link, never anything about you.
+                  </li>
                 </ul>
               </div>
 
@@ -358,6 +362,16 @@
                 install id and nothing about you. With the check off it is never contacted.
               </p>
               <p>
+                blockedforaireply.levels.io, levelsio's list of AI reply bots, receives reports of X replies people
+                marked as AI slop. Our server sends them, not your browser, at least 15 minutes after the mark (so an
+                Undo stops it), once per post, and only for a reply whose account is not on his list already and that
+                the maintainer has not rejected. A report is the public link to the reply,
+                <code>https://x.com/&lt;account&gt;/status/&lt;post&gt;</code>, and nothing else: no install id, no
+                network, no count of who marked it. To find the account behind a post, the server asks X's public
+                embed service (cdn.syndication.twimg.com) about the post id. With Contribute reports off, your marks
+                never reach our server, so they are never passed on.
+              </p>
+              <p>
                 Donating is a page of its own, <a href="/donate">killslop.app/donate</a>. Both the site's Donate
                 button and "Support the project" in the popup open that page, and it is the page that links out to
                 <a href="https://buymemomo.com/aarohan">buymemomo.com</a>, where donations are handled under that
@@ -379,7 +393,8 @@
                 <li>Build a history of what anyone watches or reads, on the device or on the server.</li>
                 <li>
                   Let anyone read what you sent, apart from the maintainer reading feedback and reviewing list
-                  entries, and TypeSafe receiving a post's text while the writing check is on.
+                  entries, TypeSafe receiving a post's text while the writing check is on, and levelsio's report queue
+                  receiving the public link to an X reply people marked.
                 </li>
                 <li>Store the text of a post. The writing check keeps its hash and its score, never its words.</li>
               </ul>
