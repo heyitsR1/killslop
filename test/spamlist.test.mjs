@@ -28,7 +28,7 @@ test('levelsio statuses and Clankwall flags become one row per account', () => {
   assert.deepEqual(rows.get('martinvars'), ['781293', 'martinvars', 'c']);
   assert.deepEqual(rows.get('shashib'), ['1221471', 'shashib', 'b']);
   assert.deepEqual(rows.get('bomhoang4943'), ['977517252739125249', 'bomhoang4943', 'bv']);
-  assert.deepEqual(rows.get('moa_builds'), ['2008421182891323400', 'moa_builds', 'l']);
+  assert.deepEqual(rows.get('moa_builds'), ['2008421182891323400', 'moa_builds', 'bn'], "'likely' has no evidence, so it is served as unreviewed");
   assert.deepEqual(rows.get('only_clank'), ['42', 'only_clank', 'v']);
   assert.equal(list.accounts.length, 5, 'an entry with neither a valid id nor handle is dropped');
   assert.equal(list.sources.levelsio.total, 6);
@@ -64,6 +64,9 @@ test('unreviewed silent blocks hide only when asked for', () => {
   assert.equal(hides('bv', {}), true, 'Clankwall flagged it, so it hides by default');
   assert.equal(hides('k', {}), true);
   assert.equal(hides('b', {}), false);
+  assert.equal(hides('bn', {}), false, "levelsio 'likely' alone is opt-in");
+  assert.equal(hides('bnv', {}), true, "'likely' plus a Clankwall flag still hides");
   assert.equal(hides('b', { spamListUnreviewed: true }), true);
+  assert.equal(hides('bn', { spamListUnreviewed: true }), true);
   assert.equal(hides(null, { spamListUnreviewed: true }), false);
 });

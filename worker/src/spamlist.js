@@ -17,9 +17,15 @@
  *
  * Each account is [userId, handle, flags]. Either id may be empty. Flags:
  *
- *   c  levelsio confirmed, with evidence       l  levelsio likely
- *   b  levelsio silent block, not reviewed     v  flagged on Clankwall
- *   k  on KillSlop's own reviewed list
+ *   c  levelsio confirmed, with evidence
+ *   b  levelsio block with no evidence on record: a silent block he has not
+ *      reviewed, or (with n) one he rates 'likely'
+ *   n  levelsio 'likely' (account created 2023+); always comes with b
+ *   v  flagged on Clankwall                    k  on KillSlop's own reviewed list
+ *
+ * By default clients hide c, v and k. An account with only b (with or without
+ * n) has nothing on record but the block, so it hides only on opt-in. The old
+ * 'l' flag is no longer served (clients still read it, so old caches work).
  *
  * The client decides what to act on (settings.spamListUnreviewed covers `b`).
  */
@@ -73,7 +79,11 @@ export function buildList(levels, ours = []) {
     for (const a of levels.accounts) {
       const status = a?.levelsio;
       if (status === 'confirmed') upsert(a.id, a.username, 'c');
-      else if (status === 'likely') upsert(a.id, a.username, 'l');
+      // 'likely' is a block plus a new account, with no reply on record. Served
+      // as unreviewed ('b'), so it hides only for people who opt in, with 'n'
+      // kept so a client can still tell it apart. Since 2026-11-22; before
+      // that it was 'l' and hid by default.
+      else if (status === 'likely') upsert(a.id, a.username, 'b'), upsert(a.id, a.username, 'n');
       else if (status === 'blocked') upsert(a.id, a.username, 'b');
       if (a?.ryanvogel) upsert(a.id, a.username, 'v');
     }

@@ -13,7 +13,11 @@ const KEY = 'xSpamList';
 const REFRESH_MS = 6 * 3600 * 1000;
 const RETRY_MS = 30 * 60 * 1000;
 
-/** Flags that hide by default. 'b' (unreviewed silent block) is opt-in. */
+/**
+ * Flags that hide by default. 'b' (a block with no evidence on record, which
+ * since 2026-11-22 includes levelsio's 'likely', served as 'bn') is opt-in.
+ * 'l' is no longer served but still read, for lists cached before then.
+ */
 const DEFAULT_FLAGS = /[clvk]/;
 
 let index = null; // { byId: Map, byHandle: Map, meta }

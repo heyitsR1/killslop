@@ -1,6 +1,6 @@
 # KillSlop: never see AI reply guys again
 
-A free, open-source Chrome extension that hides **nearly 2,000 known AI reply
+A free, open-source Chrome extension that hides **1,300+ known AI reply
 bots on X**. A reply that lands seconds after a big post, says nothing, and was
 written by a bot farming engagement: KillSlop folds it away before you read it.
 
@@ -40,16 +40,19 @@ There is no account, no sign-in and nothing to set up.
 ## How it works on X
 
 - **One list, several sources.** levelsio's list (`confirmed`, with the reply
-  as evidence, and `likely`), the accounts it marks as flagged on Clankwall,
+  as evidence), the accounts it marks as flagged on Clankwall,
   and the X accounts on KillSlop's own list after a maintainer approved them.
   The worker merges them into one file,
   `GET https://api.killslop.app/api/v1/x-spam.json` (`worker/src/spamlist.js`),
   rebuilt every 30 minutes.
 - **Always current.** The extension downloads the list every few hours, so a
   bot levelsio blocks today is hidden for you without an extension update.
-- **Careful by default.** levelsio also lists ~1,700 accounts he blocked
-  silently and never reviewed. Some may be real people, so they stay visible
-  unless you switch on *Include unreviewed blocks* in the popup.
+- **Careful by default.** Every account hidden by default has an AI reply on
+  record or a second source flagging it. levelsio also lists ~2,500 accounts
+  with no evidence beyond his block: ones he blocked silently, and ones he
+  rates `likely` only because the account is new. Some may be real people, so
+  they stay visible unless you switch on *Include unreviewed blocks* in the
+  popup. (Until 2026-11-22, `likely` hid by default.)
 - **Private.** The whole list is matched in your browser
   (`extension/src/core/spamlist.js`). Nobody learns which accounts you see.
 - **Hide, don't block.** A listed account's posts collapse into a thin card
