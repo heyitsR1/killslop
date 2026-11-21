@@ -42,8 +42,8 @@ const FRESH_SECONDS = 1800;
 const STALE_SECONDS = 7 * 24 * 3600;
 const UPSTREAM_TIMEOUT_MS = 10_000;
 
-const CACHE_FRESH = 'https://cache.killslop.internal/x-spam/fresh/v1';
-const CACHE_STALE = 'https://cache.killslop.internal/x-spam/stale/v1';
+const CACHE_FRESH = 'https://cache.killslop.internal/x-spam/fresh/v2';
+const CACHE_STALE = 'https://cache.killslop.internal/x-spam/stale/v2';
 
 const HANDLE = /^[A-Za-z0-9_]{1,15}$/;
 const USER_ID = /^\d{1,20}$/;
