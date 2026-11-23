@@ -35,8 +35,6 @@
         <nav class="nav__links" aria-label="Main">
           <a href="/#how">How it works</a>
           <a href="/#list">The list</a>
-          <a href="/#features">On X</a>
-          <a href="/privacy">Privacy</a>
           <a href="/install">Install</a>
           <a href="/support">Help</a>
         </nav>
@@ -53,30 +51,25 @@
       <main class="shell" id="main">
         <article class="section doc">
           <header class="doc__head">
-            <p class="eyebrow">Guide</p>
-            <h1 class="doc__title">Install KillSlop in three steps.</h1>
-            <p class="doc__meta"><span>Under a minute</span><span>Chrome, Edge, Brave and other Chromium browsers</span></p>
+                        <h1 class="doc__title">Install from GitHub.</h1>
+            <p class="doc__meta"><span>Chrome, Edge, Brave</span></p>
           </header>
 
           <div class="guide">
             <p class="guide-lead">
-              The easiest way to get KillSlop is the <a href="/get">Chrome Web Store</a>, which keeps it updated for you.
-              This guide is for installing it straight from GitHub instead. It takes three clicks.
-              <span class="muted">Your settings stay in your browser either way.</span>
+              Easier: the <a href="/get">Chrome Web Store</a>, which updates itself.
             </p>
 
               <section class="guide-step" id="step-1" aria-labelledby="step-1-title">
                 <p class="guide-step__n">Step 1</p>
-                <h2 id="step-1-title">Download the zip and unzip it</h2>
+                <h2 id="step-1-title">Download and unzip</h2>
                 <p>
-                  Open the <a href="https://github.com/heyitsR1/killslop/releases/latest">latest KillSlop release</a> and
-                  under <strong>Assets</strong>, click the zip whose name starts with <code>killslop-</code>. Double-click the downloaded zip to unzip it. You get a folder; keep it somewhere
-                  you will not delete, because Chrome runs KillSlop from that folder.
+                  Get the zip from the <a href="https://github.com/heyitsR1/killslop/releases/latest">latest release</a> and unzip it. Keep the folder.
                 </p>
                 <figure class="guide-shot">
                   <picture>
                     <source media="(prefers-reduced-motion: reduce)" srcset="/site/install-step-1-download.png" />
-                    <img src="/site/install-step-1-download.gif" width="960" height="600" loading="eager" alt="The KillSlop release page on GitHub. The file killslop-1.2.0.zip under Assets is circled, labelled Download this zip, and a note says double-click it to unzip." />
+                    <img src="/site/install-step-1-download.gif" width="960" height="600" loading="eager" alt="The KillSlop release page on GitHub. The KillSlop zip under Assets is circled, labelled Download this zip, and a note says double-click it to unzip." />
                   </picture>
                 </figure>
               </section>
@@ -85,9 +78,7 @@
                 <p class="guide-step__n">Step 2</p>
                 <h2 id="step-2-title">Turn on Developer mode</h2>
                 <p>
-                  Type <code>chrome://extensions</code> into the address bar and press Enter. In Edge it is
-                  <code>edge://extensions</code>, in Brave <code>brave://extensions</code>. Switch on
-                  <strong>Developer mode</strong> at the top right. A row of new buttons appears.
+                  Open <code>chrome://extensions</code> and switch on <strong>Developer mode</strong>.
                 </p>
                 <figure class="guide-shot">
                   <picture>
@@ -99,12 +90,10 @@
 
               <section class="guide-step" id="step-3" aria-labelledby="step-3-title">
                 <p class="guide-step__n">Step 3</p>
-                <h2 id="step-3-title">Choose Load unpacked and pick the folder</h2>
+                <h2 id="step-3-title">Load unpacked</h2>
                 <p>
-                  Click <strong>Load unpacked</strong>, then select the folder you unzipped in step 1: the folder itself,
-                  not a file inside it. KillSlop appears on the page with its switch on. That's it.
+                  Click <strong>Load unpacked</strong> and pick the folder.
                 </p>
-                <p class="guide-note">The folder picker in the animation is drawn for clarity; yours looks like your computer's own.</p>
                 <figure class="guide-shot">
                   <picture>
                     <source media="(prefers-reduced-motion: reduce)" srcset="/site/install-step-3-load-unpacked.png" />
@@ -117,29 +106,19 @@
                 <p class="guide-step__n">Optional</p>
                 <h2 id="pin-title">Pin it, then open X</h2>
                 <p>
-                  Click the puzzle piece next to the address bar and the pin beside KillSlop, so its switch and the
-                  dashboard are one click away. Then <a href="https://x.com/home">open X</a>: replies from listed bots
-                  fold into a thin card that says why, with <strong>Show</strong> to read one anyway.
+                  Pin it from the puzzle piece, then <a href="https://x.com/home">open X</a>.
                 </p>
               </section>
 
               <section class="guide-step guide-step--extra" aria-labelledby="faq-title">
-                <h2 id="faq-title">Questions</h2>
-                <details class="guide-fold">
-                  <summary>Is Developer mode safe to leave on?</summary>
-                  <p>Yes. It only lets you load extensions from a folder. Chrome may show a reminder about developer-mode extensions when it starts; you can close it.</p>
-                </details>
+                <h2 id="faq-title">Help</h2>
                 <details class="guide-fold">
                   <summary>How do I update it?</summary>
-                  <p>The bot list updates itself every few hours, with no reinstall. For a new version of the extension itself, download the new zip, replace the folder, and press the reload arrow on KillSlop's card in <code>chrome://extensions</code>. Or switch to the <a href="/get">Chrome Web Store</a> copy, which updates on its own.</p>
-                </details>
-                <details class="guide-fold">
-                  <summary>Where does the bot list come from?</summary>
-                  <p>It is built on <a href="https://blockedforaireply.levels.io">levelsio's Blocked for AI reply list</a>, with <a href="https://clankwall.vogel.dev">Clankwall</a> and our own reviewed list. KillSlop is not affiliated with any of them, or with X.</p>
+                  <p>Download the new zip, replace the folder, and press reload in <code>chrome://extensions</code>. The bot list updates on its own.</p>
                 </details>
                 <details class="guide-fold">
                   <summary>Something went wrong</summary>
-                  <p>If Chrome says the manifest is missing, you picked a file or the wrong folder: pick the folder that contains <code>manifest.json</code>. Anything else, <a href="/support">tell us here</a>.</p>
+                  <p>"Manifest missing" means you picked the wrong folder: pick the one with <code>manifest.json</code>. Anything else, <a href="/support">tell us</a>.</p>
                 </details>
               </section>
           </div>
@@ -151,14 +130,12 @@
               <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="6" fill="currentColor"/><circle class="mark__glyph" cx="12" cy="12" r="6"/><path class="mark__glyph" d="M7.76 7.76l8.48 8.48"/></svg>
               <span class="wordmark">KillSlop</span>
             </a>
-            <p class="footer__tag">Hides AI reply bots on X, and AI slop everywhere else.</p>
+            <p class="footer__tag">Hides AI reply bots on X.</p>
           </div>
           <nav class="footer__col" aria-label="Product">
             <p class="footer__head">Product</p>
-            <a href="/#features">Features</a>
-            <a href="/#how">How it decides</a>
+            <a href="/#how">How it works</a>
             <a href="/#list">The list</a>
-            <a href="/#features">On X</a>
             <a href="/privacy">Privacy</a>
           </nav>
           <nav class="footer__col" aria-label="Project">
@@ -171,7 +148,7 @@
           </nav>
           <div class="footer__legal">
             <span>&copy; 2026 KillSlop</span>
-            <span>Not affiliated with X, levelsio, Clankwall, YouTube, Google or LinkedIn.</span>
+            <span>Not affiliated with X, levelsio, Clankwall, YouTube or LinkedIn.</span>
           </div>
         </footer>
       </main>

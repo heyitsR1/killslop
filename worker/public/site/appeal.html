@@ -37,8 +37,6 @@
         <nav class="nav__links" aria-label="Main">
           <a href="/#how">How it works</a>
           <a href="/#list">The list</a>
-          <a href="/#features">On X</a>
-          <a href="/privacy">Privacy</a>
           <a href="/install">Install</a>
           <a href="/support">Help</a>
         </nav>
@@ -55,19 +53,12 @@
       <main class="shell" id="main">
         <article class="section doc">
           <header class="doc__head">
-            <p class="eyebrow">Appeal</p>
-            <h1 class="doc__title">Listed by mistake?</h1>
-            <p class="doc__meta"><span>For X accounts</span><span>Read by a person</span></p>
+                        <h1 class="doc__title">Listed by mistake?</h1>
+            
           </header>
 
           <div class="guide">
-            <p class="guide-lead">
-              KillSlop hides replies from accounts on public AI reply bot lists: levelsio's
-              <a href="https://blockedforaireply.levels.io">Blocked for AI reply</a>, Clankwall, and our own reviewed
-              list. Enter your username to see what each list says about you, and why.
-              <span class="muted">KillSlop never blocks anyone. It only folds replies away in the feeds of people
-              who installed it.</span>
-            </p>
+            <p class="guide-lead">See why an account is hidden, and appeal.</p>
 
             <form class="support__form appeal__lookup" id="lookup" novalidate>
               <label class="signup__label" for="handle">Your X username</label>
@@ -79,7 +70,7 @@
               <p class="signup__msg" id="lookup-msg" role="status" aria-live="polite"></p>
               <noscript>
                 <p class="signup__msg signup__msg--error">
-                  This page needs JavaScript. You can write to us on the <a class="link" href="/support">help page</a> instead.
+                  Needs JavaScript.
                 </p>
               </noscript>
             </form>
@@ -92,19 +83,16 @@
               <div class="appeal__steps" id="steps">
                 <section class="guide-step" id="step-ours">
                   <p class="guide-step__n">Step 1</p>
-                  <h2>Ask KillSlop to stop hiding you</h2>
-                  <p>
-                    A person reads every appeal. If it is upheld, KillSlop stops hiding your account for everyone,
-                    whatever the other lists say, usually within an hour of the decision.
-                  </p>
+                  <h2>Appeal to KillSlop</h2>
+                  <p>A person reads every appeal.</p>
                   <form class="support__form appeal__form" id="appeal" novalidate>
                     <div class="support__field">
-                      <label class="signup__label" for="note">Anything we should know? <span class="optional">Optional</span></label>
+                      <label class="signup__label" for="note">Note <span class="optional">Optional</span></label>
                       <textarea class="input" id="note" rows="4" maxlength="1000"
-                        placeholder="For example: I write my own replies. Here is a recent one."></textarea>
+                        placeholder="I write my own replies."></textarea>
                     </div>
                     <div class="support__field">
-                      <label class="signup__label" for="email">Email <span class="optional">Optional, only to tell you the outcome</span></label>
+                      <label class="signup__label" for="email">Email <span class="optional">Optional</span></label>
                       <div class="signup__row">
                         <input class="input" id="email" type="email" maxlength="254" placeholder="you@example.com"
                           autocomplete="email" spellcheck="false" />
@@ -117,13 +105,9 @@
 
                 <section class="guide-step" id="step-levels" hidden>
                   <p class="guide-step__n">Step 2</p>
-                  <h2>Appeal to levelsio too</h2>
-                  <p>
-                    His list is his, and only he can take you off it. His appeal asks you to post a short pledge from
-                    your account and paste the link, then a quick human check, so it has to be done on his site. This
-                    button opens your entry there; press <strong>Appeal</strong> on it.
-                  </p>
-                  <p><a class="btn btn--xl" id="levels-link" href="https://blockedforaireply.levels.io">Open my entry on levelsio's list</a></p>
+                  <h2>Appeal to levelsio</h2>
+                  <p>Only he can take you off his list. Press <strong>Appeal</strong> on your entry.</p>
+                  <p><a class="btn btn--xl" id="levels-link" href="https://blockedforaireply.levels.io">Open my entry</a></p>
                 </section>
               </div>
             </section>
@@ -136,14 +120,12 @@
               <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="6" fill="currentColor"/><circle class="mark__glyph" cx="12" cy="12" r="6"/><path class="mark__glyph" d="M7.76 7.76l8.48 8.48"/></svg>
               <span class="wordmark">KillSlop</span>
             </a>
-            <p class="footer__tag">Hides AI reply bots on X, and AI slop everywhere else.</p>
+            <p class="footer__tag">Hides AI reply bots on X.</p>
           </div>
           <nav class="footer__col" aria-label="Product">
             <p class="footer__head">Product</p>
-            <a href="/#features">Features</a>
-            <a href="/#how">How it decides</a>
+            <a href="/#how">How it works</a>
             <a href="/#list">The list</a>
-            <a href="/#features">On X</a>
             <a href="/privacy">Privacy</a>
           </nav>
           <nav class="footer__col" aria-label="Project">
@@ -156,7 +138,7 @@
           </nav>
           <div class="footer__legal">
             <span>&copy; 2026 KillSlop</span>
-            <span>Not affiliated with X, levelsio, Clankwall, YouTube, Google or LinkedIn.</span>
+            <span>Not affiliated with X, levelsio, Clankwall, YouTube or LinkedIn.</span>
           </div>
         </footer>
       </main>

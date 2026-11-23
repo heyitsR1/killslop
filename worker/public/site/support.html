@@ -49,10 +49,8 @@
         <nav class="nav__links" aria-label="Main">
           <a href="/#how">How it works</a>
           <a href="/#list">The list</a>
-          <a href="/#features">On X</a>
-          <a href="/privacy">Privacy</a>
           <a href="/install">Install</a>
-          <a href="/support" aria-current="page">Help</a>
+          <a href="/support">Help</a>
         </nav>
         <div class="nav__actions">
           <a class="btn btn--sm nav__support" href="/donate">Donate</a>
@@ -65,88 +63,33 @@
 
     <div class="page">
       <main class="shell" id="main">
-        <!-- ------------------------------------------------------------ head -->
-        <section class="section waitlist" aria-labelledby="support-title">
-          <div class="hero__bg" aria-hidden="true"></div>
-          <p class="eyebrow">Help and support</p>
-          <h1 class="waitlist__title" id="support-title">Something not working?</h1>
-          <p class="lead">
-            Most problems are one setting in the popup, so the fixes are below. If none of them is it, write to us
-            and a person will read it. There is no ticket system and no bot.
-          </p>
-
-          <div class="actions">
-            <a class="btn btn--primary btn--xl btn--pill" href="#write">Write to us</a>
-            <a class="btn btn--xl btn--pill" href="#fixes">Try a fix first</a>
-          </div>
-        </section>
-
-        <!-- ----------------------------------------------------------- fixes -->
         <section class="section" id="fixes" aria-labelledby="fixes-title">
-          <span class="plus plus--l" aria-hidden="true"></span>
-          <span class="plus plus--r" aria-hidden="true"></span>
           <div class="head">
-            <p class="eyebrow">Common problems</p>
-            <h2 class="h2" id="fixes-title">The four things that usually go wrong.</h2>
-            <p class="lead">
-              Every one of these is a switch in the KillSlop popup, which you open from the puzzle-piece icon in
-              Chrome's toolbar. Nothing here needs an account or a reinstall.
-            </p>
+            <h1 class="h2" id="fixes-title">Help.</h1>
           </div>
           <div class="cells cells--2">
             <div class="cell">
-              <p class="chip">It hid too much</p>
-              <h3 class="cell__title">It hid something I wanted to see</h3>
-              <p class="cell__text">
-                Press <strong>Show</strong> on the note it left, then <strong>Not slop</strong>. Your call outranks
-                every other signal and sticks. If it happens often, switch <strong>Hide it</strong> to
-                <strong>Dim it</strong> so nothing is removed, only greyed out, and tell us below which account it
-                was: a wrong entry on the list is worth fixing for everyone.
-              </p>
+              <h3 class="cell__title">It hid something I wanted</h3>
+              <p class="cell__text">Press <strong>Show</strong>, then <strong>Not slop</strong>.</p>
             </div>
             <div class="cell">
-              <p class="chip">It missed things</p>
-              <h3 class="cell__title">Obvious slop got through</h3>
-              <p class="cell__text">
-                Press <strong>AI SLOP</strong> on the post. It disappears for you at once and joins the review
-                queue. Most AI posts carry no label at all, so on X and LinkedIn the
-                <strong>writing check</strong> is what catches the rest. It ships switched off because it is the
-                only part that sends a post's text away; turn it on in the popup.
-              </p>
+              <h3 class="cell__title">It missed one</h3>
+              <p class="cell__text">Press <strong>AI SLOP</strong> on it.</p>
             </div>
             <div class="cell">
-              <p class="chip">The site broke</p>
-              <h3 class="cell__title">A page is slow, blank or looks wrong</h3>
-              <p class="cell__text">
-                Turn KillSlop off for that one platform under <strong>Platforms</strong>, and reload. If that fixes
-                it, it is ours and we want to know: tell us below which site and what you saw. You can also press
-                <strong>Reset local data</strong>, which clears the saved verdicts and your marks without
-                reinstalling.
-              </p>
+              <h3 class="cell__title">A site broke</h3>
+              <p class="cell__text">Turn that site off under <strong>Platforms</strong> and tell us below.</p>
             </div>
             <div class="cell">
-              <p class="chip">Privacy</p>
-              <h3 class="cell__title">I want it to stop sending things</h3>
-              <p class="cell__text">
-                Turn off <strong>Contribute reports</strong> and your marks stay on your device. Turn off the
-                <strong>community list</strong> and no lookups go out at all. The
-                <a class="link" href="/privacy">privacy policy</a> lists every single thing that is ever sent, and
-                uninstalling removes everything stored on your device.
-              </p>
+              <h3 class="cell__title">My account is listed</h3>
+              <p class="cell__text"><a class="link" href="/appeal">Appeal here</a>.</p>
             </div>
           </div>
         </section>
 
-        <!-- ----------------------------------------------------------- write -->
         <section class="section waitlist" id="write" aria-labelledby="write-title">
           <div class="hero__bg" aria-hidden="true"></div>
-          <p class="eyebrow">Send feedback</p>
-          <h2 class="waitlist__title" id="write-title">Write to the maintainer.</h2>
-          <p class="lead">
-            The same form as the one in the extension, and it lands in the same inbox. Tell us what happened and
-            what you expected instead. An email address is optional and only used to reply.
-          </p>
-
+          <h2 class="waitlist__title" id="write-title">Write to us.</h2>
           <form class="support__form" id="form" novalidate>
             <div class="support__field">
               <p class="signup__label" id="cat-label">What is it about?</p>
@@ -169,7 +112,7 @@
 
             <div class="support__field">
               <label class="signup__label" for="email">
-                Email <span class="optional">Optional, only if you want a reply</span>
+                Email <span class="optional">Optional</span>
               </label>
               <div class="signup__row">
                 <input
@@ -188,46 +131,11 @@
             <p class="signup__msg" id="msg" role="status" aria-live="polite"></p>
             <noscript>
               <p class="signup__msg signup__msg--error">
-                This form needs JavaScript. You can
-                <a class="link" href="https://github.com/heyitsR1/killslop/issues/new/choose">open an issue on GitHub</a>
-                instead, or use Send feedback inside the extension.
+                Needs JavaScript. Or <a class="link" href="https://github.com/heyitsR1/killslop/issues/new/choose">open an issue</a>.
               </p>
             </noscript>
           </form>
-
-          <ul class="signup__terms">
-            <li>Read by a person, never published, never sold.</li>
-            <li>No account and no identifier is attached. We cannot tell which reports or votes are yours.</li>
-            <li>Include a link if you are reporting a wrong call. It is the fastest way for us to check it.</li>
-          </ul>
-        </section>
-
-        <!-- ----------------------------------------------------------- other -->
-        <section class="section" id="other" aria-labelledby="other-title">
-          <div class="split split--even">
-            <div>
-              <p class="eyebrow">Other ways</p>
-              <h2 class="h2" id="other-title">In the open, if you prefer.</h2>
-              <p class="lead">
-                Bugs filed on GitHub are public, which makes them easier for other people to find and to pile onto.
-                If your problem might be someone else's too, that is the better place for it.
-              </p>
-              <div class="actions">
-                <a class="btn btn--lg btn--pill btn--primary" href="https://github.com/heyitsR1/killslop/issues/new/choose">Open an issue</a>
-                <a class="btn btn--lg btn--pill" href="https://github.com/heyitsR1/killslop">View source</a>
-              </div>
-            </div>
-            <div class="links">
-              <p class="links__label">Also useful</p>
-              <ul>
-                <li><a href="/welcome">What KillSlop does, in one page</a></li>
-                <li><a href="/privacy">What it sends, and what it never sends</a></li>
-                <li><a href="/#how">How it decides what is slop</a></li>
-                <li><a href="https://github.com/heyitsR1/killslop/security/policy">Report a security problem privately</a></li>
-                <li><a href="/#list">Download the public list</a></li>
-              </ul>
-            </div>
-          </div>
+          <p class="lead"><a class="link" href="https://github.com/heyitsR1/killslop/issues/new/choose">Or open an issue on GitHub</a>.</p>
         </section>
 
         <footer class="footer">
@@ -236,14 +144,12 @@
               <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="6" fill="currentColor"/><circle class="mark__glyph" cx="12" cy="12" r="6"/><path class="mark__glyph" d="M7.76 7.76l8.48 8.48"/></svg>
               <span class="wordmark">KillSlop</span>
             </a>
-            <p class="footer__tag">Hides AI reply bots on X, and AI slop everywhere else.</p>
+            <p class="footer__tag">Hides AI reply bots on X.</p>
           </div>
           <nav class="footer__col" aria-label="Product">
             <p class="footer__head">Product</p>
-            <a href="/#features">Features</a>
-            <a href="/#how">How it decides</a>
+            <a href="/#how">How it works</a>
             <a href="/#list">The list</a>
-            <a href="/#features">On X</a>
             <a href="/privacy">Privacy</a>
           </nav>
           <nav class="footer__col" aria-label="Project">
@@ -256,7 +162,7 @@
           </nav>
           <div class="footer__legal">
             <span>&copy; 2026 KillSlop</span>
-            <span>Not affiliated with X, levelsio, Clankwall, YouTube, Google or LinkedIn.</span>
+            <span>Not affiliated with X, levelsio, Clankwall, YouTube or LinkedIn.</span>
           </div>
         </footer>
       </main>

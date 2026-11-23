@@ -22,9 +22,9 @@ const isValidEmail = (s) =>
 /** What to write about, per category. The wrong-call hint asks for the link,
     because without one a wrong call cannot be checked. */
 const HINTS = {
-  bug: 'What happened, and what did you expect instead?',
-  wrong: 'Paste the link. Say whether it hid something it should not have, or missed slop.',
-  idea: 'What would make KillSlop better for you?',
+  bug: 'What happened?',
+  wrong: 'Paste the link.',
+  idea: '',
   other: '',
 };
 
@@ -46,10 +46,10 @@ function say(text, error = false) {
 
 /** What each refusal means, in words someone can act on. */
 function failure(status, error) {
-  if (error === 'bad email') return 'That does not look like an email address.';
-  if (error === 'message too long') return 'That message is too long to send.';
-  if (status === 429) return 'Too many messages from your network just now. Try again in a minute.';
-  return 'Something went wrong at our end. Your message is still here, so you can try again.';
+  if (error === 'bad email') return 'Check the email.';
+  if (error === 'message too long') return 'Too long.';
+  if (status === 429) return 'Too many messages. Try again soon.';
+  return 'Could not send. Try again.';
 }
 
 function paint() {
@@ -78,7 +78,7 @@ form.addEventListener('submit', async (event) => {
   const address = email.value.trim();
 
   if (!text) {
-    say('Write a message first, and we will read it.', true);
+    say('Write something first.', true);
     message.focus();
     return;
   }
@@ -90,7 +90,7 @@ form.addEventListener('submit', async (event) => {
   // than a round trip, and the message is never sent with an address that
   // cannot be replied to.
   if (address && !isValidEmail(address)) {
-    say('That does not look like an email address.', true);
+    say('Check the email.', true);
     email.focus();
     return;
   }
@@ -110,7 +110,7 @@ form.addEventListener('submit', async (event) => {
     sent = res.ok && body?.ok === true;
     if (!sent) say(failure(res.status, body?.error), true);
   } catch {
-    say('Could not reach the server. Your message is still here, so you can try again.', true);
+    say('Could not send. Try again.', true);
   }
 
   if (!sent) {
@@ -122,8 +122,8 @@ form.addEventListener('submit', async (event) => {
   form.hidden = true;
   say(
     address
-      ? `Sent. If there is something to follow up on, the reply goes to ${address}.`
-      : 'Sent. You left no email, so there will be no reply, but it will be read.'
+      ? `Sent. Any reply goes to ${address}.`
+      : 'Sent.'
   );
 });
 

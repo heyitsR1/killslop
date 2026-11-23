@@ -384,13 +384,27 @@ async function postWaitlist(request, env) {
 
 /* ------------------------------------------------------------------ stats */
 
-async function getStats(env) {
-  const { results } = await env.DB.prepare(
-    `SELECT kind, id, platform, up, down, tallies, writings, writing_ai, writing_total,
-            review, json_extract(meta, '$.ucid') AS ucid
-       FROM entries`
-  ).all();
-  return json(countStats(results || [], reviewMode(env)), 200, { 'cache-control': 'public, max-age=60' });
+async function getStats(env, ctx) {
+  const [{ results }, x] = await Promise.all([
+    env.DB.prepare(
+      `SELECT kind, id, platform, up, down, tallies, writings, writing_ai, writing_total,
+              review, json_extract(meta, '$.ucid') AS ucid
+         FROM entries`
+    ).all(),
+    xCounts(env, ctx),
+  ]);
+  return json({ ...countStats(results || [], reviewMode(env)), ...x }, 200, { 'cache-control': 'public, max-age=60' });
+}
+
+/** Size of the X bot list, for the home page: every account known, and those hidden by default. */
+async function xCounts(env, ctx) {
+  try {
+    const data = await (await getXSpam(env, ctx)).json();
+    const rows = (data.accounts || []).filter((r) => Array.isArray(r) && r[2]);
+    return { xAccounts: rows.length, xHidden: rows.filter((r) => /[clvk]/.test(r[2])).length };
+  } catch {
+    return {};
+  }
 }
 
 /* --------------------------------------------------------- writing check */
@@ -521,7 +535,7 @@ export default {
       const text = path.match(/^\/api\/v1\/text\/([0-9a-f]{1,8})$/);
       if (text) return getTextBucket(env, text[1]);
       if (Object.hasOwn(EXPORTS, path)) return getExport(env, EXPORTS[path]);
-      if (path === '/api/v1/stats') return getStats(env);
+      if (path === '/api/v1/stats') return getStats(env, ctx);
       if (path === '/api/v1/x-spam.json') return getXSpam(env, ctx);
       if (path === '/api/v1/appeal') return getAppeal(request, env, ctx, url);
     }

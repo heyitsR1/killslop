@@ -36,27 +36,19 @@ for (const btn of document.querySelectorAll('[data-copy]')) {
 
 /* ----------------------------------------------------------------- stats */
 
-// Numbers are shown only when the API answers and they are above zero. An
-// empty block is hidden rather than advertised.
-const stats = document.getElementById('stats');
-if (stats) {
+// Live counts, rounded down to the hundred ("3,800+"). The markup carries a
+// fallback, so a slow or failed request changes nothing.
+const live = document.querySelectorAll('[data-live]');
+if (live.length) {
   const signal = typeof AbortSignal.timeout === 'function' ? AbortSignal.timeout(5000) : undefined;
   fetch(`${API}/api/v1/stats`, { credentials: 'omit', signal })
     .then((res) => (res.ok ? res.json() : null))
     .then((body) => {
       if (!body) return;
-      let shown = 0;
-      for (const value of stats.querySelectorAll('[data-stat]')) {
-        const n = Number(body[value.dataset.stat]);
-        const cell = value.closest('.stat');
-        if (Number.isFinite(n) && n > 0) {
-          value.textContent = n.toLocaleString('en');
-          shown += 1;
-        } else if (cell) {
-          cell.hidden = true;
-        }
+      for (const el of live) {
+        const n = Number(body[el.dataset.live]);
+        if (Number.isFinite(n) && n >= 100) el.textContent = `${(Math.floor(n / 100) * 100).toLocaleString('en')}+`;
       }
-      stats.hidden = shown === 0;
     })
     .catch(() => {});
 }

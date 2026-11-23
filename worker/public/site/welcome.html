@@ -36,7 +36,7 @@
       <svg class="wl-pin__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17v5" /><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z" /></svg>
       <p class="wl-pin__text">
         <strong>Pin KillSlop</strong>
-        <span>Click the puzzle piece, then the pin, to keep its switch one click away.</span>
+        <span>Click the puzzle piece, then the pin.</span>
       </p>
       <button class="wl-pin__close" type="button" aria-label="Dismiss tip" data-act="pin-close">×</button>
     </aside>
@@ -54,11 +54,10 @@
                 <path class="wl-badge__slash" d="M15.5 15.5l17 17" />
               </svg>
             </div>
-            <p class="eyebrow wl-rise" data-d="1">KillSlop is on</p>
-            <h1 class="wl-title wl-rise" data-d="2" id="wl-title">You're in. The reply bots are gone.</h1>
+                        <h1 class="wl-title wl-rise" data-d="2" id="wl-title">The reply bots are gone.</h1>
             <p class="wl-lead wl-rise" data-d="3">
-              <span class="wl-count" id="wl-count" data-fallback="1,341">0</span>
-              known AI reply bots on X are now hidden for you. Nothing to set up, and nothing to log in to.
+              <span class="wl-count" id="wl-count" data-fallback="1,400">0</span>
+              AI reply bots on X, hidden.
             </p>
             <div class="wl-actions wl-rise" data-d="4">
               <a class="btn btn--primary btn--xl btn--pill" href="https://x.com/home">Open X and see</a>
@@ -84,26 +83,19 @@
 
         <!-- ------------------------------------------------------------ credit -->
         <section class="section wl-credit wl-reveal" aria-labelledby="wl-credit-title">
-          <p class="eyebrow">Built on levelsio's list</p>
           <h2 class="h2" id="wl-credit-title">Thank you, <a href="https://x.com/levelsio">@levelsio</a>.</h2>
           <p class="lead">
-            Pieter Levels blocks AI reply accounts in public and keeps the evidence for every one in
-            <a href="https://blockedforaireply.levels.io">Blocked for AI reply</a>. KillSlop turns that list into a
-            filter. <span class="muted">Clankwall flags by <a href="https://x.com/ryanvogel">@ryanvogel</a> come
-            inside it, the original X list was <a href="https://x.com/dillon_mulroy">@dillon_mulroy</a>'s, and our
-            own reviewed list goes on top. KillSlop is not affiliated with any of them, or with X.</span>
+            KillSlop runs on <a href="https://blockedforaireply.levels.io">Blocked for AI reply</a>,
+            with <a href="https://clankwall.vogel.dev">Clankwall</a> and our own list on top.
           </p>
         </section>
 
         <!-- --------------------------------------------------------------- try -->
         <section class="section wl-try" id="try" aria-labelledby="wl-try-title">
           <div class="wl-try__copy wl-reveal">
-            <p class="eyebrow">Spot one we missed?</p>
-            <h2 class="h2" id="wl-try-title">Press AI SLOP. Watch it go.</h2>
+                        <h2 class="h2" id="wl-try-title">Spot one? Press AI SLOP.</h2>
             <p class="lead">
-              Every post on X gets this button at the end of its row. Try it here, on a fake reply.
-              <span class="muted">On X it hides the post for you at once, and a person checks it before it is hidden
-              for anyone else. The reply also goes to levelsio's report queue, so his list grows too.</span>
+              Try it on this one.
             </p>
           </div>
 
@@ -129,90 +121,10 @@
             </div>
             <div class="wl-burst" id="wl-burst" aria-hidden="true"></div>
             <div class="wl-toast" id="wl-toast" role="status" hidden>
-              <span>Gone. Hidden for you now, and for everyone once a person checks it.</span>
+              <span>Gone.</span>
               <button type="button" data-act="undo">Undo</button>
             </div>
           </div>
-        </section>
-
-        <!-- ------------------------------------------------------------- steps -->
-        <section class="section" aria-labelledby="wl-steps-title">
-          <div class="head wl-reveal">
-            <p class="eyebrow">Good to know</p>
-            <h2 class="h2" id="wl-steps-title">Three things, then you're done.</h2>
-          </div>
-          <div class="cells cells--3 wl-steps">
-            <div class="cell wl-reveal" data-d="1">
-              <p class="wl-step">01</p>
-              <h3 class="cell__title">Every hide says why</h3>
-              <p class="cell__text">
-                A hidden reply shrinks to a thin card. <strong>Why?</strong> opens the evidence,
-                <strong>Show</strong> reads it anyway, <strong>Not slop</strong> keeps that account visible for you.
-              </p>
-            </div>
-            <div class="cell wl-reveal" data-d="2">
-              <p class="wl-step">02</p>
-              <h3 class="cell__title">Your account is untouched</h3>
-              <p class="cell__text">
-                KillSlop only hides. It never blocks or mutes anyone on your X account, so there is nothing for X to
-                flag. Turn it off and everything comes back.
-              </p>
-            </div>
-            <div class="cell wl-reveal" data-d="3">
-              <p class="wl-step">03</p>
-              <h3 class="cell__title">It keeps itself current</h3>
-              <p class="cell__text">
-                The list refreshes every few hours and is checked on your computer, so nobody learns which accounts
-                you see. It hides AI slop on YouTube and LinkedIn too.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <!-- -------------------------------------------------------------- more -->
-        <section class="section wl-more" aria-labelledby="wl-more-title">
-          <h2 class="eyebrow" id="wl-more-title">The details, if you want them</h2>
-          <details class="wl-fold">
-            <summary>What decides what gets hidden?</summary>
-            <ul>
-              <li><strong>Your own calls</strong> outrank everything, including us.</li>
-              <li><strong>The AI reply bot list</strong> on X: levelsio's list, Clankwall and our reviewed list.
-                Accounts levelsio blocked silently and never reviewed stay visible unless you switch them on in
-                the popup, because some may be real people.</li>
-              <li><strong>The platform's own AI label</strong>, where there is one: YouTube's, and X's label on AI
-                images and video.</li>
-              <li><strong>The account's pattern.</strong> Accounts that label nearly every upload as AI are slop
-                farms; ordinary ones label none.</li>
-              <li><strong>The writing itself</strong>, only if you switch the writing check on. It is off until you
-                do, because it is the only part that sends a post's words away. See the
-                <a href="/privacy#writing">privacy policy</a>.</li>
-            </ul>
-          </details>
-          <details class="wl-fold">
-            <summary>What leaves my browser?</summary>
-            <p>
-              The bot list is downloaded whole, with no identifier, and matched on your computer. Other lookups send
-              only the first four characters of a hash. There are no accounts, ads, analytics or tracking, and
-              nothing is sold. The <a href="/privacy">privacy policy</a> lists everything that is sent.
-            </p>
-          </details>
-          <details class="wl-fold">
-            <summary>How do my reports work?</summary>
-            <p>
-              Pressing AI SLOP hides a post for you at once and adds it to a queue a person reviews by hand. On X,
-              the link to the reply also goes to levelsio's report queue (nothing about you, just the link), where
-              his AI and then he check it before it joins his list. One person cannot bury anyone. Got one wrong? <strong>Not slop</strong> is just as useful. To keep your calls
-              to yourself, turn off <strong>Contribute reports</strong> in the popup.
-            </p>
-          </details>
-          <details class="wl-fold">
-            <summary>Is it really free?</summary>
-            <p>
-              Yes. No paid tier and nothing held back for one. The code is GPL-3.0 and our list is CC BY-SA 4.0.
-              If it earns its place in your browser, <a href="/donate">you can chip in</a>.
-              <a href="https://github.com/heyitsR1/killslop">Read the source</a>.
-            </p>
-          </details>
         </section>
 
         <footer class="footer">
@@ -221,12 +133,11 @@
               <svg class="mark" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="6" fill="currentColor"/><circle class="mark__glyph" cx="12" cy="12" r="6"/><path class="mark__glyph" d="M7.76 7.76l8.48 8.48"/></svg>
               <span class="wordmark">KillSlop</span>
             </a>
-            <p class="footer__tag">Hides AI reply bots on X, and AI slop everywhere else.</p>
+            <p class="footer__tag">Hides AI reply bots on X.</p>
           </div>
           <nav class="footer__col" aria-label="Product">
             <p class="footer__head">Product</p>
-            <a href="/#features">On X</a>
-            <a href="/#how">How it decides</a>
+            <a href="/#how">How it works</a>
             <a href="/#list">The list</a>
             <a href="/privacy">Privacy</a>
           </nav>
@@ -240,7 +151,7 @@
           </nav>
           <div class="footer__legal">
             <span>&copy; 2026 KillSlop</span>
-            <span>Not affiliated with X, levelsio, Clankwall, YouTube, Google or LinkedIn.</span>
+            <span>Not affiliated with X, levelsio, Clankwall, YouTube or LinkedIn.</span>
           </div>
         </footer>
       </main>

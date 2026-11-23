@@ -67,7 +67,7 @@ for (const button of reasons.querySelectorAll('.reason')) {
 
     post({ message: `Uninstalled: ${chosen.label}` }).catch(() => {});
 
-    thanks.textContent = 'Thanks, that is recorded.';
+    thanks.textContent = 'Thanks.';
     more.hidden = false;
     detail.focus();
   });
@@ -78,7 +78,7 @@ more.addEventListener('submit', async (event) => {
   const text = detail.value.trim();
   const address = email.value.trim();
   if (!text && !address) {
-    say('Add a note or an email address, or you are already done.');
+    say('');
     return;
   }
 
@@ -94,21 +94,21 @@ more.addEventListener('submit', async (event) => {
     if (res.ok && body?.ok === true) {
       more.hidden = true;
       thanks.textContent = address
-        ? `Sent. If there is something to follow up on, the reply goes to ${address}.`
-        : 'Sent. Thank you, it will be read.';
+        ? `Sent. Any reply goes to ${address}.`
+        : 'Sent. Thanks.';
       thanks.hidden = false;
       return;
     }
     say(
       body?.error === 'bad email'
-        ? 'That does not look like an email address.'
+        ? 'Check the email.'
         : res.status === 429
-          ? 'Too many messages from your network just now. Try again in a minute.'
-          : 'Something went wrong at our end. Your note is still here, so you can try again.',
+          ? 'Too many messages. Try again soon.'
+          : 'Could not send. Try again.',
       true
     );
   } catch {
-    say('Could not reach the server. Your note is still here, so you can try again.', true);
+    say('Could not send. Try again.', true);
   }
   send.disabled = false;
 });

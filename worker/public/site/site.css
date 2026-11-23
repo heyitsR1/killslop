@@ -1088,16 +1088,17 @@ body {
 
 .limits {
   display: grid;
-  grid-template-columns: minmax(0, 4fr) minmax(0, 5fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 64px;
   align-items: end;
 }
 
 .bignum {
-  font-size: clamp(120px, 18vw, 200px);
+  font-size: clamp(72px, 10vw, 136px);
   font-weight: 600;
-  line-height: 0.8;
-  letter-spacing: -0.075em;
+  line-height: 0.9;
+  letter-spacing: -0.06em;
+  white-space: nowrap;
   font-variant-numeric: tabular-nums;
 }
 

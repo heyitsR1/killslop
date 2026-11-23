@@ -20,9 +20,9 @@ const say = (el, text, error = false) => {
 };
 
 const LEVELS = {
-  confirmed: 'confirmed. He blocked it for an AI reply and kept the reply as evidence.',
-  likely: 'likely. He blocked it, and the account was created in 2023 or later. No reply is on record.',
-  blocked: 'blocked, not reviewed. He blocked it at some point, with no reply or reason on record.',
+  confirmed: 'confirmed, with an AI reply on record.',
+  likely: 'likely. New account, no reply on record.',
+  blocked: 'blocked, not reviewed.',
 };
 
 function li(...parts) {
@@ -70,8 +70,8 @@ function render(d) {
     }
     sources.append(item);
   }
-  if (d.clankwall) sources.append(li(b('Clankwall: '), 'flagged by @ryanvogel’s Clankwall.'));
-  if (d.killslop) sources.append(li(b('KillSlop: '), 'on our own list, after a maintainer reviewed it.'));
+  if (d.clankwall) sources.append(li(b('Clankwall: '), 'flagged.'));
+  if (d.killslop) sources.append(li(b('KillSlop: '), 'on our reviewed list.'));
 
   $('evidence-block').hidden = !d.listed;
   $('appeal-card').hidden = !d.listed || d.cleared;

@@ -17,9 +17,9 @@
   };
 
   const LEVELS = {
-    confirmed: 'confirmed. He blocked it for an AI reply and kept the reply as evidence.',
-    likely: 'likely. He blocked it, and the account was created in 2023 or later. No reply is on record.',
-    blocked: 'blocked, not reviewed. He blocked it at some point, with no reply or reason on record.',
+    confirmed: 'confirmed, with an AI reply on record.',
+    likely: 'likely. New account, no reply on record.',
+    blocked: 'blocked, not reviewed.',
   };
 
   function li(html) {
@@ -43,7 +43,7 @@
     sources.replaceChildren();
 
     if (!d.listed) {
-      verdict.textContent = 'This account is not on any list KillSlop uses. Nothing is hidden. You do not need to do anything.';
+      verdict.textContent = 'Not listed. Nothing is hidden.';
       verdict.classList.add('appeal__verdict--ok');
       $('steps').hidden = true;
       $('result').hidden = false;
@@ -51,14 +51,14 @@
     }
     if (d.cleared) {
       verdict.textContent =
-        'An appeal for this account was upheld. KillSlop does not hide it, whatever the other lists say.';
+        'Cleared. KillSlop does not hide it.';
       verdict.classList.add('appeal__verdict--ok');
     } else if (d.hiddenByDefault) {
-      verdict.textContent = 'KillSlop hides this account’s replies for everyone who uses it.';
+      verdict.textContent = 'Hidden by KillSlop.';
       verdict.classList.add('appeal__verdict--hidden');
     } else {
       verdict.textContent =
-        'KillSlop does not hide this account by default. Only people who switched on “Include unreviewed blocks” see it hidden.';
+        'Not hidden by default.';
       verdict.classList.add('appeal__verdict--opt');
     }
 
@@ -72,8 +72,8 @@
       }
       sources.append(item);
     }
-    if (d.clankwall) sources.append(li([b('Clankwall: '), 'flagged by @ryanvogel’s Clankwall.']));
-    if (d.killslop) sources.append(li([b('KillSlop: '), 'on our own list, after a maintainer reviewed it.']));
+    if (d.clankwall) sources.append(li([b('Clankwall: '), 'flagged.']));
+    if (d.killslop) sources.append(li([b('KillSlop: '), 'on our reviewed list.']));
 
     $('steps').hidden = false;
     $('step-ours').hidden = d.cleared;
@@ -101,7 +101,7 @@
       history.replaceState(null, '', `?u=${encodeURIComponent(m[1])}`);
       render(d);
     } catch {
-      say(msg, 'Could not check right now. Try again in a minute.', true);
+      say(msg, 'Could not check. Try again.', true);
     } finally {
       $('check').disabled = false;
     }
@@ -123,10 +123,10 @@
         body: JSON.stringify({ handle: current.handle, note: $('note').value.trim(), email }),
       });
       const d = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(d.error || 'Could not send it. Try again in a minute.');
+      if (!res.ok) throw new Error(d.error || 'Could not send. Try again.');
       say(msg, d.cleared
-        ? 'This account is already cleared. Nothing more to do here.'
-        : 'Sent. A person will read it. If it is upheld, KillSlop stops hiding your account for everyone.');
+        ? 'Already cleared.'
+        : 'Sent. We will take a look.');
     } catch (err) {
       $('send').disabled = false;
       say(msg, err.message, true);
