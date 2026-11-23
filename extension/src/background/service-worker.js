@@ -107,6 +107,15 @@ const handlers = {
     return community.feedback({ category, message, email, version: chrome.runtime.getManifest().version });
   },
 
+  /** "Why?" on a hidden X reply: the evidence and appeal page for that account. */
+  async openAccount({ handle }) {
+    const url = new URL(chrome.runtime.getURL('src/account/account.html'));
+    const h = /^@?([A-Za-z0-9_]{1,15})$/.exec(String(handle || ''))?.[1];
+    if (h) url.searchParams.set('u', h);
+    await chrome.tabs.create({ url: url.href });
+    return { ok: true };
+  },
+
   async clearData() {
     await store.clearAll();
     hiddenThisSession.clear();

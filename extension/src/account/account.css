@@ -1,0 +1,128 @@
+/* "Check an account" page: lookup, evidence, appeal. Shell from ../ui/page.css. */
+
+.card + .card,
+.card + .foot {
+  margin-top: 16px;
+}
+
+.field {
+  margin-top: 16px;
+}
+
+.field__label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.field__inline {
+  display: flex;
+  gap: 8px;
+}
+
+.field__inline .input {
+  flex: 1;
+}
+
+.optional {
+  margin-left: 6px;
+  color: var(--fg-faint);
+  font-weight: 400;
+}
+
+.msg {
+  min-height: 20px;
+  margin-top: 8px;
+  color: var(--fg-muted);
+  font-size: 13px;
+}
+
+.msg:empty {
+  display: none;
+}
+
+.msg--error {
+  color: var(--red-fg);
+}
+
+.result__who {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 28px;
+}
+
+.verdict {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  background: var(--bg-subtle);
+  box-shadow: 0 0 0 1px var(--border);
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.verdict--hidden {
+  background: var(--red-bg);
+  color: var(--red-fg);
+  box-shadow: none;
+}
+
+.verdict--ok {
+  box-shadow: inset 3px 0 0 var(--green), 0 0 0 1px var(--border);
+}
+
+.section-title {
+  margin-top: 24px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.section-title--first {
+  margin-top: 0;
+}
+
+.step__text {
+  margin-top: 8px;
+  color: var(--fg-muted);
+  font-size: 14px;
+  line-height: 22px;
+}
+
+#levels-card .btn {
+  margin-top: 16px;
+}
+
+.sources {
+  margin-top: 8px;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.sources > li + li {
+  margin-top: 12px;
+}
+
+.sources blockquote {
+  margin: 8px 0 0;
+  padding: 8px 12px;
+  border-left: 2px solid var(--border-strong);
+  color: var(--fg-muted);
+  font-size: 13px;
+  line-height: 20px;
+  overflow-wrap: anywhere;
+}
+
+.sources .none {
+  margin-top: 8px;
+  color: var(--fg-faint);
+  font-size: 13px;
+}
+
+.foot {
+  color: var(--fg-faint);
+  font-size: 13px;
+  text-align: center;
+}

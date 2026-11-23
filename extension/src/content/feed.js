@@ -237,8 +237,16 @@
         const act = ev.target?.dataset?.act;
         // Both sites open the post on any click inside it; the card is ours.
         if (act === 'why') {
+          // Our own evidence-and-appeal page for the account. The href stays
+          // as a fallback (middle click, or a background that is not up).
+          ev.preventDefault();
           ev.stopPropagation();
-          return; // a real link: let the browser open it
+          const handle = adapter.meta(el)?.channel || '';
+          const href = ev.target.href;
+          send('openAccount', { handle }).then((r) => {
+            if (!r) window.open(href, '_blank', 'noopener');
+          });
+          return;
         }
         ev.preventDefault();
         ev.stopPropagation();

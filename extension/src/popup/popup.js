@@ -252,6 +252,11 @@ async function refreshSpam() {
     });
   }
 
+  $('check-account')?.addEventListener('click', () => {
+    chrome.tabs.create({ url: chrome.runtime.getURL('src/account/account.html') });
+    if (document.body.dataset.view === 'popup') window.close();
+  });
+
   $('marks')?.addEventListener('click', () => {
     chrome.tabs.create({ url: chrome.runtime.getURL('src/marks/marks.html') });
   });

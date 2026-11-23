@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="../ui/base.css" />
+    <link rel="stylesheet" href="../ui/page.css" />
+    <link rel="stylesheet" href="account.css" />
+    <title>Check an account · KillSlop</title>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar__inner">
+        <svg class="mark" viewBox="0 0 24 24" aria-hidden="true">
+          <rect width="24" height="24" rx="6" fill="currentColor" />
+          <circle class="mark__glyph" cx="12" cy="12" r="6" />
+          <path class="mark__glyph" d="M7.76 7.76l8.48 8.48" />
+        </svg>
+        <span class="wordmark">KillSlop</span>
+        <svg class="topbar__sep" viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 2 5.5 14" /></svg>
+        <span class="topbar__page">Check an account</span>
+      </div>
+    </header>
+
+    <main class="sheet sheet--narrow">
+      <div class="page-head">
+        <h1 class="page-title">Check an account</h1>
+        <p class="page-sub">
+          See whether KillSlop hides an X account, which list put it there, and the evidence.
+          Listed by mistake? Appeal from here.
+        </p>
+      </div>
+
+      <form class="card" id="lookup" novalidate>
+        <div class="card__body">
+          <label class="field__label" for="handle">X username</label>
+          <div class="field__inline">
+            <input class="input" id="handle" type="text" maxlength="16" placeholder="@username"
+              autocomplete="off" autocapitalize="none" spellcheck="false" />
+            <button class="btn btn--primary" type="submit" id="check">Check</button>
+          </div>
+          <p class="msg" id="lookup-msg" role="status" aria-live="polite"></p>
+        </div>
+        <div class="card__footer">
+          <span>Checking sends only the username to api.killslop.app.</span>
+        </div>
+      </form>
+
+      <section class="card result" id="result" hidden aria-live="polite">
+        <div class="card__body">
+          <h2 class="result__who" id="who"></h2>
+          <p class="verdict" id="verdict"></p>
+
+          <div id="evidence-block" hidden>
+            <h3 class="section-title">Why it is listed</h3>
+            <ul class="sources" id="sources"></ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" id="appeal-card" hidden>
+        <form id="appeal" novalidate>
+          <div class="card__body">
+            <h3 class="section-title section-title--first">Appeal</h3>
+            <p class="step__text">
+              A person reads every appeal. If it is upheld, KillSlop stops hiding the account for
+              everyone, whatever the other lists say, usually within an hour of the decision.
+            </p>
+            <div class="field">
+              <label class="field__label" for="note">Anything we should know? <span class="optional">Optional</span></label>
+              <textarea class="input" id="note" rows="4" maxlength="1000"
+                placeholder="For example: I write my own replies. Here is a recent one."></textarea>
+            </div>
+            <div class="field">
+              <label class="field__label" for="email">Email <span class="optional">Optional, only to tell you the outcome</span></label>
+              <input class="input" id="email" type="email" maxlength="254" placeholder="you@example.com"
+                autocomplete="email" spellcheck="false" />
+            </div>
+            <p class="msg" id="appeal-msg" role="status" aria-live="polite"></p>
+          </div>
+          <div class="card__footer">
+            <span>Read by a person. Never published.</span>
+            <span class="spacer"></span>
+            <button class="btn btn--primary" type="submit" id="send">Send appeal</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="card" id="levels-card" hidden>
+        <div class="card__body">
+          <h3 class="section-title section-title--first">Appeal to levelsio too</h3>
+          <p class="step__text">
+            His list is his, and only he can take an account off it. His appeal asks you to post a short
+            pledge from the account, then a quick human check, so it has to be done on his site.
+          </p>
+          <a class="btn" id="levels-link" href="https://blockedforaireply.levels.io" target="_blank" rel="noopener">Open the entry on levelsio's list</a>
+        </div>
+      </section>
+
+      <p class="foot">KillSlop never blocks anyone. It only folds replies away for people who installed it.</p>
+    </main>
+
+    <script type="module" src="account.js"></script>
+  </body>
+</html>
