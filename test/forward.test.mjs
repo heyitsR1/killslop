@@ -121,3 +121,34 @@ test('a busy server stops the run and leaves the post for next time; a refusal i
   await forwardReports(env, ctx, { now: NOW, fetchImpl: no.impl });
   assert.equal(db.recorded[0].status, 'refused:Already reported');
 });
+
+test('reports are signed his way (X-Timestamp, X-Signature over ts.body) when LEVELS_HMAC_KEY is set', async () => {
+  const { sign, reportRequest } = await import('../worker/src/forward.js');
+  const { createHmac } = await import('node:crypto');
+  const url = 'https://x.com/growthbot/status/1';
+  const body = JSON.stringify({ tweet_url: url });
+  // Same as his openssl / Python examples.
+  assert.equal(await sign('k3y', '1800000000', body), createHmac('sha256', 'k3y').update(`1800000000.${body}`).digest('hex'));
+
+  const plain = await reportRequest(url, '');
+  assert.equal(plain.headers['x-signature'], undefined);
+
+  const r = await reportRequest(url, 'k3y', NOW);
+  assert.equal(r.body, body);
+  assert.equal(r.headers['x-timestamp'], String(NOW / 1000));
+  assert.equal(r.headers['x-signature'], createHmac('sha256', 'k3y').update(`${NOW / 1000}.${body}`).digest('hex'));
+
+  // End to end: the bytes sent are the bytes signed.
+  const seen = [];
+  const impl = async (u, init) => {
+    if (String(u).startsWith(REPORT_URL)) {
+      seen.push(init);
+      return Response.json({ ok: true });
+    }
+    return Response.json({ __typename: 'Tweet', id_str: '1', user: { screen_name: 'growthbot', id_str: '11' }, in_reply_to_status_id_str: '9' });
+  };
+  await forwardReports({ DB: fakeDb([row(1)]), FORWARD_LEVELS: 'on', LEVELS_HMAC_KEY: 'k3y' }, ctx, { now: NOW, fetchImpl: impl });
+  assert.equal(seen.length, 1);
+  const h = seen[0].headers;
+  assert.equal(h['x-signature'], createHmac('sha256', 'k3y').update(`${h['x-timestamp']}.${seen[0].body}`).digest('hex'));
+});

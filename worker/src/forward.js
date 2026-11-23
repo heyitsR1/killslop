@@ -21,11 +21,22 @@
  * author is not already on his list.
  *
  * Off unless FORWARD_LEVELS = "on".
+ *
+ * Signing (from 2026-11-23, levelsio's spec): when the LEVELS_HMAC_KEY
+ * secret is set, each report carries
+ *
+ *   X-Timestamp: unix seconds
+ *   X-Signature: hex(HMAC-SHA256(LEVELS_HMAC_KEY, ts + "." + body))
+ *
+ * where body is the exact JSON string sent. Signed reports skip his
+ * Turnstile check; he refuses a ts more than 5 minutes off (401). The key
+ * lives only here (a Worker secret) and on his server; never in the
+ * extension, whose source is public.
  */
 
 import { getXSpam } from './spamlist.js';
 
-export const REPORT_URL = 'https://blockedforaireply.levels.io/api/report.php';
+export const REPORT_URL = 'https://blockedforaireply.com/api/report.php';
 const LOOKUP_URL = 'https://cdn.syndication.twimg.com/tweet-result';
 const UA = 'KillSlop (+https://killslop.app)';
 
@@ -103,14 +114,36 @@ async function alreadySent(env, handle) {
   return Boolean(row);
 }
 
+const hex = (buf) => [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join('');
+
+/** hex(HMAC-SHA256(key, `${ts}.${body}`)). Exported for the tests. */
+export async function sign(key, ts, body) {
+  const enc = new TextEncoder();
+  const k = await crypto.subtle.importKey('raw', enc.encode(key), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  return hex(await crypto.subtle.sign('HMAC', k, enc.encode(`${ts}.${body}`)));
+}
+
+/** Body string and headers for one report, signed when a key is set. */
+export async function reportRequest(url, key, nowMs = Date.now()) {
+  const body = JSON.stringify(key ? { tweet_url: url } : { tweet_url: url, website: '' });
+  const headers = { 'content-type': 'application/json', 'user-agent': UA };
+  if (key) {
+    const ts = String(Math.floor(nowMs / 1000));
+    headers['x-timestamp'] = ts;
+    headers['x-signature'] = await sign(key, ts, body);
+  }
+  return { body, headers };
+}
+
 /** One report. Returns the status to record, or null to try again later. */
-export async function send(url, fetchImpl = fetch) {
+export async function send(url, fetchImpl = fetch, key = '') {
   let res;
   try {
+    const { body, headers } = await reportRequest(url, key);
     res = await fetchImpl(REPORT_URL, {
       method: 'POST',
-      headers: { 'content-type': 'application/json', 'user-agent': UA },
-      body: JSON.stringify({ tweet_url: url, website: '' }),
+      headers,
+      body,
       signal: withTimeout(),
     });
   } catch {
@@ -166,7 +199,7 @@ export async function forwardReports(env, ctx, { now = Date.now(), fetchImpl = f
       done.skipped++;
       continue;
     }
-    status = await send(url, fetchImpl);
+    status = await send(url, fetchImpl, env.LEVELS_HMAC_KEY);
     if (!status) {
       done.retry++;
       break; // his server said slow down, or is down
