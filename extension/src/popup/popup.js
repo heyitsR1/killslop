@@ -109,15 +109,10 @@ function paint() {
   //
   // The writing check is named first when it is on, because it is the only
   // setting that can send the words of a post rather than a hash of them.
-  setText('privacy', settings.unreachable
-    ? "KillSlop's background page is not responding, so these are the default settings and changes will not save. Reload the extension at chrome://extensions."
-    : settings.useWritingCheck
-      ? 'The writing check asks by hash first, and sends the text itself only for a post nothing else could place and nobody has had checked before.'
-      : settings.useCommunity
-      ? 'Lookups are sent as a 4-character hash prefix, so the list never learns what you watched or read.'
-      : settings.shareReports
-        ? 'Community list is off, so nothing is looked up in it. Your marks are still shared; turn off Contribute reports to keep them here.'
-        : "Community list and sharing are off. Only YouTube's label check sends a request, to YouTube, without your cookies.");
+  // Only worth a line when something is wrong.
+  setText('privacy', settings.unreachable ? 'Not responding. Reload KillSlop in chrome://extensions.' : '');
+  const privacy = $('privacy');
+  if (privacy) privacy.hidden = !settings.unreachable;
 }
 
 /** Last counts seen, so the tiles have something true to show immediately. */
@@ -163,24 +158,17 @@ async function refreshStats() {
 
 /* ------------------------------------------------------------ spam list */
 
-const ago = (ms) => {
-  const m = Math.round((Date.now() - ms) / 60000);
-  if (m < 60) return `${Math.max(m, 1)} min ago`;
-  const h = Math.round(m / 60);
-  return h < 48 ? `${h} h ago` : `${Math.round(h / 24)} days ago`;
-};
-
 async function refreshSpam() {
   const s = await send('spamSummary');
   if (!s) return;
   const n = s.count.toLocaleString('en-US');
   setText('spam-desc', !settings.useSpamList
-    ? 'Off. Turn on to hide known AI reply bots'
+    ? 'Off'
     : s.fetched
-      ? `Hiding ${n} accounts · updated ${ago(s.fetched)}`
-      : 'Downloading the list…');
+      ? `${n} hidden`
+      : 'Loading…');
   if (s.unreviewed) {
-    setText('spam-unreviewed-desc', `${s.unreviewed.toLocaleString('en-US')} more accounts levelsio blocked silently. Some may be real people`);
+    setText('spam-unreviewed-desc', `${s.unreviewed.toLocaleString('en-US')} more. Some may be real people`);
   }
 }
 

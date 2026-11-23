@@ -119,23 +119,23 @@
 
     const REASON_LABEL = {
       disclosure: adapter.disclosureLabel,
-      channel: `This ${noun} often posts AI media`,
+      channel: 'Posts AI media',
       writing: 'Reads as AI-written',
-      community: 'Reported by the community',
-      'community-channel': `This ${noun} was reported by the community`,
-      'community-measured': `This ${noun}'s own posts are labelled AI`,
-      'community-writing': `This ${noun}'s posts read as AI-written`,
-      you: 'You marked this as slop',
-      'you-channel': `You marked this ${noun} as slop`,
-      spamlist: 'On the AI reply spammer list',
+      community: 'Reported',
+      'community-channel': 'Reported',
+      'community-measured': 'Labelled AI',
+      'community-writing': 'Reads as AI-written',
+      you: 'You marked this',
+      'you-channel': 'You marked this account',
+      spamlist: 'AI reply bot',
     };
     const reasonText = (reason) => REASON_LABEL[reason] || 'Hidden as AI slop';
 
     const VOTE_TITLES = {
-      none: 'Mark as AI slop. Hides it for you right away.',
-      mine: 'You marked this as AI slop. Click to undo.',
-      channel: `You marked this ${noun} as AI slop. Click to undo.`,
-      notai: 'You said this is not AI slop. Click to undo.',
+      none: 'Mark as AI slop',
+      mine: 'Marked. Click to undo',
+      channel: 'Marked. Click to undo',
+      notai: 'Not slop. Click to undo',
     };
 
     let settings = { enabled: false, action: 'hide', platforms: {} };
@@ -264,7 +264,7 @@
           apply(el, 'clear');
           paint();
           scheduleScan();
-          toast(`Got it. This ${noun} won't be hidden for you.`);
+          toast('Shown from now on.');
         } else if (act === 'notslop') {
           const id = el.getAttribute(ID_ATTR);
           send('override', { id, kind: 'video', slop: false, meta: adapter.meta(el) });
@@ -343,7 +343,7 @@
 
     function markChannel(channelId, meta) {
       mark(channelId, 'channel', true, { title: meta?.channel || channelId, channel: null });
-      toast(`Marked this ${noun} as AI slop. Its posts are hidden for you.`, [
+      toast(`${noun[0].toUpperCase()}${noun.slice(1)} hidden.`, [
         { label: 'Undo', run: () => undo(channelId) },
       ]);
     }
@@ -373,9 +373,7 @@
         case 'none':
           mark(id, 'video', true, meta);
           toast(
-            settings.shareReports
-              ? 'Marked as AI slop. Hidden for you now, and for everyone else once the community list confirms it.'
-              : 'Marked as AI slop. Hidden for you.',
+            'Hidden.',
             [hideChannel, { label: 'Undo', run: () => undo(id) }]
           );
           break;
@@ -385,7 +383,7 @@
               label: 'Not slop',
               run: () => {
                 mark(id, 'video', false, meta);
-                toast("Got it. KillSlop won't flag this post for you.", [
+                toast('Shown from now on.', [
                   { label: 'Undo', run: () => undo(id) },
                 ]);
               },
@@ -399,7 +397,7 @@
           const target = v.reason === 'you-channel' ? channelId : id;
           if (!target) return;
           undo(target);
-          toast('Removed your mark.');
+          toast('Mark removed.');
           break;
         }
       }

@@ -25,7 +25,7 @@
     <main class="sheet sheet--narrow">
       <div class="page-head">
         <h1 class="page-title">Send feedback</h1>
-        <p class="page-sub">Bugs, wrong calls, ideas. It goes straight to the maintainer.</p>
+        
       </div>
 
       <form class="card" id="form" novalidate>
@@ -51,7 +51,7 @@
 
           <label class="attach" id="page" hidden>
             <input type="checkbox" id="attach" checked />
-            <span>Include the page you were on <span class="attach__url" id="page-url"></span></span>
+            <span>Include this page <span class="attach__url" id="page-url"></span></span>
           </label>
 
           <div class="field">
@@ -64,14 +64,14 @@
               maxlength="254"
               placeholder="you@example.com"
             />
-            <div class="field__hint">Only if you want a reply. It is never published or shared.</div>
+            
           </div>
 
           <p class="error" id="error" role="alert" hidden></p>
         </div>
 
         <div class="card__footer">
-          <span>Read by a person. Never published.</span>
+          <span></span>
           <span class="spacer"></span>
           <button type="submit" class="btn btn--primary" id="submit" disabled>Send feedback</button>
         </div>
@@ -79,7 +79,7 @@
 
       <div class="card" id="done" hidden>
         <div class="card__body done">
-          <h2 class="done__title">Thanks, it is sent.</h2>
+          <h2 class="done__title">Sent. Thanks.</h2>
           <p class="done__text" id="done-text"></p>
           <button type="button" class="btn" id="again">Send another</button>
         </div>

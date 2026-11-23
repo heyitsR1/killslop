@@ -15,17 +15,17 @@ const isValidEmail = (s) =>
   s.length <= 254 && /^[^\s@<>()",;:]+@[^\s@<>()",;:]+\.[a-z]{2,}$/i.test(s);
 
 const HINTS = {
-  bug: 'What happened, and what did you expect instead?',
-  wrong: 'Say whether KillSlop hid something it should not have, or missed some slop.',
-  idea: 'What would make KillSlop better for you?',
+  bug: 'What happened?',
+  wrong: 'Hid too much, or missed one?',
+  idea: '',
   other: '',
 };
 
 const ERRORS = {
-  'rate limited': 'Too many messages from your network. Please try again later.',
-  'bad email': 'That email address does not look right.',
-  'message too long': 'That message is too long.',
-  offline: 'Could not reach the server. Your message is still here, so you can try again.',
+  'rate limited': 'Too many messages. Try again soon.',
+  'bad email': 'Check the email.',
+  'message too long': 'Too long.',
+  offline: 'Could not send. Try again.',
 };
 
 /** The YouTube, X or LinkedIn page the popup was opened on, if any. Nothing else is accepted. */
@@ -89,14 +89,14 @@ $('form').addEventListener('submit', async (ev) => {
     $('form').hidden = true;
     $('done').hidden = false;
     $('done-text').textContent = email
-      ? `If there is something to follow up on, the reply goes to ${email}.`
-      : 'You left no email, so there will be no reply, but it will be read.';
+      ? `Any reply goes to ${email}.`
+      : '';
     return;
   }
   paint();
   showError(
     ERRORS[res?.error] ||
-      (res ? `The server did not accept it (${res.error || res.status}).` : ERRORS.offline)
+      (res ? `Could not send (${res.error || res.status}).` : ERRORS.offline)
   );
 });
 

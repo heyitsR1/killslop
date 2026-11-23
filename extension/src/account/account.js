@@ -38,10 +38,10 @@ function b(text) {
 }
 
 export function verdictFor(d) {
-  if (!d.listed) return { cls: 'ok', text: 'Not on any list KillSlop uses. Nothing from this account is hidden.' };
-  if (d.cleared) return { cls: 'ok', text: 'An appeal for this account was upheld. KillSlop does not hide it, whatever the other lists say.' };
-  if (d.hiddenByDefault) return { cls: 'hidden', text: 'KillSlop hides this account’s replies for everyone who uses it.' };
-  return { cls: 'opt', text: 'Not hidden by default. Only people who switched on “Include unreviewed blocks” see it hidden.' };
+  if (!d.listed) return { cls: 'ok', text: 'Not listed.' };
+  if (d.cleared) return { cls: 'ok', text: 'Cleared. Not hidden.' };
+  if (d.hiddenByDefault) return { cls: 'hidden', text: 'Hidden by KillSlop.' };
+  return { cls: 'opt', text: 'Hidden only with unreviewed blocks on.' };
 }
 
 function render(d) {
@@ -97,7 +97,7 @@ async function lookup(ev) {
     history.replaceState(null, '', `?u=${encodeURIComponent(m[1])}`);
     render(d);
   } catch {
-    say(msg, 'Could not check right now. Try again in a minute.', true);
+    say(msg, 'Could not check. Try again.', true);
   } finally {
     $('check').disabled = false;
   }
@@ -108,7 +108,7 @@ async function appeal(ev) {
   if (!current) return;
   const msg = $('appeal-msg');
   const email = $('email').value.trim();
-  if (email && !isValidEmail(email)) return say(msg, 'That email address does not look right.', true);
+  if (email && !isValidEmail(email)) return say(msg, 'Check the email.', true);
   $('send').disabled = true;
   say(msg, 'Sending…');
   try {
@@ -119,10 +119,10 @@ async function appeal(ev) {
       body: JSON.stringify({ handle: current.handle, note: $('note').value.trim(), email }),
     });
     const d = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(d.error || 'Could not send it. Try again in a minute.');
+    if (!res.ok) throw new Error(d.error || 'Could not send. Try again.');
     say(msg, d.cleared
-      ? 'This account is already cleared. Nothing more to do.'
-      : 'Sent. A person will read it. If it is upheld, KillSlop stops hiding the account for everyone.');
+      ? 'Already cleared.'
+      : 'Sent. We will take a look.');
   } catch (err) {
     $('send').disabled = false;
     say(msg, err.message, true);

@@ -71,7 +71,7 @@
     // Promoted posts have no timestamp link, so they never parse.
     selector: 'article[data-testid="tweet"]',
     noun: 'account',
-    disclosureLabel: 'X labels this as made with AI',
+    disclosureLabel: 'Labelled AI by X',
 
     parse(el) {
       const id = xPostIdFrom(permalink(el));

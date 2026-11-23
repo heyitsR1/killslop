@@ -72,13 +72,13 @@
   /* ----------------------------------------------------------------- render */
 
   const REASON_LABEL = {
-    disclosure: 'Labelled AI by the creator',
-    channel: 'Channel publishes AI content',
-    community: 'Reported by the community',
-    'community-channel': 'Channel reported by the community',
-    'community-measured': "Channel's own uploads are labelled AI",
-    you: 'You marked this as slop',
-    'you-channel': 'You marked this channel as slop',
+    disclosure: 'Labelled AI',
+    channel: 'AI channel',
+    community: 'Reported',
+    'community-channel': 'Channel reported',
+    'community-measured': 'AI channel',
+    you: 'You marked this',
+    'you-channel': 'You marked this channel',
   };
 
   function apply(el, state, reason) {
@@ -160,11 +160,11 @@
   // One label, three looks. Grey is something you can do; red is a verdict,
   // solid when it's yours and tinted when KillSlop reached it on its own.
   const VOTE_STATES = {
-    none: { label: 'AI SLOP', title: 'Mark as AI slop. Hides it for you right away.' },
-    mine: { label: 'AI SLOP', title: 'You marked this as AI slop. Click to undo.' },
-    channel: { label: 'AI SLOP', title: 'You marked this channel as AI slop. Click to undo.' },
+    none: { label: 'AI SLOP', title: 'Mark as AI slop' },
+    mine: { label: 'AI SLOP', title: 'Marked. Click to undo' },
+    channel: { label: 'AI SLOP', title: 'Channel marked. Click to undo' },
     flagged: { label: 'AI SLOP', title: null }, // title is the reason
-    notai: { label: 'NOT SLOP', title: 'You said this is not AI slop. Click to undo.' },
+    notai: { label: 'NOT SLOP', title: 'Not slop. Click to undo' },
   };
 
   function voteState(v) {
@@ -252,11 +252,9 @@
       case 'none':
         mark(videoId, 'video', true, meta);
         toast(
-          settings.shareReports
-            ? 'Marked as AI slop. Hidden for you now, and for everyone else once the community list confirms it.'
-            : 'Marked as AI slop. Hidden for you.',
+          'Hidden.',
           [
-            channelId && { label: 'Hide whole channel', run: () => markChannel(channelId, meta) },
+            channelId && { label: 'Hide channel', run: () => markChannel(channelId, meta) },
             { label: 'Undo', run: () => undo(videoId) },
           ]
         );
@@ -267,13 +265,13 @@
             label: 'Not slop',
             run: () => {
               mark(videoId, 'video', false, meta);
-              toast("Got it. KillSlop won't flag this video for you.", [
+              toast('Shown from now on.', [
                 { label: 'Undo', run: () => undo(videoId) },
               ]);
             },
           },
           channelId && !v.reason.includes('channel') && {
-            label: 'Hide whole channel',
+            label: 'Hide channel',
             run: () => markChannel(channelId, meta),
           },
         ]);
@@ -284,7 +282,7 @@
         const id = v.reason === 'you-channel' ? channelId : videoId;
         if (!id) return;
         undo(id);
-        toast('Removed your mark.');
+        toast('Mark removed.');
         break;
       }
     }
@@ -310,7 +308,7 @@
 
   function markChannel(channelId, meta) {
     mark(channelId, 'channel', true, { title: meta?.channel || channelId, channel: null });
-    toast('Channel marked as AI slop. Its videos are hidden for you.', [
+    toast('Channel hidden.', [
       { label: 'Undo', run: () => undo(channelId) },
     ]);
   }

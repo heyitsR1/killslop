@@ -166,8 +166,8 @@ function render() {
   $('empty').hidden = shown.length > 0;
   $('empty').textContent =
     tab === 'slop'
-      ? 'Nothing marked yet. Press AI SLOP under a YouTube video, an X post or a LinkedIn post.'
-      : 'Nothing here yet. Things you tell KillSlop are not slop show up here.';
+      ? 'Nothing marked yet.'
+      : 'Nothing here yet.';
 }
 
 async function load() {
@@ -190,7 +190,7 @@ document.addEventListener('visibilitychange', () => {
 (async () => {
   const settings = await send('getSettings');
   if (settings && !settings.shareReports) {
-    $('sub').textContent = 'Hidden for you right away. Sharing is off, so your marks stay on this device.';
+    $('sub').textContent = 'Kept on this device.';
   }
   load();
 })();
