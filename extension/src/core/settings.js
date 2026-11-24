@@ -38,6 +38,12 @@ export const DEFAULTS = {
    * those can be real people he blocked for some other reason.
    */
   spamListUnreviewed: false,
+  /**
+   * Your X username, to be credited on levelsio's Top reporters board for the
+   * X replies you mark. Empty = sent without a name, as before. Only ever sent
+   * with an X "slop" mark, never with anything else.
+   */
+  xReporter: '',
 
   /** Community-reported list. */
   useCommunity: true,

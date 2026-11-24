@@ -24,7 +24,7 @@ function fakeDb(rows) {
                   r.created < before &&
                   !recorded.some((x) => x.hash === r.hash)
               );
-              return { results: due.slice(0, limit).map(({ hash, id }) => ({ hash, id })) };
+              return { results: due.slice(0, limit).map(({ hash, id, reporter = null }) => ({ hash, id, reporter })) };
             },
             first: async () => {
               assert.match(sql, /status = 'sent' AND url LIKE/);
@@ -149,6 +149,25 @@ test('reports are signed his way (X-Timestamp, X-Signature over ts.body) when LE
   };
   await forwardReports({ DB: fakeDb([row(1)]), FORWARD_LEVELS: 'on', LEVELS_HMAC_KEY: 'k3y' }, ctx, { now: NOW, fetchImpl: impl });
   assert.equal(seen.length, 1);
+  const h = seen[0].headers;
+  assert.equal(h['x-signature'], createHmac('sha256', 'k3y').update(`${h['x-timestamp']}.${seen[0].body}`).digest('hex'));
+});
+
+test('an opted-in username goes as reporter, inside the signed body; a bad one or none is left out', async () => {
+  const { createHmac } = await import('node:crypto');
+  const seen = [];
+  const impl = async (u, init) => {
+    if (String(u).startsWith(REPORT_URL)) {
+      seen.push(init);
+      return Response.json({ ok: true });
+    }
+    const id = new URL(u).searchParams.get('id');
+    return Response.json({ __typename: 'Tweet', id_str: id, user: { screen_name: `bot${id}`, id_str: `9${id}` }, in_reply_to_status_id_str: '9' });
+  };
+  const db = fakeDb([row(1, { reporter: 'valhalla_dev' }), row(2, { reporter: 'bad name!' }), row(3)]);
+  await forwardReports({ DB: db, FORWARD_LEVELS: 'on', LEVELS_HMAC_KEY: 'k3y' }, ctx, { now: NOW, fetchImpl: impl });
+  const bodies = seen.map((x) => JSON.parse(x.body));
+  assert.deepEqual(bodies.map((b) => b.reporter), ['valhalla_dev', undefined, undefined]);
   const h = seen[0].headers;
   assert.equal(h['x-signature'], createHmac('sha256', 'k3y').update(`${h['x-timestamp']}.${seen[0].body}`).digest('hex'));
 });

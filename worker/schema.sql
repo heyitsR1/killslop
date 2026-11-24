@@ -89,6 +89,8 @@ CREATE TABLE IF NOT EXISTS votes (
   slop    INTEGER NOT NULL,
   created INTEGER NOT NULL,
   ipkey   TEXT,
+  -- X username to credit on levelsio's board; X slop marks only, opt-in
+  reporter TEXT,
   PRIMARY KEY (voter, hash, source)
 );
 

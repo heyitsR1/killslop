@@ -11,6 +11,10 @@
  *
  *   - Nothing about the person who marked it leaves our server. He gets the
  *     public link to the post and no IP, install id or count of who marked it.
+ *     The one exception is opt-in: someone who typed their X username into
+ *     the dashboard gets it sent as `reporter`, so his Top reporters board
+ *     credits them (his API: "Apps can pass their user's username"). The
+ *     earliest such mark on the post wins; an Undo deletes it with the vote.
  *   - It waits FORWARD_DELAY_MS first, so an Undo in the extension (which
  *     retracts the vote) stops it from being sent at all.
  *   - It works for every install at once, with no store review.
@@ -54,7 +58,12 @@ const withTimeout = () => AbortSignal.timeout?.(TIMEOUT_MS);
 /** The posts due a forward, oldest first. */
 async function due(env, now) {
   const { results } = await env.DB.prepare(
-    `SELECT e.hash, e.id FROM entries e
+    `SELECT e.hash, e.id,
+            (SELECT v.reporter FROM votes v
+              WHERE v.hash = e.hash AND v.source = 'vote' AND v.slop = 1
+                AND v.reporter IS NOT NULL
+              ORDER BY v.created ASC LIMIT 1) AS reporter
+       FROM entries e
       WHERE e.platform = 'x' AND e.kind = 'video'
         AND e.up > e.down
         AND (e.review IS NULL OR e.review = 'slop')
@@ -123,9 +132,14 @@ export async function sign(key, ts, body) {
   return hex(await crypto.subtle.sign('HMAC', k, enc.encode(`${ts}.${body}`)));
 }
 
-/** Body string and headers for one report, signed when a key is set. */
-export async function reportRequest(url, key, nowMs = Date.now()) {
-  const body = JSON.stringify(key ? { tweet_url: url } : { tweet_url: url, website: '' });
+/**
+ * Body string and headers for one report, signed when a key is set.
+ * `reporter` is the X username to credit, or null.
+ */
+export async function reportRequest(url, key, nowMs = Date.now(), reporter = null) {
+  const fields = key ? { tweet_url: url } : { tweet_url: url, website: '' };
+  if (reporter && HANDLE.test(reporter)) fields.reporter = reporter;
+  const body = JSON.stringify(fields);
   const headers = { 'content-type': 'application/json', 'user-agent': UA };
   if (key) {
     const ts = String(Math.floor(nowMs / 1000));
@@ -136,10 +150,10 @@ export async function reportRequest(url, key, nowMs = Date.now()) {
 }
 
 /** One report. Returns the status to record, or null to try again later. */
-export async function send(url, fetchImpl = fetch, key = '') {
+export async function send(url, fetchImpl = fetch, key = '', reporter = null) {
   let res;
   try {
-    const { body, headers } = await reportRequest(url, key);
+    const { body, headers } = await reportRequest(url, key, Date.now(), reporter);
     res = await fetchImpl(REPORT_URL, {
       method: 'POST',
       headers,
@@ -174,7 +188,7 @@ export async function forwardReports(env, ctx, { now = Date.now(), fetchImpl = f
       .bind(hash, id, url, status, now)
       .run();
 
-  for (const { hash, id } of rows) {
+  for (const { hash, id, reporter } of rows) {
     const postId = POST_ID.exec(id)?.[1];
     if (!postId) {
       await record(hash, id, null, 'bad-id');
@@ -199,7 +213,7 @@ export async function forwardReports(env, ctx, { now = Date.now(), fetchImpl = f
       done.skipped++;
       continue;
     }
-    status = await send(url, fetchImpl, env.LEVELS_HMAC_KEY);
+    status = await send(url, fetchImpl, env.LEVELS_HMAC_KEY, reporter);
     if (!status) {
       done.retry++;
       break; // his server said slow down, or is down

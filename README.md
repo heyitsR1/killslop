@@ -130,7 +130,9 @@ AI and then he review it before it joins his list (which KillSlop then serves
 to everyone). The server does this, at least 15 minutes after your mark so an
 Undo stops it, once per post, and only for replies whose author is not on his
 list yet. It sends the public link to the reply and nothing about you
-(`worker/src/forward.js`). What counts as a "person" is
+(`worker/src/forward.js`), unless you typed your X username into the
+dashboard: then it goes along as `reporter`, so his Top reporters board
+credits you. Opt-in, X marks only, and an Undo takes it back with the vote. What counts as a "person" is
 under Privacy.
 
 Everything you have marked is listed on the **Your marks** page (popup, then
@@ -286,7 +288,8 @@ Four things do send data, and none of them is a browsing trail:
 
 - a **vote**, when you click "not slop" or mark something: the id you
   marked. For a marked X reply, the server later passes the reply's public
-  link, and only that, to levelsio's report queue;
+  link, and only that, to levelsio's report queue (plus your X username, if
+  you chose to be credited on his leaderboard);
 - a **tally**, when a channel or X account you encountered crosses the
   disclosure threshold: its id and the sampled counts, once;
 - **feedback**, when you send it: your message, the optional email, and the

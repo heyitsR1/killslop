@@ -113,17 +113,31 @@ export async function lookup(ids) {
   return out;
 }
 
+/** The X username the user chose to be credited under, or ''. */
+async function creditName() {
+  try {
+    const { xReporter } = await chrome.storage.sync.get('xReporter');
+    return typeof xReporter === 'string' && /^[A-Za-z0-9_]{1,15}$/.test(xReporter) ? xReporter : '';
+  } catch {
+    return '';
+  }
+}
+
 /**
  * Submit a report. `kind` is 'video' or 'channel', `slop` is the user's claim.
  * Fire-and-forget: a failed report must never block the UI.
  */
 export async function report({ id, kind, slop, platform = platformOf(id), evidence = null }) {
   try {
+    const reporter = platform === 'x' && slop ? await creditName() : '';
     const res = await fetch(`${API_BASE}/api/v1/report`, {
       method: 'POST',
       credentials: 'omit',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ id, kind, slop, platform, evidence, voter: await installId() }),
+      body: JSON.stringify({
+        id, kind, slop, platform, evidence, voter: await installId(),
+        ...(reporter ? { reporter } : {}),
+      }),
     });
     if (!res.ok) return { ok: false, status: res.status };
     // Our own vote invalidates any cached bucket containing it.

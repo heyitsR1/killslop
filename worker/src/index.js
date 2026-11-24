@@ -53,6 +53,8 @@ import { forwardReports } from './forward.js';
 import { getAppeal, postAppeal } from './appeal.js';
 
 const DAY_MS = 24 * 3600 * 1000;
+/** An X username, as X allows them. */
+const REPORTER = /^[A-Za-z0-9_]{1,15}$/;
 
 const CORS = {
   'access-control-allow-origin': '*',
@@ -206,6 +208,12 @@ async function postReport(request, env) {
 
   const { id, kind, slop, platform = 'youtube', voter } = body;
   if (!isValidId(id, kind)) return json({ error: 'bad id' }, 400);
+  // Opt-in credit on levelsio's board (forward.js). X slop marks only; a bad
+  // name is dropped rather than failing the vote.
+  const reporter =
+    slop === true && platform === 'x' && typeof body.reporter === 'string' && REPORTER.test(body.reporter)
+      ? body.reporter
+      : null;
   if (typeof slop !== 'boolean') return json({ error: 'bad slop' }, 400);
   // The id's spelling names its platform; a body that disagrees is confused.
   if (!PLATFORMS.includes(platform) || platform !== platformOf(id)) {
@@ -225,8 +233,9 @@ async function postReport(request, env) {
     // Changing your mind moves two counters and keeps you one voter.
     statements.push(
       env.DB.prepare(
-        `UPDATE votes SET slop = ?3, created = ?4 WHERE voter = ?1 AND hash = ?2 AND source = 'vote'`
-      ).bind(prior.voter, hash, slop ? 1 : 0, now),
+        `UPDATE votes SET slop = ?3, created = ?4, reporter = ?5
+          WHERE voter = ?1 AND hash = ?2 AND source = 'vote'`
+      ).bind(prior.voter, hash, slop ? 1 : 0, now, reporter),
       env.DB.prepare(
         `UPDATE entries SET up = MAX(0, up + ?2), down = MAX(0, down + ?3), updated = ?4
           WHERE hash = ?1`
@@ -235,9 +244,9 @@ async function postReport(request, env) {
   } else {
     statements.push(
       env.DB.prepare(
-        `INSERT INTO votes (voter, ipkey, hash, source, slop, created)
-         VALUES (?1, ?2, ?3, 'vote', ?4, ?5)`
-      ).bind(keys.userkey, keys.ipkey, hash, slop ? 1 : 0, now),
+        `INSERT INTO votes (voter, ipkey, hash, source, slop, created, reporter)
+         VALUES (?1, ?2, ?3, 'vote', ?4, ?5, ?6)`
+      ).bind(keys.userkey, keys.ipkey, hash, slop ? 1 : 0, now, reporter),
       env.DB.prepare(
         `UPDATE entries SET up = up + ?2, down = down + ?3, updated = ?4 WHERE hash = ?1`
       ).bind(hash, slop ? 1 : 0, slop ? 0 : 1, now)

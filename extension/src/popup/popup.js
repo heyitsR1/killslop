@@ -240,6 +240,20 @@ async function refreshSpam() {
     });
   }
 
+  // Opt-in credit on levelsio's board: saved on change, '' clears it.
+  const reporterInput = $('xReporter');
+  if (reporterInput) {
+    reporterInput.value = settings.xReporter ? `@${settings.xReporter}` : '';
+    reporterInput.addEventListener('change', async () => {
+      const name = reporterInput.value.trim().replace(/^@/, '');
+      const ok = name === '' || /^[A-Za-z0-9_]{1,15}$/.test(name);
+      reporterInput.setAttribute('aria-invalid', String(!ok));
+      if (!ok) return;
+      reporterInput.value = name ? `@${name}` : '';
+      settings = await setSettings({ xReporter: name });
+    });
+  }
+
   $('check-account')?.addEventListener('click', () => {
     chrome.tabs.create({ url: chrome.runtime.getURL('src/account/account.html') });
     if (document.body.dataset.view === 'popup') window.close();

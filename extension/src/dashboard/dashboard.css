@@ -112,6 +112,16 @@
   border-top: 0;
 }
 
+.row__input {
+  flex: none;
+  width: 180px;
+  height: 36px;
+}
+
+.row__input[aria-invalid='true'] {
+  box-shadow: 0 0 0 1px var(--red);
+}
+
 .row__body {
   flex: 1;
   min-width: 0;
